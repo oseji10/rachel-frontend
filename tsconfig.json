@@ -28,22 +28,22 @@
 //       "@/*": [
 //         "./src/*"
 //       ],
-//       "@core/*": [
-//         "./src/@core/*"
+//       "@/@core/*": [
+//         "./src/@/@core/*"
 //       ],
-//       "@layouts/*": [
-//         "./src/@layouts/*"
+//       "@/@layouts/*": [
+//         "./src/@/@layouts/*"
 //       ],
-//       "@menu/*": [
-//         "./src/@menu/*"
+//       "@/@menu/*": [
+//         "./src/@/@menu/*"
 //       ],
 //       "@assets/*": [
 //         "./src/assets/*"
 //       ],
-//       "@components/*": [
+//       "@/components/*": [
 //         "./src/components/*"
 //       ],
-//       "@configs/*": [
+//       "@/configs/*": [
 //         "./src/configs/*"
 //       ],
 //       "@views/*": [

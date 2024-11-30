@@ -11,24 +11,24 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 
 // Type Imports
-import type { Mode } from '@core/types'
+import type { Mode } from '@/@core/types'
 
 // Component Imports
-import Form from '@components/Form'
-import DirectionalIcon from '@components/DirectionalIcon'
-import Illustrations from '@components/Illustrations'
-import Logo from '@components/layout/shared/Logo'
+import Form from '@/components/Form'
+import DirectionalIcon from '@/components/DirectionalIcon'
+import Illustrations from '@/components/Illustrations'
+import Logo from '@/components/layout/shared/Logo'
 
 // Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
+import { useImageVariant } from '@/@core/hooks/useImageVariant'
 
-const ForgotPassword = ({ mode }: { mode: Mode }) => {
+const ForgotPassword = () => {
   // Vars
   const darkImg = '/images/pages/auth-v1-mask-dark.png'
   const lightImg = '/images/pages/auth-v1-mask-light.png'
 
   // Hooks
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
+  // const authBackground = useImageVariant( lightImg, darkImg)
 
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
@@ -57,7 +57,7 @@ const ForgotPassword = ({ mode }: { mode: Mode }) => {
           </div>
         </CardContent>
       </Card>
-      <Illustrations maskImg={{ src: authBackground }} />
+      <Illustrations />
     </div>
   )
 }

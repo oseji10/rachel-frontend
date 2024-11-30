@@ -17,20 +17,20 @@ import type {} from '@mui/material/themeCssVarsAugmentation' //! Do not remove t
 import type {} from '@mui/lab/themeAugmentation' //! Do not remove this import otherwise you will get type errors while making a production build
 
 // Type Imports
-import type { ChildrenType, Direction } from '@core/types'
+import type { ChildrenType, Direction } from '@/@core/types'
 
 // Component Imports
 import ModeChanger from './ModeChanger'
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
-import primaryColorConfig from '@configs/primaryColorConfig'
+import themeConfig from '@/configs/themeConfig'
+import primaryColorConfig from '@/configs/primaryColorConfig'
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from '@/@core/hooks/useSettings'
 
 // Core Theme Imports
-import defaultCoreTheme from '@core/theme'
+import defaultCoreTheme from '@/@core/theme'
 
 type Props = ChildrenType & {
   direction: Direction

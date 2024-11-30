@@ -5,13 +5,10 @@ import type { ReactNode } from 'react'
 import { createContext, useMemo, useState } from 'react'
 
 // Type Imports
-import type { Mode } from '@core/types'
+import type { Mode } from '@/@core/types'
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
-
-// Hook Imports
-import { useObjectCookie } from '@core/hooks/useObjectCookie'
+import themeConfig from '@/configs/themeConfig'
 
 // Settings type
 export type Settings = {
@@ -19,14 +16,12 @@ export type Settings = {
 }
 
 // UpdateSettingsOptions type
-type UpdateSettingsOptions = {
-  updateCookie?: boolean
-}
+type UpdateSettingsOptions = {}
 
 // SettingsContextProps type
 type SettingsContextProps = {
   settings: Settings
-  updateSettings: (settings: Partial<Settings>, options?: UpdateSettingsOptions) => void
+  updateSettings: (settings: Partial<Settings>) => void
   isSettingsChanged: boolean
   resetSettings: () => void
   updatePageSettings: (settings: Partial<Settings>) => () => void
@@ -34,7 +29,6 @@ type SettingsContextProps = {
 
 type Props = {
   children: ReactNode
-  settingsCookie: Settings | null
   mode?: Mode
 }
 
@@ -45,55 +39,21 @@ export const SettingsContext = createContext<SettingsContextProps | null>(null)
 export const SettingsProvider = (props: Props) => {
   // Initial Settings
   const initialSettings: Settings = {
-    mode: themeConfig.mode
-  }
-
-  const updatedInitialSettings = {
-    ...initialSettings,
     mode: props.mode || themeConfig.mode
   }
 
-  // Cookies
-  const [settingsCookie, updateSettingsCookie] = useObjectCookie<Settings>(
-    themeConfig.settingsCookieName,
-    JSON.stringify(props.settingsCookie) !== '{}' ? props.settingsCookie : updatedInitialSettings
-  )
-
   // State
-  const [_settingsState, _updateSettingsState] = useState<Settings>(
-    JSON.stringify(settingsCookie) !== '{}' ? settingsCookie : updatedInitialSettings
-  )
+  const [_settingsState, _updateSettingsState] = useState<Settings>(initialSettings)
 
-  const updateSettings = (settings: Partial<Settings>, options?: UpdateSettingsOptions) => {
-    const { updateCookie = true } = options || {}
-
-    _updateSettingsState(prev => {
-      const newSettings = { ...prev, ...settings }
-
-      // Update cookie if needed
-      if (updateCookie) updateSettingsCookie(newSettings)
-
-      return newSettings
-    })
+  const updateSettings = (settings: Partial<Settings>) => {
+    _updateSettingsState(prev => ({ ...prev, ...settings }))
   }
 
-  /**
-   * Updates the settings for page with the provided settings object.
-   * Updated settings won't be saved to cookie hence will be reverted once navigating away from the page.
-   *
-   * @param settings - The partial settings object containing the properties to update.
-   * @returns A function to reset the page settings.
-   *
-   * @example
-   * useEffect(() => {
-   *     return updatePageSettings({ theme: 'dark' });
-   * }, []);
-   */
   const updatePageSettings = (settings: Partial<Settings>): (() => void) => {
-    updateSettings(settings, { updateCookie: false })
+    updateSettings(settings)
 
     // Returns a function to reset the page settings
-    return () => updateSettings(settingsCookie, { updateCookie: false })
+    return () => updateSettings(initialSettings)
   }
 
   const resetSettings = () => {
@@ -102,7 +62,6 @@ export const SettingsProvider = (props: Props) => {
 
   const isSettingsChanged = useMemo(
     () => JSON.stringify(initialSettings) !== JSON.stringify(_settingsState),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [_settingsState]
   )
 

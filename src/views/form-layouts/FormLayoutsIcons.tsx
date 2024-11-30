@@ -8,7 +8,7 @@ import CardContent from '@mui/material/CardContent'
 import InputAdornment from '@mui/material/InputAdornment'
 
 // Component Imports
-import Form from '@components/Form'
+import Form from '@/components/Form'
 
 const FormLayoutsWithIcon = () => {
   return (

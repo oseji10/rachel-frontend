@@ -4,7 +4,7 @@
 import IconButton from '@mui/material/IconButton'
 
 // Hook Imports
-import useVerticalNav from '@menu/hooks/useVerticalNav'
+import useVerticalNav from '@/@menu/hooks/useVerticalNav'
 
 const NavSearch = () => {
   // Hooks

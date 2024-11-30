@@ -21,19 +21,19 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Divider from '@mui/material/Divider'
 
 // Type Imports
-import type { Mode } from '@core/types'
+import type { Mode } from '@/@core/types'
 
 // Component Imports
-import Logo from '@components/layout/shared/Logo'
-import Illustrations from '@components/Illustrations'
+import Logo from '@/components/layout/shared/Logo'
+import Illustrations from '@/components/Illustrations'
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from '@/configs/themeConfig'
 
 // Hook Imports
-import { useImageVariant } from '@core/hooks/useImageVariant'
+import { useImageVariant } from '@/@core/hooks/useImageVariant'
 
-const Login = ({ mode }: { mode: Mode }) => {
+const Login = () => {
   // States
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
@@ -43,7 +43,7 @@ const Login = ({ mode }: { mode: Mode }) => {
 
   // Hooks
   const router = useRouter()
-  const authBackground = useImageVariant(mode, lightImg, darkImg)
+  // const authBackground = useImageVariant(lightImg, darkImg)
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
 
@@ -120,7 +120,7 @@ const Login = ({ mode }: { mode: Mode }) => {
           </div>
         </CardContent>
       </Card>
-      <Illustrations maskImg={{ src: authBackground }} />
+      <Illustrations/>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import { Inter } from 'next/font/google'
 import type { Theme } from '@mui/material/styles'
 
 // Type Imports
-import type { SystemMode } from '@core/types'
+import type { SystemMode } from '@/@core/types'
 
 // Theme Options Imports
 import overrides from './overrides'

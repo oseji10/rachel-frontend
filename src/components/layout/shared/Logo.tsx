@@ -7,10 +7,10 @@ import type { CSSProperties } from 'react'
 import styled from '@emotion/styled'
 
 // Component Imports
-import MaterioLogo from '@core/svg/Logo'
+import MaterioLogo from '@/@core/svg/Logo'
 
 // Config Imports
-import themeConfig from '@configs/themeConfig'
+import themeConfig from '@/configs/themeConfig'
 
 type LogoTextProps = {
   color?: CSSProperties['color']

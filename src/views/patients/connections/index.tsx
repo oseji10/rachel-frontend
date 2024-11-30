@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography'
 import Switch from '@mui/material/Switch'
 
 // Component Imports
-import CustomIconButton from '@core/components/mui/IconButton'
+import CustomIconButton from '@/@core/components/mui/IconButton'
 
 type ConnectedAccountsType = {
   title: string

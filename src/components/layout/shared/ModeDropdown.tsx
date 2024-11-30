@@ -8,7 +8,7 @@ import Tooltip from '@mui/material/Tooltip'
 import IconButton from '@mui/material/IconButton'
 
 // Hook Imports
-import { useSettings } from '@core/hooks/useSettings'
+import { useSettings } from '@/@core/hooks/useSettings'
 
 const ModeDropdown = () => {
   // States
