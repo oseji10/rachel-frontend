@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 
 // Component Imports
 import CreatePatient from './CreatePatient'
-import AccountDelete from './AccountDelete'
+
 
 const Create = () => {
   return (
@@ -11,9 +11,6 @@ const Create = () => {
       <Grid item xs={12}>
         <CreatePatient />
       </Grid>
-      {/* <Grid item xs={12}>
-        <AccountDelete />
-      </Grid> */}
     </Grid>
   )
 }

@@ -1,17 +1,15 @@
-// React Imports
-import type { ReactElement } from 'react'
 
-// Next Imports
-import dynamic from 'next/dynamic'
-
-// Component Imports
-// import NewEncounter from '@/views/encounters/create'
+'use client';
 
 import Consulting from '@/views/encounters/create/Consulting'
-
+import { Suspense } from 'react';
 
 const EncountersPage = () => {
-  return <Consulting />
+  return (
+  <Suspense fallback={<div>Loading...</div>}>
+      <Consulting />
+    </Suspense>
+  );
 }
 
 export default EncountersPage

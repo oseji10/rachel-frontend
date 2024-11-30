@@ -1,14 +1,12 @@
 // Component Imports
 import Login from '@/views/Login'
 
-// Server Action Imports
-import { getServerMode } from '@/@core/utils/serverHelpers'
 
 const LoginPage = () => {
   // Vars
-  const mode = getServerMode()
+  // const mode = getServerMode()
 
-  return <Login mode={mode} />
+  return <Login />
 }
 
 export default LoginPage
