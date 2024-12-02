@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -21,20 +21,93 @@ import {
 import { Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 
+type VisualAcuity = {
+  id: number;
+  name: string;
+  status: string | null;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+};
+
+type Consulting = {
+  consultingId: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+  visualAcuityFarPresentingLeft?: VisualAcuity | null;
+  visualAcuityFarPresentingRight?: VisualAcuity | null;
+  visualAcuityFarPinholeRight?: VisualAcuity | null;
+  visualAcuityFarPinholeLeft?: VisualAcuity | null;
+  visualAcuityFarBestCorrectedLeft?: VisualAcuity | null;
+  visualAcuityFarBestCorrectedRight?: VisualAcuity | null;
+  visualAcuityNearLeft?: VisualAcuity | null;
+  visualAcuityNearRight?: VisualAcuity | null;
+};
+
+type ContinueConsulting = {
+  intraOccularPressureRight: string | null;
+  intraOccularPressureLeft: string | null;
+  otherComplaintsRight: string | null;
+  otherComplaintsLeft: string | null;
+  detailedHistoryRight: string | null;
+  detailedHistoryLeft: string | null;
+  findingsRight: string | null;
+  findingsLeft: string | null;
+  eyelidRight: string | null;
+  eyelidLeft: string | null;
+  conjunctivaRight: string | null;
+  conjunctivaLeft: string | null;
+  corneaRight: string | null;
+  corneaLeft: string | null;
+  ACRight: string | null;
+  ACLeft: string | null;
+  irisRight: string | null;
+  irisLeft: string | null;
+  pupilRight: string | null;
+  pupilLeft: string | null;
+  lensRight: string | null;
+  lensLeft: string | null;
+  vitreousRight: string | null;
+  vitreousLeft: string | null;
+  retinaRight: string | null;
+  retinaLeft: string | null;
+  otherFindingsRight: string | null;
+  otherFindingsLeft: string | null;
+  chiefComplaintRight: VisualAcuity | null;
+  chiefComplaintLeft: VisualAcuity | null;
+  
+};
+
+
+
 type Patient = {
+  id: number;
   patientId: string;
+  hospitalFileNumber: string;
   firstName: string;
   lastName: string;
-  otherNames?: string;
+  otherNames?: string | null;
   gender: string;
   bloodGroup: string;
-  doctor?: {
-    doctors: {
-      doctorName: string;
-    };
-  };
-  phoneNumber?: string;
-  email?: string;
+  occupation?: string | null;
+  dateOfBirth: string;
+  address?: string | null;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+};
+
+type Encounter = {
+  encounterId: number;
+  status: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string | null;
+  patient: Patient;
+  consulting?: Consulting | null;
+  continueConsulting?: ContinueConsulting | null;
 };
 
 const modalStyle = {
@@ -52,78 +125,54 @@ const modalStyle = {
   overflowY: 'auto',
 };
 
+
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+
 const EncountersTable = () => {
-  const [patients, setPatients] = useState<Patient[]>([]);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [filteredEncounters, setFilteredEncounters] = useState<Encounter[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openViewModal, setOpenViewModal] = useState(false);
+  const [selectedEncounter, setSelectedEncounter] = useState<Encounter | null>(null);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
-  const [openViewModal, setOpenViewModal] = useState<boolean>(false);
-  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-
-  const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-
-
-  const calculateAge = (dateOfBirth: string): number => {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-  
-    // Adjust if the birth date hasn't occurred yet this year
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-  
-    return age;
-  };
-
-  
   useEffect(() => {
-    const fetchPatients = async () => {
+    const fetchEncounters = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/all_patients`);
-        setPatients(response.data);
-        setFilteredPatients(response.data);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/encounters`);
+        setEncounters(response.data);
+        setFilteredEncounters(response.data);
         setLoading(false);
       } catch (err) {
-        setError('Failed to load patients data.');
+        setError('Failed to load encounters data.');
         setLoading(false);
       }
     };
 
-    fetchPatients();
+    fetchEncounters();
   }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    const filtered = patients.filter(
-      (patient) =>
-        `${patient.firstName} ${patient.lastName}`.toLowerCase().includes(query) ||
-        patient.phoneNumber?.toLowerCase().includes(query) ||
-        patient.email?.toLowerCase().includes(query)
+    const filtered = encounters.filter(
+      (encounter) =>
+        `${encounter.patient.firstName} ${encounter.patient.lastName}`.toLowerCase().includes(query)
     );
-    setFilteredPatients(filtered);
-    setPage(0); // Reset pagination on search
+    setFilteredEncounters(filtered);
+    setPage(0);
   };
 
-  const handleView = (patient: Patient) => {
-    setSelectedPatient(patient);
+  const handleView = (encounter: Encounter) => {
+    setSelectedEncounter(encounter);
     setOpenViewModal(true);
-  };
-
-  const handleEdit = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setOpenEditModal(true);
-  };
-
-  const handleEditSave = () => {
-    // Handle save logic (e.g., API call to update the patient)
-    setOpenEditModal(false);
   };
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -134,6 +183,8 @@ const EncountersTable = () => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const displayedEncounters = filteredEncounters.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
     return (
@@ -151,13 +202,11 @@ const EncountersTable = () => {
     );
   }
 
-  const displayedPatients = filteredPatients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
   return (
     <>
-    <h3>Encounters</h3>
+      <h3>Encounters</h3>
       <TextField
-        placeholder="Search by name, phone number, or email"
+        placeholder="Search by name"
         value={searchQuery}
         onChange={handleSearch}
         variant="outlined"
@@ -168,30 +217,25 @@ const EncountersTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Patient ID</TableCell>
+              <TableCell>Encounter Date</TableCell>
               <TableCell>Patient Name</TableCell>
-              <TableCell>Phone</TableCell>
               <TableCell>Gender</TableCell>
               <TableCell>Blood Group</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedPatients.map((patient) => (
-              <TableRow key={patient.patientId}>
-                <TableCell>{patient.patientId}</TableCell>
+            {displayedEncounters.map((encounter) => (
+              <TableRow key={encounter.encounterId}>
+                <TableCell>{formatDate(encounter.createdAt)}</TableCell>
                 <TableCell>
-                  {patient.firstName} {patient.lastName} {patient.otherNames}
+                  {encounter.patient.firstName} {encounter.patient.lastName}
                 </TableCell>
-                <TableCell>{patient.phoneNumber}</TableCell>
-                <TableCell>{patient.gender}</TableCell>
-                <TableCell>{patient.bloodGroup}</TableCell>
+                <TableCell>{encounter.patient.gender}</TableCell>
+                <TableCell>{encounter.patient.bloodGroup}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleView(patient)} color="primary">
+                  <IconButton onClick={() => handleView(encounter)} color="primary">
                     <Visibility />
-                  </IconButton>
-                  <IconButton onClick={() => handleEdit(patient)} color="secondary">
-                    <Edit />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -199,9 +243,9 @@ const EncountersTable = () => {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
+          rowsPerPageOptions={[10, 25, 50]}
           component="div"
-          count={filteredPatients.length}
+          count={filteredEncounters.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
@@ -210,224 +254,162 @@ const EncountersTable = () => {
       </TableContainer>
 
       {/* View Modal */}
-<Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
-  <Box sx={{ ...modalStyle, padding: '2rem', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
-    <Typography
-      variant="h5"
-      gutterBottom
-      sx={{
-        fontWeight: 'bold',
-        color: 'primary.main',
-        textAlign: 'center',
-        marginBottom: '1.5rem',
-      }}
-    >
-      Patient Details
+    
+      <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
+  <Box sx={modalStyle}>
+    <Typography variant="h5" gutterBottom>
+      Encounter Details
     </Typography>
+    {selectedEncounter && (
+      <>
+        <Typography variant="body1">
+          <strong>Full Name:</strong> {`${selectedEncounter.patient.firstName} ${selectedEncounter.patient.lastName}`}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Gender:</strong> {selectedEncounter.patient.gender}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Blood Group:</strong> {selectedEncounter.patient.bloodGroup}
+        </Typography>
+        <Typography variant="body1">
+          <strong>Occupation:</strong> {selectedEncounter.patient.occupation || 'N/A'}
+        </Typography>
 
-    {selectedPatient && (
-      <Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Full Name:
-          </Typography>
-          <Typography variant="body1">
-            {`${selectedPatient.firstName} ${selectedPatient.lastName}`}
-          </Typography>
-        </Box>
+        {/* <Typography variant="h6" gutterBottom mt={2}>
+          Visual Acuity
+        </Typography> */}
+        {selectedEncounter.consulting ? (
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell><strong>Category</strong></TableCell>
+                  <TableCell><strong>Right Eye</strong></TableCell>
+                  <TableCell><strong>Left Eye</strong></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>Visual Acuity Far Presenting</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarPresentingRight?.name || 'N/A'}</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarPresentingLeft?.name || 'N/A'}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Visual AcuityFar Pinhole</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarPinholeRight?.name || 'N/A'}</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarPinholeLeft?.name || 'N/A'}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Visual Acuity Far Best Corrected</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarBestCorrectedRight?.name || 'N/A'}</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityFarBestCorrectedLeft?.name || 'N/A'}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Visual Acuity Near</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityNearRight?.name || 'N/A'}</TableCell>
+                  <TableCell>{selectedEncounter.consulting.visualAcuityNearLeft?.name || 'N/A'}</TableCell>
+                </TableRow>
+                {selectedEncounter?.continueConsulting && (
+                  <>
+                    <TableRow>
+                      <TableCell>Intra Occular Pressure</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.intraOccularPressureRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.intraOccularPressureLeft || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Chief Complaint</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.chiefComplaintRight?.name || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.chiefComplaintLeft?.name || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Gender:
-          </Typography>
-          <Typography variant="body1">{selectedPatient.gender}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>Other Complaints</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.otherComplaintsRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.otherComplaintsLeft || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Detailed History</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.detailedHistoryRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.detailedHistoryLeft || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Findings</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.findingsRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.findingsLeft || 'N/A'}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell>Eyelid </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.eyelidRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.eyelidLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Blood Group:
-          </Typography>
-          <Typography variant="body1">{selectedPatient.bloodGroup}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>Conjunctiva </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.conjunctivaRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.conjunctivaLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Phone Number:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.user?.phoneNumber || 'N/A'}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>Cornea </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.corneaRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.corneaLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Email:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.user?.email || 'N/A'}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>AC </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.ACRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.ACLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
+                    <TableRow>
+                      <TableCell>Iris </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.irisRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.irisLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Address:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.address || 'N/A'}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>Pupil </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.pupilRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.pupilLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
+                    <TableRow>
+                      <TableCell>Lens </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.lensRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.lensLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Occupation:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.occupation || 'N/A'}</Typography>
-        </Box>
+                    <TableRow>
+                      <TableCell>Retina </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.retinaRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.retinaLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
+                    <TableRow>
+                      <TableCell>Vitreous </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.vitreousRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.vitreousLeft || 'N/A'}</TableCell>
+                    </TableRow>
 
-        <Box
-  sx={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '1rem',
-  }}
->
-  <Typography variant="body1" fontWeight="bold" color="text.secondary">
-    Age:
-  </Typography>
-  <Typography variant="body1">
-    {selectedPatient?.dateOfBirth
-      ? calculateAge(selectedPatient.dateOfBirth)
-      : 'N/A'}
-  </Typography>
-</Box>
-
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Doctor:
-          </Typography>
-          <Typography variant="body1">
-            {selectedPatient.doctor?.doctors?.doctorName || 'N/A'}
-          </Typography>
-        </Box>
-      </Box>
+                    <TableRow>
+                      <TableCell>Other Findings </TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.otherFindingsRight || 'N/A'}</TableCell>
+                      <TableCell>{selectedEncounter.continueConsulting.otherFindingsLeft || 'N/A'}</TableCell>
+                    </TableRow>
+                  </>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <Typography variant="body1">No consulting information available.</Typography>
+        )}
+      </>
     )}
-
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '1rem',
-        marginTop: '2rem',
-      }}
-    >
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenViewModal(false)}
-        sx={{ textTransform: 'none', fontWeight: 'bold', padding: '0.5rem 2rem' }}
-      >
-        Close
-      </Button>
-    </Box>
   </Box>
 </Modal>
 
 
-      {/* Edit Modal */}
-      <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
-        <Box sx={modalStyle}>
-          <Typography variant="h6" gutterBottom>
-            Edit Patient
-          </Typography>
-          {selectedPatient && (
-            <>
-              <TextField
-                label="First Name"
-                defaultValue={selectedPatient.firstName}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Last Name"
-                defaultValue={selectedPatient.lastName}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Phone Number"
-                defaultValue={selectedPatient.phoneNumber}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Email"
-                defaultValue={selectedPatient.email}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          )}
-          <Button variant="contained" color="primary" onClick={handleEditSave}>
-            Save
-          </Button>
-          <Button onClick={() => setOpenEditModal(false)}>Cancel</Button>
-        </Box>
-      </Modal>
     </>
   );
 };
