@@ -150,29 +150,48 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           >
             Kanban
           </MenuItem> */}
-          <MenuItem href='/patients' icon={<i className='ri-user-settings-line' />}>
+          {/* <MenuItem href='/patients' icon={<i className='ri-user-settings-line' />}>
             Patients
-          </MenuItem>
-
-          
-
-          <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
+          </MenuItem> */}
+          <SubMenu label='Patients' icon={<i className='ri-user-settings-line' />}>
+            <MenuItem href='/patients'>
+              All Patients
+            </MenuItem>
+            <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
             <MenuItem href='/encounters/new-encounter'>
               New Encounter
             </MenuItem>
             <MenuItem href='/encounters'>
               All Encounters
             </MenuItem>
-            
           </SubMenu>
+          </SubMenu>
+          
+
+          {/* <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
+            <MenuItem href='/encounters/new-encounter'>
+              New Encounter
+            </MenuItem>
+            <MenuItem href='/encounters'>
+              All Encounters
+            </MenuItem>
+          </SubMenu> */}
 
 
           <MenuItem href='#' icon={<i className='ri-calendar-line' />}>
             Appointments
           </MenuItem>
 
+          <MenuItem href='#' icon={<i className='ri-hand-heart-line' />}>
+            Clinic Receptionists
+          </MenuItem>
+
+          <MenuItem href='#' icon={<i className='ri-table-line' />}>
+            Workshop Receptionists
+          </MenuItem>
+
           <MenuItem href='#' icon={<i className='ri-shopping-cart-line' />}>
-            Sales
+            Front Desk
           </MenuItem>
 
           <MenuItem href='#' icon={<i className='ri-stethoscope-line' />}>
@@ -182,6 +201,22 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           <MenuItem href='#' icon={<i className='ri-nurse-fill' />}>
             Nurses
           </MenuItem>
+
+          <MenuItem href='#' icon={<i className='ri-capsule-line' />}>
+            Medicines
+          </MenuItem>
+
+          <SubMenu label='Inventory' icon={<i className='ri-stock-line' />}>
+            <MenuItem href='#'>
+              Lenses
+            </MenuItem>
+            <MenuItem href='#'>
+              Frames
+            </MenuItem>
+            <MenuItem href='#'>
+              Accessories
+            </MenuItem>
+          </SubMenu>
 
        </MenuSection>
         
