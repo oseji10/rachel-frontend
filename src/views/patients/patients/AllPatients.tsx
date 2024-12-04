@@ -18,7 +18,7 @@ import {
   Button,
   TablePagination,
 } from '@mui/material';
-import { Edit, Visibility } from '@mui/icons-material';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 
 type Patient = {
@@ -49,14 +49,20 @@ const modalStyle = {
 
 const PatientsTable = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [page, setPage] = useState<number>(0);
-  const rowsPerPage = 15; // Fixed rows per page for server-side pagination
-  const [totalPatients, setTotalPatients] = useState<number>(0); // Total patients count for pagination
+  const [openViewModal, setOpenViewModal] = useState<boolean>(false);
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
+  const [page, setPage] = useState<number>(0);
+  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const [totalPatients, setTotalPatients] = useState<number>(0);
+
+  // Fetch patients from the server
   const fetchPatients = async (currentPage: number) => {
     setLoading(true);
     setError(null);
@@ -67,7 +73,8 @@ const PatientsTable = () => {
 
       const patientsData = response.data.data;
       setPatients(patientsData);
-      setTotalPatients(response.data.total); // Update total count from server response
+      setFilteredPatients(patientsData);
+      setTotalPatients(response.data.total);
     } catch (err) {
       setError('Failed to load patients data.');
     } finally {
@@ -75,28 +82,48 @@ const PatientsTable = () => {
     }
   };
 
+  // UseEffect hook to fetch data on page change
   useEffect(() => {
     fetchPatients(page);
   }, [page]);
 
+  // Handle search functionality
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    const filtered = patients.filter(
+      (patient) =>
+        `${patient.firstName} ${patient.lastName} ${patient.otherNames}`.toLowerCase().includes(query) ||
+        patient.phoneNumber?.toLowerCase().includes(query) ||
+        patient.email?.toLowerCase().includes(query) ||
+        patient.patientId?.toLowerCase().includes(query)
+    );
+    setFilteredPatients(filtered);
+    setPage(0); // Reset pagination on search
   };
 
-  const filteredPatients = patients.filter(
-    (patient) =>
-      `${patient.firstName} ${patient.lastName} ${patient.otherNames}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      patient.email?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handleView = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setOpenViewModal(true);
+  };
+
+  const handleEdit = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setOpenEditModal(true);
+  };
+
+  const handleEditSave = () => {
+    // Handle save logic (e.g., API call to update the patient)
+    setOpenEditModal(false);
+  };
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // You can adjust the `rowsPerPage` here if you want dynamic row limits
-    // For now, we're using a fixed rowsPerPage value
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0); // Reset to the first page whenever rows per page changes
   };
 
   if (loading) {
@@ -115,10 +142,12 @@ const PatientsTable = () => {
     );
   }
 
+  const displayedPatients = filteredPatients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <>
       <TextField
-        placeholder="Search by name, phone number, or email"
+        placeholder="Search by name, date of birth, Hospital ID, phone number, or email"
         value={searchQuery}
         onChange={handleSearch}
         variant="outlined"
@@ -138,19 +167,24 @@ const PatientsTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredPatients.map((patient) => (
+            {displayedPatients.map((patient) => (
               <TableRow key={patient.patientId}>
                 <TableCell>{patient.patientId}</TableCell>
-                <TableCell>{`${patient.firstName} ${patient.lastName} ${patient.otherNames || ''}`}</TableCell>
+                <TableCell>
+                  {patient.firstName} {patient.lastName} {patient.otherNames}
+                </TableCell>
                 <TableCell>{patient.phoneNumber}</TableCell>
                 <TableCell>{patient.gender}</TableCell>
                 <TableCell>{patient.bloodGroup}</TableCell>
                 <TableCell>
-                  <IconButton color="primary">
+                  <IconButton onClick={() => handleView(patient)} color="primary">
                     <Visibility />
                   </IconButton>
-                  <IconButton color="secondary">
+                  <IconButton onClick={() => handleEdit(patient)} color="warning">
                     <Edit />
+                  </IconButton>
+                  <IconButton color="error">
+                    <Delete />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -158,14 +192,98 @@ const PatientsTable = () => {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[100]} // Fixed to 100 for server-side
+          rowsPerPageOptions={[20]}
           component="div"
           count={totalPatients}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
+
+      {/* View Modal */}
+      <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
+        <Box sx={{ ...modalStyle, padding: '2rem', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              color: 'primary.main',
+              textAlign: 'center',
+              marginBottom: '1.5rem',
+            }}
+          >
+            Patient Details
+          </Typography>
+
+          {selectedPatient && (
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Patient ID:</Typography>
+                <Typography variant="body1">
+                {selectedPatient.patientId} 
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Full Name:</Typography>
+                <Typography variant="body1">
+                  {`${selectedPatient.firstName} ${selectedPatient.lastName}`}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Gender:</Typography>
+                <Typography variant="body1">{selectedPatient.gender}</Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Blood Group:</Typography>
+                <Typography variant="body1">{selectedPatient.bloodGroup}</Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Phone Number:</Typography>
+                <Typography variant="body1">{selectedPatient.phoneNumber}</Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+                <Typography variant="body1" fontWeight="bold" color="text.secondary">Email:</Typography>
+                <Typography variant="body1">{selectedPatient.email}</Typography>
+              </Box>
+
+            </Box>
+
+            
+          )}
+          <Button onClick={() => setOpenViewModal(false)} sx={{ width: '100%' }} variant="contained" color="primary">
+            Close
+          </Button>
+        </Box>
+      </Modal>
+
+      {/* Edit Modal */}
+      <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
+        <Box sx={{ ...modalStyle, padding: '2rem', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
+          <Typography
+            variant="h5"
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              color: 'primary.main',
+              textAlign: 'center',
+              marginBottom: '1.5rem',
+            }}
+          >
+            Edit Patient Information
+          </Typography>
+          <Button onClick={handleEditSave} sx={{ width: '100%' }} variant="contained" color="secondary">
+            Save Changes
+          </Button>
+        </Box>
+      </Modal>
     </>
   );
 };
