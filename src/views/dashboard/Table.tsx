@@ -1,4 +1,4 @@
-// MUI Imports
+"use client";
 import Typography from '@mui/material/Typography'
 import Card from '@mui/material/Card'
 import Chip from '@mui/material/Chip'
@@ -11,6 +11,8 @@ import CustomAvatar from '@/@core/components/mui/Avatar'
 
 // Styles Imports
 import tableStyles from '@/@core/styles/table.module.css'
+import { useEffect, useState } from 'react'
+import axios from 'axios';
 
 type TableBodyRowType = {
   avatarSrc?: string
@@ -107,51 +109,79 @@ const rowsData: TableBodyRowType[] = [
   }
 ]
 
+
+
 const Table = () => {
+
+  const [patients, setPatients] = useState<Patient[]>([]);
+const [loading, setLoading] = useState<boolean>(true);
+const [error, setError] = useState<string | null>(null);
+useEffect(() => {
+  const fetchPatients = async () => {
+    try {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients-all`);
+      setPatients(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to load patients data.');
+      setLoading(false);
+    }
+  };
+
+  fetchPatients();
+}, []);
+
+
   return (
     <Card>
+       
       <div className='overflow-x-auto'>
         <table className={tableStyles.table}>
           <thead>
             <tr>
-              <th>User</th>
+              <th>Patient</th>
+              <th>Phone</th>
               <th>Email</th>
-              <th>Role</th>
+              <th>Doctor</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {rowsData.map((row, index) => (
+            {patients.map((row, index) => (
               <tr key={index}>
                 <td className='!plb-1'>
                   <div className='flex items-center gap-3'>
                     <CustomAvatar src={row.avatarSrc} size={34} />
                     <div className='flex flex-col'>
                       <Typography color='text.primary' className='font-medium'>
-                        {row.name}
+                      {row.firstName} {row.lastName} {row.otherNames}
                       </Typography>
-                      <Typography variant='body2'>{row.username}</Typography>
+                      <Typography variant='body2'>{row.patientId} </Typography>
                     </div>
                   </div>
                 </td>
                 <td className='!plb-1'>
+                  <Typography>{row.phoneNumber}</Typography>
+                </td>
+
+                 <td className='!plb-1'>
                   <Typography>{row.email}</Typography>
                 </td>
+
                 <td className='!plb-1'>
-                  <div className='flex gap-2'>
-                    <i className={classnames(row.roleIcon, row.iconClass, 'text-[22px]')} />
-                    <Typography color='text.primary'>{row.role}</Typography>
-                  </div>
+                  <Typography>{row.doctor?.doctorName}</Typography>
                 </td>
                 <td className='!pb-1'>
                   <Chip
                     className='capitalize'
                     variant='tonal'
-                    color={row.status === 'pending' ? 'warning' : row.status === 'inactive' ? 'secondary' : 'success'}
+                    color={row.status === 'disabled' ? 'warning' : 'success'}
                     label={row.status}
                     size='small'
                   />
                 </td>
+
+            
               </tr>
             ))}
           </tbody>

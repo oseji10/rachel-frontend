@@ -22,13 +22,13 @@ const DashboardAnalytics = () => {
       <Grid item xs={12} md={8} lg={8}>
         <Transactions />
       </Grid>
-      <Grid item xs={12} md={6} lg={4}>
+      {/* <Grid item xs={12} md={6} lg={4}>
         <WeeklyOverview />
-      </Grid>
-      <Grid item xs={12} md={6} lg={4}>
+      </Grid> */}
+      {/* <Grid item xs={12} md={6} lg={4}>
         <TotalEarning />
-      </Grid>
-      <Grid item xs={12} md={6} lg={4}>
+      </Grid> */}
+      {/* <Grid item xs={12} md={6} lg={4}>
         <Grid container spacing={6}>
           <Grid item xs={12} sm={6}>
             <LineChart />
@@ -59,14 +59,15 @@ const DashboardAnalytics = () => {
             <DistributedColumnChart />
           </Grid>
         </Grid>
-      </Grid>
-      <Grid item xs={12} md={6} lg={4}>
+      </Grid> */}
+      {/* <Grid item xs={12} md={6} lg={4}>
         <SalesByCountries />
-      </Grid>
-      <Grid item xs={12} lg={8}>
+      </Grid> */}
+      {/* <Grid item xs={12} lg={8}>
         <DepositWithdraw />
-      </Grid>
+      </Grid> */}
       <Grid item xs={12}>
+      <h4>Recent Patients</h4>
         <Table />
       </Grid>
     </Grid>

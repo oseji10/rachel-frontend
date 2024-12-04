@@ -9,24 +9,24 @@ const Award = () => {
     <Card>
       <CardContent className='flex flex-col gap-2 relative items-start'>
         <div>
-          <Typography variant='h5'>Congratulations John! 🎉</Typography>
-          <Typography>Best seller of the month</Typography>
+          <Typography variant='h5'>Welcome back! 🎉</Typography>
+          <Typography>This dashbaord lets you manage your patients, inventory and patient encounters.</Typography>
         </div>
         <div>
-          <Typography variant='h4' color='primary'>
+          {/* <Typography variant='h4' color='primary'>
             $42.8k
           </Typography>
-          <Typography>78% of target 🚀</Typography>
+          <Typography>78% of target 🚀</Typography> */}
         </div>
-        <Button size='small' variant='contained'>
+        {/* <Button size='small' variant='contained'>
           View Sales
-        </Button>
-        <img
+        </Button> */}
+        {/* <img
           src='/images/pages/trophy.png'
           alt='trophy image'
           height={102}
           className='absolute inline-end-7 bottom-6'
-        />
+        /> */}
       </CardContent>
     </Card>
   )

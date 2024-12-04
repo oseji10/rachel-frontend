@@ -165,6 +165,24 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             </MenuItem>
             
           </SubMenu>
+
+
+          <MenuItem href='#' icon={<i className='ri-calendar-line' />}>
+            Appointments
+          </MenuItem>
+
+          <MenuItem href='#' icon={<i className='ri-shopping-cart-line' />}>
+            Sales
+          </MenuItem>
+
+          <MenuItem href='#' icon={<i className='ri-stethoscope-line' />}>
+            Doctors
+          </MenuItem>
+
+          <MenuItem href='#' icon={<i className='ri-nurse-fill' />}>
+            Nurses
+          </MenuItem>
+
        </MenuSection>
         
         {/* <MenuSection label='Forms & Tables'>
