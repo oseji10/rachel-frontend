@@ -65,7 +65,7 @@ const ContinueConsulting = () => {
   useEffect(() => {
     const fetchChiefComplaints = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/chief_complaint`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/chief_complaint`);
         setChiefComplaintOptions(response.data);
       } catch (error) {
         console.error('Error fetching chief complaints:', error);
@@ -95,7 +95,7 @@ const ContinueConsulting = () => {
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/patients/continue-consulting`, payload);
+      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/continue_consulting`, payload);
       Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -103,7 +103,7 @@ const ContinueConsulting = () => {
         timer: 3000,
         showConfirmButton: false,
       });
-      router.push('/success-page');
+      router.push(`/encounters/refraction?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -121,7 +121,7 @@ const ContinueConsulting = () => {
     <Card>
       <CardContent>
         <Typography variant="h4" gutterBottom>
-          Consulting
+         Page 2: Consulting
         </Typography>
         <Typography variant="h6" gutterBottom>
           Patient Details: {patientName}

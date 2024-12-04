@@ -17,36 +17,44 @@ const SearchPatient = () => {
   const [error, setError] = useState<string>('')
 
   const handleSearch = async (searchQuery: string) => {
-    setQuery(searchQuery)
+    setQuery(searchQuery);
+  
     if (!searchQuery.trim()) {
-      setPatient(null)
-      setError('')
-      return
+      setPatient(null);
+      setError('');
+      return;
     }
-
-    setLoading(true)
-    setError('')
-
+  
+    setLoading(true);
+    setError('');
+  
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/${searchQuery}`)
-      if (response.status === 200 && response.data) {
-        setPatient(response.data)
-        setError('')
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_URL}/patients/search`,
+        {
+          params: { queryParameter: searchQuery }, // Include query parameter in the URL
+        }
+      );
+  
+      if (response.status === 200 && response.data.length > 0) {
+        setPatient(response.data[0]); // Assuming you want the first patient
+        setError('');
       } else {
-        setPatient(null)
-        setError('No patient found')
+        setPatient(null);
+        setError('No patient found');
       }
     } catch (err: any) {
-      setPatient(null)
-      setError('No patient found')
+      setPatient(null);
+      setError('No patient found');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
+  };
+  
+  
   const handleContinue = () => {
     if (patient) {
-      window.location.href = `/encounters/consulting?patientId=${patient.id}&patientName=${patient.firstName}%20${patient.lastName}` // Adjust the next-page URL as needed
+      window.location.href = `/encounters/consulting?patientId=${patient.patientId}&patientName=${patient.firstName}%20${patient.lastName}` // Adjust the next-page URL as needed
     }
   }
 

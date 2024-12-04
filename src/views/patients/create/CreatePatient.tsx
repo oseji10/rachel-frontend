@@ -57,10 +57,10 @@ const CreatePatient = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors/4`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
         const data = await response.json()
-        const allDoctors = data.flatMap(user => user.doctors)
-        setDoctors(allDoctors)
+        // const allDoctors = data.flatMap(user => user.doctors)
+        setDoctors(data)
         // console.log(allDoctors)
       } catch (error) {
         console.error('Error fetching doctors:', error)
@@ -84,7 +84,7 @@ const CreatePatient = () => {
 
     // Prepare payload with the Date object for dateOfBirth
     const payload = {
-      patientData: {
+      
         hospitalFileNumber: formData.hospitalFileNumber,
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -94,19 +94,16 @@ const CreatePatient = () => {
         occupation: formData.occupation,
         dateOfBirth: formData.dateOfBirth,  // Pass as Date object
         address: formData.address,
-        status: 'active',
-        doctorId: formData.assignDoctor
-      },
-      userAccountData: {
+        // status: 'active',
+        doctor: formData.assignDoctor,
         email: formData.email,
-        password: 'password',
         phoneNumber: formData.phoneNumber
-      }
+      
     }
   
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_URL}/patients/create`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/patients`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -259,7 +256,7 @@ const CreatePatient = () => {
                   onChange={e => handleFormChange('assignDoctor', e.target.value)}
                 >
                   {doctors.map(doctor => (
-                    <MenuItem key={doctor.id} value={doctor.user.userId}>
+                    <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
                       {doctor.doctorName}
                     </MenuItem>
                   ))}

@@ -42,8 +42,8 @@ const Consulting = () => {
     const fetchData = async () => {
       try {
         const [farResponse, nearResponse] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/visual_acuity_far`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/visual_acuity_near`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_far`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_near`),
         ])
 
         setVisualAcuityFar(Array.isArray(farResponse.data) ? farResponse.data : [])
@@ -71,8 +71,9 @@ const Consulting = () => {
     }
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/patients/consulting`, payload)
-      const { encounterId } = response.data
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload)
+      const  encounterId  = response.data.encounterId
+      // console.log(response.data.encounterId)
       Swal.fire({
         icon: 'success',
         title: 'Success',

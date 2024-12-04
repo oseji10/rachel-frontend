@@ -85,7 +85,7 @@ const PatientsTable = () => {
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients/all_patients`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients`);
         setPatients(response.data);
         setFilteredPatients(response.data);
         setLoading(false);
@@ -283,7 +283,7 @@ const PatientsTable = () => {
           <Typography variant="body1" fontWeight="bold" color="text.secondary">
             Phone Number:
           </Typography>
-          <Typography variant="body1">{selectedPatient?.user?.phoneNumber || 'N/A'}</Typography>
+          <Typography variant="body1">{selectedPatient?.phoneNumber || 'N/A'}</Typography>
         </Box>
 
         <Box
@@ -297,7 +297,7 @@ const PatientsTable = () => {
           <Typography variant="body1" fontWeight="bold" color="text.secondary">
             Email:
           </Typography>
-          <Typography variant="body1">{selectedPatient?.user?.email || 'N/A'}</Typography>
+          <Typography variant="body1">{selectedPatient?.email || 'N/A'}</Typography>
         </Box>
 
 
@@ -362,7 +362,7 @@ const PatientsTable = () => {
             Doctor:
           </Typography>
           <Typography variant="body1">
-            {selectedPatient.doctor?.doctors?.doctorName || 'N/A'}
+            {selectedPatient.doctor?.doctorName || 'N/A'}
           </Typography>
         </Box>
       </Box>
