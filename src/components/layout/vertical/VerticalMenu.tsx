@@ -190,7 +190,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             Workshop Receptionists
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-shopping-cart-line' />}>
+          <MenuItem href='#' icon={<i className='ri-mac-line' />}>
             Front Desk
           </MenuItem>
 

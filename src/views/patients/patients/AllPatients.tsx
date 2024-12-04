@@ -28,11 +28,6 @@ type Patient = {
   otherNames?: string;
   gender: string;
   bloodGroup: string;
-  doctor?: {
-    doctors: {
-      doctorName: string;
-    };
-  };
   phoneNumber?: string;
   email?: string;
 };
@@ -54,87 +49,54 @@ const modalStyle = {
 
 const PatientsTable = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const [openViewModal, setOpenViewModal] = useState<boolean>(false);
-  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-
   const [page, setPage] = useState<number>(0);
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10);
+  const rowsPerPage = 15; // Fixed rows per page for server-side pagination
+  const [totalPatients, setTotalPatients] = useState<number>(0); // Total patients count for pagination
 
+  const fetchPatients = async (currentPage: number) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_APP_URL}/patients?page=${currentPage + 1}&limit=${rowsPerPage}`
+      );
 
-  const calculateAge = (dateOfBirth: string): number => {
-    const birthDate = new Date(dateOfBirth);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-  
-    // Adjust if the birth date hasn't occurred yet this year
-    const monthDifference = today.getMonth() - birthDate.getMonth();
-    if (monthDifference < 0 || (monthDifference === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
+      const patientsData = response.data.data;
+      setPatients(patientsData);
+      setTotalPatients(response.data.total); // Update total count from server response
+    } catch (err) {
+      setError('Failed to load patients data.');
+    } finally {
+      setLoading(false);
     }
-  
-    return age;
   };
 
-  
   useEffect(() => {
-    const fetchPatients = async () => {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients`);
-        setPatients(response.data);
-        setFilteredPatients(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load patients data.');
-        setLoading(false);
-      }
-    };
-
-    fetchPatients();
-  }, []);
+    fetchPatients(page);
+  }, [page]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-    const filtered = patients.filter(
-      (patient) =>
-        `${patient.firstName} ${patient.lastName} ${patient.otherNames}`.toLowerCase().includes(query) ||
-        patient.phoneNumber?.toLowerCase().includes(query) ||
-        patient.email?.toLowerCase().includes(query) ||
-        patient.patientId?.toLowerCase().includes(query) ||
-        patient.dateOfBirth?.toLowerCase().includes(query)
-    );
-    setFilteredPatients(filtered);
-    setPage(0); // Reset pagination on search
+    setSearchQuery(e.target.value);
   };
 
-  const handleView = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setOpenViewModal(true);
-  };
-
-  const handleEdit = (patient: Patient) => {
-    setSelectedPatient(patient);
-    setOpenEditModal(true);
-  };
-
-  const handleEditSave = () => {
-    // Handle save logic (e.g., API call to update the patient)
-    setOpenEditModal(false);
-  };
+  const filteredPatients = patients.filter(
+    (patient) =>
+      `${patient.firstName} ${patient.lastName} ${patient.otherNames}`.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patient.phoneNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      patient.email?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleChangePage = (_: unknown, newPage: number) => {
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    // You can adjust the `rowsPerPage` here if you want dynamic row limits
+    // For now, we're using a fixed rowsPerPage value
   };
 
   if (loading) {
@@ -153,12 +115,10 @@ const PatientsTable = () => {
     );
   }
 
-  const displayedPatients = filteredPatients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
   return (
     <>
       <TextField
-        placeholder="Search by name, date of birth, Hospital ID phone number, or email"
+        placeholder="Search by name, phone number, or email"
         value={searchQuery}
         onChange={handleSearch}
         variant="outlined"
@@ -178,20 +138,18 @@ const PatientsTable = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedPatients.map((patient) => (
+            {filteredPatients.map((patient) => (
               <TableRow key={patient.patientId}>
                 <TableCell>{patient.patientId}</TableCell>
-                <TableCell>
-                  {patient.firstName} {patient.lastName} {patient.otherNames}
-                </TableCell>
+                <TableCell>{`${patient.firstName} ${patient.lastName} ${patient.otherNames || ''}`}</TableCell>
                 <TableCell>{patient.phoneNumber}</TableCell>
                 <TableCell>{patient.gender}</TableCell>
                 <TableCell>{patient.bloodGroup}</TableCell>
                 <TableCell>
-                  <IconButton onClick={() => handleView(patient)} color="primary">
+                  <IconButton color="primary">
                     <Visibility />
                   </IconButton>
-                  <IconButton onClick={() => handleEdit(patient)} color="secondary">
+                  <IconButton color="secondary">
                     <Edit />
                   </IconButton>
                 </TableCell>
@@ -200,235 +158,14 @@ const PatientsTable = () => {
           </TableBody>
         </Table>
         <TablePagination
-          rowsPerPageOptions={[10, 25, 50, 100]}
+          rowsPerPageOptions={[100]} // Fixed to 100 for server-side
           component="div"
-          count={filteredPatients.length}
+          count={totalPatients}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </TableContainer>
-
-      {/* View Modal */}
-<Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
-  <Box sx={{ ...modalStyle, padding: '2rem', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)' }}>
-    <Typography
-      variant="h5"
-      gutterBottom
-      sx={{
-        fontWeight: 'bold',
-        color: 'primary.main',
-        textAlign: 'center',
-        marginBottom: '1.5rem',
-      }}
-    >
-      Patient Details
-    </Typography>
-
-    {selectedPatient && (
-      <Box>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Full Name:
-          </Typography>
-          <Typography variant="body1">
-            {`${selectedPatient.firstName} ${selectedPatient.lastName}`}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Gender:
-          </Typography>
-          <Typography variant="body1">{selectedPatient.gender}</Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Blood Group:
-          </Typography>
-          <Typography variant="body1">{selectedPatient.bloodGroup}</Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Phone Number:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.phoneNumber || 'N/A'}</Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Email:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.email || 'N/A'}</Typography>
-        </Box>
-
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Address:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.address || 'N/A'}</Typography>
-        </Box>
-
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Occupation:
-          </Typography>
-          <Typography variant="body1">{selectedPatient?.occupation || 'N/A'}</Typography>
-        </Box>
-
-
-        <Box
-  sx={{
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: '1rem',
-  }}
->
-  <Typography variant="body1" fontWeight="bold" color="text.secondary">
-    Age:
-  </Typography>
-  <Typography variant="body1">
-    {selectedPatient?.dateOfBirth
-      ? calculateAge(selectedPatient.dateOfBirth)
-      : 'N/A'}
-  </Typography>
-</Box>
-
-
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '1rem',
-          }}
-        >
-          <Typography variant="body1" fontWeight="bold" color="text.secondary">
-            Doctor:
-          </Typography>
-          <Typography variant="body1">
-            {selectedPatient.doctor?.doctorName || 'N/A'}
-          </Typography>
-        </Box>
-      </Box>
-    )}
-
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '1rem',
-        marginTop: '2rem',
-      }}
-    >
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => setOpenViewModal(false)}
-        sx={{ textTransform: 'none', fontWeight: 'bold', padding: '0.5rem 2rem' }}
-      >
-        Close
-      </Button>
-    </Box>
-  </Box>
-</Modal>
-
-
-      {/* Edit Modal */}
-      <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
-        <Box sx={modalStyle}>
-          <Typography variant="h6" gutterBottom>
-            Edit Patient
-          </Typography>
-          {selectedPatient && (
-            <>
-              <TextField
-                label="First Name"
-                defaultValue={selectedPatient.firstName}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Last Name"
-                defaultValue={selectedPatient.lastName}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Phone Number"
-                defaultValue={selectedPatient.phoneNumber}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Email"
-                defaultValue={selectedPatient.email}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          )}
-          <Button variant="contained" color="primary" onClick={handleEditSave}>
-            Save
-          </Button>
-          <Button onClick={() => setOpenEditModal(false)}>Cancel</Button>
-        </Box>
-      </Modal>
     </>
   );
 };
