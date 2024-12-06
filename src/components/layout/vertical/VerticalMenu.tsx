@@ -178,33 +178,55 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           </SubMenu> */}
 
 
-          <MenuItem href='#' icon={<i className='ri-calendar-line' />}>
-            Appointments
-          </MenuItem>
+<SubMenu label='Appointments' icon={<i className='ri-calendar-line' />}>
+            <MenuItem href='/appointments/new-appointment'>
+              New Appointment
+            </MenuItem>
+            <MenuItem href='/appointments'>
+              All Appointments
+            </MenuItem>
+          
+          </SubMenu>
 
-          <MenuItem href='#' icon={<i className='ri-hand-heart-line' />}>
+          <SubMenu label='Users' icon={<i className='ri-group-line' />}>
+            <MenuItem href='/users/new-user'>
+              New User
+            </MenuItem>
+            <MenuItem href='/users'>
+              All Users
+            </MenuItem>
+          
+          </SubMenu>
+
+          <MenuItem href='/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
             Clinic Receptionists
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-table-line' />}>
+          <MenuItem href='/workshop_receptionists' icon={<i className='ri-table-line' />}>
             Workshop Receptionists
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-mac-line' />}>
+          <MenuItem href='/front_desks' icon={<i className='ri-mac-line' />}>
             Front Desk
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-stethoscope-line' />}>
+          <MenuItem href='/doctors' icon={<i className='ri-stethoscope-line' />}>
             Doctors
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-nurse-fill' />}>
+          <MenuItem href='/nurses' icon={<i className='ri-nurse-fill' />}>
             Nurses
           </MenuItem>
 
-          <MenuItem href='#' icon={<i className='ri-capsule-line' />}>
-            Medicines
-          </MenuItem>
+
+          <SubMenu label='Medicines' icon={<i className='ri-capsule-line' />}>
+            <MenuItem href='/medicines/new-medicine'>
+              New Medicine
+            </MenuItem>
+            <MenuItem href='/medicines'>
+              All Medicines
+            </MenuItem>
+          </SubMenu>
 
           <SubMenu label='Inventory' icon={<i className='ri-stock-line' />}>
             <MenuItem href='#'>
