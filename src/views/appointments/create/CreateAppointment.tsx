@@ -25,6 +25,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 type FormData = {
   
   appointmentDate: string
+  appointmentTime: string
   comment: string
   assignDoctor: string
   patientId: string
@@ -32,6 +33,7 @@ type FormData = {
 
 const initialFormData: FormData = {
   appointmentDate: '',
+  appointmentTime: '',
   comment: '',
   assignDoctor: '',
   patientId: ''
@@ -39,7 +41,7 @@ const initialFormData: FormData = {
 
 
 
-const CreateMedicine = () => {
+const CreateAppointment = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [doctors, setDoctors] = useState<{ doctorId: string; doctorName: string }[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -47,9 +49,9 @@ const CreateMedicine = () => {
 
   const searchParams = useSearchParams();
 const router = useRouter();
-const patientId = searchParams.get('patientId'); // Retrieve patientId from the URL
+const patientId = searchParams.get('patientId');
 const patientName = searchParams.get('patientName');
-const encounterId = searchParams.get('encounterId');
+
 
 
   // Fetch doctor names from the API
@@ -85,6 +87,7 @@ const encounterId = searchParams.get('encounterId');
       
         
         appointmentDate: formData.appointmentDate,
+        appointmentTime: formData.appointmentTime,
         comment: formData.comment,
         doctor: formData.assignDoctor,
         patientId: patientId
@@ -134,14 +137,25 @@ const encounterId = searchParams.get('encounterId');
             {/* Form Fields */}
            
             <Grid item xs={12} sm={6}>
-              <TextField
-              type='date'
-                fullWidth
-                label="Appoitment Date"
-                value={formData.appointmentDate}
-                onChange={e => handleFormChange('appointmentDate', e.target.value)}
-              />
-            </Grid>
+  <TextField
+    type="date"
+    fullWidth
+    label="Appointment Date"
+    value={formData.appointmentDate}
+    onChange={e => handleFormChange('appointmentDate', e.target.value)}
+  />
+</Grid>
+
+<Grid item xs={12} sm={6}>
+  <TextField
+    type="time"
+    fullWidth
+    label="Appointment Time"
+    value={formData.appointmentTime}
+    onChange={e => handleFormChange('appointmentTime', e.target.value)}
+  />
+</Grid>
+
          
             <Grid item xs={12} sm={6}>
               <TextField
@@ -202,4 +216,4 @@ const encounterId = searchParams.get('encounterId');
   )
 }
 
-export default CreateMedicine
+export default CreateAppointment

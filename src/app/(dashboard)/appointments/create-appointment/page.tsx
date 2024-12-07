@@ -1,16 +1,13 @@
-// React Imports
-import type { ReactElement } from 'react'
+'use client';
+import { Suspense } from 'react';
+import CreateAppointment from '@/views/appointments/create/CreateAppointment';
 
-// Next Imports
-import dynamic from 'next/dynamic'
-import Create from '@/views/appointments/create'
-import CreateAppointment from '@/views/appointments/create/CreateAppointment'
-import SearchPatient from '@/views/appointments/create/SearchPatient'
+const CreateAppointmentsPage = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CreateAppointment />
+    </Suspense>
+  );
+};
 
-
-const AppointmentsPage = () => {
-  // return <CreateAppointment />
-return <CreateAppointment/>
-}
-
-export default AppointmentsPage
+export default CreateAppointmentsPage;
