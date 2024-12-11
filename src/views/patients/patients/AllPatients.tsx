@@ -101,19 +101,25 @@ const PatientsTable = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-
-    // Filter the patients and reset to page 0
-    const filtered = patients.filter(
-      (patient) =>
-        `${patient.firstName} ${patient.lastName} ${patient.otherNames}`.toLowerCase().includes(query) ||
-        patient.phoneNumber?.toLowerCase().includes(query) ||
-        patient.email?.toLowerCase().includes(query) ||
-        patient.patientId?.toLowerCase().includes(query)
-    );
-
+  
+    const filtered = patients.filter((patient) => {
+      const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
+      const phone = (patient.phoneNumber || '').toLowerCase();
+      const email = (patient.email || '').toLowerCase();
+      const patientId = String(patient.patientId || '').toLowerCase(); // Ensure patientId is a string
+  
+      return (
+        fullName.includes(query) ||
+        phone.includes(query) ||
+        email.includes(query) ||
+        patientId.includes(query)
+      );
+    });
+  
     setFilteredPatients(filtered);
-    setPage(0); // Reset to first page after search
+    setPage(0); // Reset to the first page after search
   };
+  
 
   const handleView = (patient: Patient) => {
     setSelectedPatient(patient);

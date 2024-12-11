@@ -159,16 +159,33 @@ const EncountersTable = () => {
     fetchEncounters();
   }, []);
 
+  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const query = e.target.value.toLowerCase();
+  //   setSearchQuery(query);
+  //   const filtered = encounters.filter(
+  //     (encounter) =>
+  //       `${encounter.patients.firstName} ${encounter.patients.lastName}`.toLowerCase().includes(query)
+  //   );
+  //   setFilteredEncounters(filtered);
+  //   setPage(0);
+  // };
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    const filtered = encounters.filter(
-      (encounter) =>
-        `${encounter.patients.firstName} ${encounter.patients.lastName}`.toLowerCase().includes(query)
-    );
+  
+    const filtered = encounters.filter((encounter) => {
+      const fullName = `${encounter.patients.firstName || ''} ${encounter.patients.lastName || ''} ${encounter.patients.otherNames || ''}`.toLowerCase();
+      
+      return (
+        fullName.includes(query)
+      );
+    });
+  
     setFilteredEncounters(filtered);
-    setPage(0);
+    setPage(0); // Reset to the first page after search
   };
+  
 
   const handleView = (encounter: Encounter) => {
     setSelectedEncounter(encounter);
@@ -227,7 +244,7 @@ const EncountersTable = () => {
           <TableBody>
             {displayedEncounters.map((encounter) => (
               <TableRow key={encounter.encounterId}>
-                <TableCell>{formatDate(encounter.createdAt)}</TableCell>
+                <TableCell>{formatDate(encounter?.created_at)}</TableCell>
                 <TableCell>
                   {encounter.patients?.firstName} {encounter.patients?.lastName}
                 </TableCell>

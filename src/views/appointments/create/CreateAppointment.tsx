@@ -17,7 +17,8 @@ import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import Swal from 'sweetalert2'
 import { useRouter, useSearchParams } from 'next/navigation'
-
+import Clock from 'react-clock';
+import 'react-clock/dist/Clock.css';
 
 
 
@@ -53,7 +54,16 @@ const patientId = searchParams.get('patientId');
 const patientName = searchParams.get('patientName');
 
 
+const [value, setValue] = useState(new Date()); // Set initial time to current time
 
+  // Handle time change
+  const handleTimeChange = (newTime) => {
+    setValue(newTime);
+    // Format the time into HH:mm format and update formData
+    const formattedTime = `${newTime.getHours()}:${newTime.getMinutes() < 10 ? '0' : ''}${newTime.getMinutes()}`;
+    handleFormChange('appointmentTime', formattedTime);
+  };
+  
   // Fetch doctor names from the API
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -143,8 +153,15 @@ const patientName = searchParams.get('patientName');
     label="Appointment Date"
     value={formData.appointmentDate}
     onChange={e => handleFormChange('appointmentDate', e.target.value)}
+    InputLabelProps={{
+      shrink: true, // Ensures the label stays visible when the input is focused
+    }}
+    inputProps={{
+      min: new Date().toISOString().split('T')[0], // Disables previous dates
+    }}
   />
 </Grid>
+
 
 <Grid item xs={12} sm={6}>
   <TextField

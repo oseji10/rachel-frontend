@@ -18,7 +18,7 @@ import {
   Button,
   TablePagination,
 } from '@mui/material';
-import { Edit, Visibility } from '@mui/icons-material';
+import { Cancel, Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 
 type VisualAcuity = {
@@ -75,6 +75,9 @@ const AppointmentsTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  // const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
@@ -116,6 +119,18 @@ const AppointmentsTable = () => {
     setPage(0);
   };
 
+
+  const handleEdit = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setOpenEditModal(true);
+  };
+
+  const handleEditSave = () => {
+    // Handle save logic (e.g., API call to update the patient)
+    setOpenEditModal(false);
+  };
+
+
   const displayedAppointments = filteredAppointments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
@@ -149,9 +164,9 @@ const AppointmentsTable = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Date</TableCell>
+              <TableCell>Appointment Date</TableCell>
               <TableCell>Patient Name</TableCell>
-              <TableCell>Doctor</TableCell>
+              <TableCell>Doctor To See</TableCell>
               {/* <TableCell>Role</TableCell> */}
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -160,7 +175,19 @@ const AppointmentsTable = () => {
             {displayedAppointments.map((appointment) => (
               <TableRow key={appointment.id}>
                 
-                  <TableCell>{appointment?.appointmentDate}</TableCell>
+                <TableCell>
+  {appointment?.appointmentDate &&
+    new Date(`${appointment?.appointmentDate}T${appointment?.appointmentTime}`).toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })}
+</TableCell>
+
                 <TableCell>
                   {appointment?.patients?.firstName} {appointment?.patients?.lastName}
                 </TableCell>
@@ -170,6 +197,14 @@ const AppointmentsTable = () => {
                   <IconButton onClick={() => handleView(appointment)} color="primary">
                     <Visibility />
                   </IconButton>
+
+                  <IconButton onClick={() => handleEdit(appointment)} color="warning">
+                    <Edit />
+                  </IconButton>
+                  <IconButton color="error">
+                    <Cancel />
+                  </IconButton>
+
                 </TableCell>
               </TableRow>
             ))}
