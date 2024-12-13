@@ -176,6 +176,26 @@ refractionPrismRight?: string | null;
 refractionPrismLeft?: string | null;
 diagnosisRight?: string | null;
 diagnosisLeft?: string | null;
+
+investigationsRequired?: string | null;  
+externalInvestigationRequired?: string | null; 
+investigationsDone?: string | null;
+HBP?: string | null; 
+diabetes?: string | null;  
+pregnancy?: string | null;  
+drugAllergy?: string | null;  
+currentMedication?: string | null;  
+documentId?: string | null;
+
+treatmentType?: string | null;  
+dosage?: string | null; 
+doseDuration?: string | null;
+doseInterval?: string | null; 
+time?: string | null;  
+comment?: string | null;  
+lensType?: string | null;  
+costOfLens?: string | null;
+costOfFrame?: string | null;
 };
 
 const modalStyle = {
@@ -366,7 +386,8 @@ const EncountersTable = () => {
         {selectedEncounter ? (
           <TableContainer component={Paper}>
             <Table>
-              <TableHead>
+              <TableHead><br/>
+              <h4>Consulting</h4>
                 <TableRow>
                   <TableCell><strong>Category</strong></TableCell>
                   <TableCell><strong>Right Eye</strong></TableCell>
@@ -395,6 +416,7 @@ const EncountersTable = () => {
                   <TableCell>{selectedEncounter?.visualAcuityNearLeft || 'N/A'}</TableCell>
                 </TableRow>
                 
+               
                     <TableRow>
                       <TableCell>Intra Occular Pressure</TableCell>
                       <TableCell>{selectedEncounter?.intraOccularPressureRight || 'N/A'}</TableCell>
@@ -411,6 +433,8 @@ const EncountersTable = () => {
                       <TableCell>{selectedEncounter?.otherComplaintsRight || 'N/A'}</TableCell>
                       <TableCell>{selectedEncounter?.otherComplaintsLeft || 'N/A'}</TableCell>
                     </TableRow>
+
+
                     <TableRow>
                       <TableCell>Detailed History</TableCell>
                       <TableCell>{selectedEncounter?.detailedHistoryRight || 'N/A'}</TableCell>
@@ -481,6 +505,8 @@ const EncountersTable = () => {
                       <TableCell>{selectedEncounter?.otherFindingsLeft || 'N/A'}</TableCell>
                     </TableRow>
 
+
+                    <h4>Refractions</h4>
 
                     <TableRow>
                       <TableCell>Near Add </TableCell>
@@ -556,10 +582,107 @@ const EncountersTable = () => {
                       <TableCell>{selectedEncounter?.refractionPrismLeft || 'N/A'}</TableCell>
                     </TableRow>
 
+                    <h4>Diagnosis</h4>
                     <TableRow>
                       <TableCell>Diagnosis</TableCell>
                       <TableCell>{selectedEncounter?.diagnosisRight || 'N/A'}</TableCell>
                       <TableCell>{selectedEncounter?.diagnosisLeft || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <h4>Investigations</h4>
+                    <TableRow>
+                      <TableCell>Investigations Required</TableCell>
+                      <TableCell>{selectedEncounter?.investigationsRequired || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>External Investigations Required</TableCell>
+                      <TableCell>{selectedEncounter?.externalInvestigationRequired || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Investigations Done</TableCell>
+                      <TableCell>{selectedEncounter?.investigationsDone || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>HBP</TableCell>
+                      <TableCell>{selectedEncounter?.HBP || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Diabetes</TableCell>
+                      <TableCell>{selectedEncounter?.diabetes || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Pregnancy</TableCell>
+                      <TableCell>{selectedEncounter?.pregnancy || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Drug Allergy</TableCell>
+                      <TableCell>{selectedEncounter?.drugAllergy || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Current Medication</TableCell>
+                      <TableCell>{selectedEncounter?.currentMedication || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Uploaded Dcoument</TableCell>
+                      <TableCell>{selectedEncounter?.documentId || 'N/A'}</TableCell>
+                    </TableRow>
+
+
+                  <h4>Treatment</h4>
+                    <TableRow>
+                      <TableCell>Treatment Type</TableCell>
+                      <TableCell>{selectedEncounter?.treatmentType || 'N/A'}</TableCell>
+                    </TableRow>
+
+
+                    <TableRow>
+                      <TableCell>Dosage</TableCell>
+                      <TableCell>{selectedEncounter?.documentId || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Dose Duration</TableCell>
+                      <TableCell>{selectedEncounter?.doseDuration || 'N/A'}</TableCell>
+                    </TableRow>
+
+
+                    <TableRow>
+                      <TableCell>Dose Interval</TableCell>
+                      <TableCell>{selectedEncounter?.doseInterval || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Time</TableCell>
+                      <TableCell>{selectedEncounter?.time || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Comment</TableCell>
+                      <TableCell>{selectedEncounter?.comment || 'N/A'}</TableCell>
+                    </TableRow>
+
+
+                    <TableRow>
+                      <TableCell>Lens Type</TableCell>
+                      <TableCell>{selectedEncounter?.lensType || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Cost Of Lens</TableCell>
+                      <TableCell>{selectedEncounter?.costOfLens || 'N/A'}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell>Cost Of Frame</TableCell>
+                      <TableCell>{selectedEncounter?.costOfFrame || 'N/A'}</TableCell>
                     </TableRow>
 
                
