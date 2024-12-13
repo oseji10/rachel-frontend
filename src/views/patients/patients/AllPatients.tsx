@@ -25,6 +25,7 @@ import {
 import { Bed, CalendarMonth, Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Swal from 'sweetalert2';
 
 type Patient = {
   patientId: string;
@@ -198,6 +199,34 @@ const PatientsTable = () => {
         });
       }
     };
+
+
+    const handleDelete = (patient) => {
+      setOpenViewModal(false);
+      Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this patient?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete!',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Make API request to delete the appointment
+          // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
+          axios
+            .delete(`${process.env.NEXT_PUBLIC_APP_URL}/patient/${patient.patientId}`)
+            .then((response) => {
+              Swal.fire('Deleted!', 'The patient has been deleted.', 'success');
+              window.location.reload();
+            })
+            .catch((error) => {
+              Swal.fire('Error!', 'Failed to delete the patient.', 'error');
+            });
+        }
+      });
+    };
     
   return (
     <>
@@ -244,7 +273,7 @@ const PatientsTable = () => {
                   <IconButton onClick={() => handleAppointment(patient)} color="success">
                    <CalendarMonth />
                   </IconButton>
-                  <IconButton color="error">
+                  <IconButton onClick={() => handleDelete(patient)} color="error">
                     <Delete />
                   </IconButton>
                 </TableCell>

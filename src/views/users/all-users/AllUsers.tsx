@@ -18,8 +18,9 @@ import {
   Button,
   TablePagination,
 } from '@mui/material';
-import { Edit, Visibility } from '@mui/icons-material';
+import { Delete, Edit, EditCalendar, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 type VisualAcuity = {
   id: number;
@@ -143,21 +144,30 @@ const UsersTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [openEditModal, setOpenEditModal] = useState(false);
+const [editUser, setEditUser] = useState<User | null>(null);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/users`);
         setUsers(response.data);
-        setFilteredUsers(response.data);
         setLoading(false);
       } catch (err) {
         setError('Failed to load users data.');
         setLoading(false);
       }
     };
-
+  
     fetchUsers();
   }, []);
+  
+  useEffect(() => {
+    const filtered = users.filter((user) =>
+      `${user?.firstName} ${user?.lastName}`.toLowerCase().includes(searchQuery)
+    );
+    setFilteredUsers(filtered);
+  }, [users, searchQuery]);
+  
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
@@ -184,7 +194,7 @@ const UsersTable = () => {
     setPage(0);
   };
 
-  const displayedUsers = filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  const displayedUsers = (filteredUsers || []).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
     return (
@@ -201,6 +211,80 @@ const UsersTable = () => {
       </Typography>
     );
   }
+
+ 
+  const handleDelete = (user) => {
+    setOpenViewModal(false);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this user?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make API request to delete the appointment
+        // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
+        axios
+          .delete(`${process.env.NEXT_PUBLIC_APP_URL}/user/${user.id}`)
+          .then((response) => {
+            Swal.fire('Deleted!', 'The User has been deleted.', 'success');
+            window.location.reload();
+          })
+          .catch((error) => {
+            Swal.fire('Error!', 'Failed to delete the user.', 'error');
+          });
+      }
+    });
+  };
+
+
+
+
+// Function to handle Edit button click
+const handleEdit = (user: User) => {
+  setEditUser(user);
+  setOpenEditModal(true);
+};
+
+// Function to handle field changes in the modal
+const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (editUser) {
+    setEditUser({ ...editUser, [e.target.name]: e.target.value });
+  }
+};
+
+// Function to submit the edited data
+const handleEditSubmit = async () => {
+  if (editUser) {
+    try {
+      const payload = {
+        firstName: editUser.firstName,
+        lastName: editUser.lastName,
+        email: editUser.email,
+        phoneNumber: editUser.phoneNumber,
+      };
+      const response = await axios.put(
+        `${process.env.NEXT_PUBLIC_APP_URL}/user/${editUser.id}`,
+        payload // Send as an object
+      );
+      Swal.fire('Success', 'User details updated successfully.', 'success');
+      setOpenEditModal(false);
+      // Optionally, refresh the users list or update the local state
+      setUsers((prevUsers) =>
+        prevUsers.map((user) =>
+          user.userId === editUser.userId ? { ...user, ...payload } : user
+        )
+      );
+    } catch (err) {
+      Swal.fire('Error', 'Failed to update user details.', 'error');
+    }
+  }
+};
+
+
 
   return (
     <>
@@ -226,7 +310,7 @@ const UsersTable = () => {
           </TableHead>
           <TableBody>
             {displayedUsers.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow key={user?.id}>
                 
                 <TableCell>
                   {user?.firstName} {user?.lastName}
@@ -237,6 +321,12 @@ const UsersTable = () => {
                 <TableCell>
                   <IconButton onClick={() => handleView(user)} color="primary">
                     <Visibility />
+                  </IconButton>
+                  <IconButton onClick={() => handleEdit(user)} color="secondary">
+    <Edit />
+  </IconButton>
+                  <IconButton onClick={() => handleDelete(user)} color="error">
+                    <Delete />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -281,6 +371,58 @@ const UsersTable = () => {
   </Box>
 </Modal>
 
+<Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
+  <Box sx={modalStyle}>
+    <Typography variant="h5" gutterBottom>
+      Edit User Details
+    </Typography>
+    {editUser && (
+      <>
+        <TextField
+          label="First Name"
+          name="firstName"
+          value={editUser?.firstName}
+          onChange={handleFieldChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Last Name"
+          name="lastName"
+          value={editUser?.lastName}
+          onChange={handleFieldChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Email"
+          name="email"
+          value={editUser?.email}
+          onChange={handleFieldChange}
+          fullWidth
+          margin="normal"
+        />
+        <TextField
+          label="Phone Number"
+          name="phoneNumber"
+          value={editUser?.phoneNumber}
+          onChange={handleFieldChange}
+          fullWidth
+          margin="normal"
+        />
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEditSubmit}
+          fullWidth
+          sx={{ mt: 2 }}
+        >
+          Submit
+        </Button>
+      </>
+    )}
+  </Box>
+</Modal>
 
     </>
   );

@@ -96,7 +96,7 @@ const MedicinesTable = () => {
     setSearchQuery(query);
     const filtered = medicines.filter(
       (medicine) =>
-        `${medicine.firstName} ${medicine.lastName}`.toLowerCase().includes(query)
+        `${medicine.medicineName}`.toLowerCase().includes(query)
     );
     setFilteredMedicines(filtered);
     setPage(0);
@@ -150,9 +150,9 @@ const MedicinesTable = () => {
           <TableHead>
             <TableRow>
               <TableCell>Medicine Name</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Role</TableCell>
+              <TableCell>Formualtion</TableCell>
+              <TableCell>Manufacturer</TableCell>
+              <TableCell>Quantity</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -161,11 +161,11 @@ const MedicinesTable = () => {
               <TableRow key={medicine.id}>
                 
                 <TableCell>
-                  {medicine?.firstName} {medicine?.lastName}
+                  {medicine?.medicineName} 
                 </TableCell>
-                <TableCell>{medicine?.email}</TableCell>
-                <TableCell>{medicine?.phoneNumber}</TableCell>
-                <TableCell>{medicine?.role?.roleName}</TableCell>
+                <TableCell>{medicine?.formulation}</TableCell>
+                <TableCell>{medicine?.manufacturer?.manufacturerName}</TableCell>
+                <TableCell>{medicine?.quantity}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleView(medicine)} color="primary">
                     <Visibility />
@@ -196,16 +196,16 @@ const MedicinesTable = () => {
     {selectedMedicine && (
       <>
         <Typography variant="body1">
-          <strong>Full Name:</strong> {`${selectedMedicine?.firstName} ${selectedMedicine?.lastName}`}
+          <strong>Medicine Name:</strong> {`${selectedMedicine?.medicineName}`}
         </Typography>
         <Typography variant="body1">
-          <strong>Email:</strong> {selectedMedicine?.email}
+          <strong>Formulation:</strong> {selectedMedicine?.formulation}
         </Typography>
         <Typography variant="body1">
-          <strong>Phone Number:</strong> {selectedMedicine?.phoneNumber}
+          <strong>Manufacturer:</strong> {selectedMedicine?.manufacturer?.manufacturerName}
         </Typography>
         <Typography variant="body1">
-          <strong>Role:</strong> {selectedMedicine.role?.roleName || 'N/A'}
+          <strong>Quantity:</strong> {selectedMedicine?.quantity || 'N/A'}
         </Typography>
 </>
        
