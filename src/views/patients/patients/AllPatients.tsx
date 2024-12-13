@@ -22,8 +22,9 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Delete, Edit, Visibility } from '@mui/icons-material';
+import { Bed, CalendarMonth, Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 type Patient = {
   patientId: string;
@@ -34,6 +35,7 @@ type Patient = {
   bloodGroup: string;
   phoneNumber?: string;
   email?: string;
+  hospitalFileNumber: string;
 };
 
 const modalStyle = {
@@ -70,22 +72,17 @@ const PatientsTable = () => {
   const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
   
-  const fetchPatients = async (currentPage: number) => {
+  const fetchPatients = async (currentPage: number, query: string = '') => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_APP_URL}/patients?page=${currentPage + 1}&limit=${rowsPerPage}`
+        `${process.env.NEXT_PUBLIC_APP_URL}/patients?page=${currentPage + 1}&limit=${rowsPerPage}&query=${query}`
       );
       const { data, total, current_page, last_page } = response.data;
-  
-      // Update state with the current page data
       setPatients(data);
-      setFilteredPatients(data);
-  
-      // Update pagination meta data
       setTotalPatients(total);
-      setCurrentPage(current_page - 1);  // Offset to match zero-based index
+      setCurrentPage(current_page - 1);
       setTotalPages(last_page);
     } catch (err) {
       setError('Failed to load patients data.');
@@ -93,6 +90,7 @@ const PatientsTable = () => {
       setLoading(false);
     }
   };
+  
 
   useEffect(() => {
     fetchPatients(page);
@@ -101,18 +99,23 @@ const PatientsTable = () => {
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
+    fetchPatients(0, query); // Fetch data with the search query
+  
+  
   
     const filtered = patients.filter((patient) => {
       const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
       const phone = (patient.phoneNumber || '').toLowerCase();
       const email = (patient.email || '').toLowerCase();
-      const patientId = String(patient.patientId || '').toLowerCase(); // Ensure patientId is a string
+      const patientId = String(patient.patientId || '').toLowerCase(); 
+      const hospitalFileNumber = String(patient.hospitalFileNumber || '').toLowerCase(); 
   
       return (
         fullName.includes(query) ||
         phone.includes(query) ||
         email.includes(query) ||
-        patientId.includes(query)
+        patientId.includes(query)||
+        hospitalFileNumber.includes(query)
       );
     });
   
@@ -138,13 +141,30 @@ const PatientsTable = () => {
 
   const handleChangePage = (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => {
     setPage(newPage);
-    fetchPatients(newPage);
+    fetchPatients(newPage, searchQuery);
   };
+
+  
   
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);  // Reset to the first page
-    fetchPatients(0); // Fetch first page of data
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    setRowsPerPage(newRowsPerPage);
+    setPage(0);
+    fetchPatients(0, searchQuery);
+  };
+
+  const router = useRouter();
+  const handleAppointment = (patient) => {
+    const { patientId, firstName, lastName } = patient; 
+    const patientName = firstName + ' ' + lastName; // Extract patientName correctly
+    router.push(`/appointments/create-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
+  };
+  
+  
+  const handleEncounter = (patient) => {
+    const { patientId, firstName, lastName } = patient; 
+    const patientName = firstName + ' ' + lastName; // Extract patientName correctly
+    router.push(`/encounters/consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
   };
   
 
@@ -164,10 +184,11 @@ const PatientsTable = () => {
     );
   }
 
-  const displayedPatients = searchQuery
-    ? filteredPatients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-    : patients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  // const displayedPatients = searchQuery
+  //   ? filteredPatients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  //   : patients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
+  const displayedPatients = patients;
 
     const handleInputChange = (field: keyof Patient, value: string) => {
       if (selectedPatient) {
@@ -216,6 +237,12 @@ const PatientsTable = () => {
                   </IconButton>
                   <IconButton onClick={() => handleEdit(patient)} color="warning">
                     <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleEncounter(patient)} color="success">
+                   <Bed />
+                  </IconButton>
+                  <IconButton onClick={() => handleAppointment(patient)} color="success">
+                   <CalendarMonth />
                   </IconButton>
                   <IconButton color="error">
                     <Delete />

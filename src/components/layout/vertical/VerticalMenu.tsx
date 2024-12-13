@@ -157,14 +157,18 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             <MenuItem href='/patients'>
               All Patients
             </MenuItem>
-            <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
+            {/* <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
             <MenuItem href='/encounters/new-encounter'>
               New Encounter
             </MenuItem>
             <MenuItem href='/encounters'>
               All Encounters
             </MenuItem>
-          </SubMenu>
+          </SubMenu> */}
+          
+          <MenuItem href='/encounters' icon={<i className='ri-shield-keyhole-line' />}>
+            Encounters
+          </MenuItem> 
           </SubMenu>
           
 
@@ -178,7 +182,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           </SubMenu> */}
 
 
-<SubMenu label='Appointments' icon={<i className='ri-calendar-line' />}>
+{/* <SubMenu label='Appointments' icon={<i className='ri-calendar-line' />}>
             <MenuItem href='/appointments/new-appointment'>
               New Appointment
             </MenuItem>
@@ -186,7 +190,11 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
               All Appointments
             </MenuItem>
           
-          </SubMenu>
+          </SubMenu> */}
+
+          <MenuItem href='/appointments' icon={<i className='ri-calendar-line' />}>
+          Appointments
+          </MenuItem> 
 
           <SubMenu label='Users' icon={<i className='ri-group-line' />}>
             <MenuItem href='/users/new-user'>

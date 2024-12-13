@@ -17,9 +17,16 @@ import {
   Box,
   Button,
   TablePagination,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from '@mui/material';
 import { Cancel, Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import { useRouter } from 'next/navigation';
 
 type VisualAcuity = {
   id: number;
@@ -77,6 +84,7 @@ const AppointmentsTable = () => {
 
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   // const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
+const router = useRouter();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -94,12 +102,29 @@ const AppointmentsTable = () => {
     fetchAppointments();
   }, []);
 
+
+
+  const [doctors, setDoctors] = useState<{ doctorId: string; doctorName: string }[]>([])
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
+        const data = await response.json()
+        setDoctors(data)
+        // console.log(allDoctors)
+      } catch (error) {
+        console.error('Error fetching doctors:', error)
+      }
+    }
+    fetchDoctors()
+  }, [])
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = appointments.filter(
       (appointment) =>
-        `${appointment.firstName} ${appointment.lastName}`.toLowerCase().includes(query)
+        `${appointment.patients.firstName} ${appointment.patients.lastName}`.toLowerCase().includes(query)
     );
     setFilteredAppointments(filtered);
     setPage(0);
@@ -121,7 +146,7 @@ const AppointmentsTable = () => {
 
 
   const handleEdit = (appointment: Appointment) => {
-    setSelectedAppointment(appointment);
+    setSelectedAppointment(appointment); // Store the full appointment object if needed for editing
     setOpenEditModal(true);
   };
 
@@ -130,8 +155,99 @@ const AppointmentsTable = () => {
     setOpenEditModal(false);
   };
 
+ 
 
   const displayedAppointments = filteredAppointments.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
+  // const handleUpdate =  (appointment) => {
+  //   // e.preventDefault()
+  //   // setLoading(true)
+
+  //   try {
+  //     await axios.put(
+  //       `${process.env.NEXT_PUBLIC_APP_URL}/appointments/${appointmentId}`,
+  //       formData,
+  //       { headers: { 'Content-Type': 'application/json' } }
+  //     )
+
+  //     // Show success message
+  //     Swal.fire({
+  //       icon: 'success',
+  //       title: 'Success',
+  //       text: 'Appointment updated successfully!',
+  //       timer: 3000,
+  //       showConfirmButton: false
+  //     })
+
+  //     // onClose() // Close the modal
+  //     router.push('/appointments') // Redirect after successful update
+  //   } catch (error) {
+  //     console.error('Error updating appointment:', error.response?.data || error.message)
+  //     Swal.fire({
+  //       icon: 'error',
+  //       title: 'Error',
+  //       text: error.response?.data?.message || 'An error occurred. Please try again.',
+  //       timer: 3000,
+  //       showConfirmButton: false
+  //     })
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
+
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setSelectedAppointment((prev) =>
+        prev ? { ...prev, [name]: value } : null
+    );
+};
+
+
+  const handleUpdate = async () => {
+    if (selectedAppointment) {
+      try {
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_APP_URL}/appointments/${selectedAppointment.appointmentId}`,
+          selectedAppointment // Send updated appointment data
+        );
+        Swal.fire('Updated!', 'The appointment has been updated.', 'success');
+        setOpenEditModal(false);
+      } catch (error) {
+        Swal.fire('Error!', 'Failed to update the appointment.', 'error');
+      }
+    }
+  };
+  
+
+
+
+  const handleDelete = (appointment) => {
+    setOpenViewModal(false);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to cancel this appointment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, cancel it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make API request to delete the appointment
+        // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
+        axios
+          .delete(`${process.env.NEXT_PUBLIC_APP_URL}/appointments/${appointmentId}`)
+          .then((response) => {
+            Swal.fire('Deleted!', 'The appointment has been canceled.', 'success');
+            // Optionally, refresh the table or update state here
+          })
+          .catch((error) => {
+            Swal.fire('Error!', 'Failed to cancel the appointment.', 'error');
+          });
+      }
+    });
+  };
+
 
   if (loading) {
     return (
@@ -198,12 +314,12 @@ const AppointmentsTable = () => {
                     <Visibility />
                   </IconButton>
 
-                  <IconButton onClick={() => handleEdit(appointment)} color="warning">
+                  <IconButton onClick={() => handleEdit(appointment)}  color="warning">
                     <Edit />
                   </IconButton>
-                  <IconButton color="error">
-                    <Cancel />
-                  </IconButton>
+                  <IconButton onClick={() => handleDelete(appointment)} color="error">
+        <Cancel />
+      </IconButton>
 
                 </TableCell>
               </TableRow>
@@ -242,6 +358,23 @@ const AppointmentsTable = () => {
         <Typography variant="body1">
           <strong>Doctor:</strong> {selectedAppointment.doctors?.doctorName || 'N/A'}
         </Typography>
+
+        {/* <Typography variant="body1">
+          <strong>Appointment Date:</strong> {selectedAppointment.appointmentDate || 'N/A'}
+        </Typography> */}
+
+        <Typography variant="body1">
+          <strong>Appointment Date:</strong> {selectedAppointment?.appointmentDate &&
+    new Date(`${selectedAppointment?.appointmentDate}T${selectedAppointment?.appointmentTime}`).toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    })}
+        </Typography>
 </>
        
     )}
@@ -249,6 +382,84 @@ const AppointmentsTable = () => {
 </Modal>
 
 
+
+
+
+<Modal open={openEditModal}  onClose={() => setOpenEditModal(false)}>
+      <Box sx={modalStyle}>
+        <Typography variant="h6" gutterBottom>
+          Edit Appointment
+        </Typography>
+        <form onSubmit={handleUpdate}>
+          <Grid container spacing={4}>
+            {/* Form Fields */}
+            <Grid item xs={12} sm={6}>
+              <TextField
+              name="appointmentDate"
+                type="date"
+                fullWidth
+                label="Appointment Date"
+                value={selectedAppointment?.appointmentDate || ''}
+                // onChange={handleFormChange}
+                onChange={handleFormChange}
+                InputLabelProps={{
+                  shrink: true
+                }}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+              name="appointmentTime"
+                type="time"
+                fullWidth
+                label="Appointment Time"
+                value={selectedAppointment?.appointmentTime || ''}
+                // onChange={e => handleFormChange('appointmentTime', e.target.value)}
+                onChange={handleFormChange}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+              name="comment"
+                fullWidth
+                label="Comment"
+                value={selectedAppointment?.comment || ''}
+                // onChange={e => handleFormChange('comment', e.target.value)}
+                onChange={handleFormChange}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+  <InputLabel>Doctor</InputLabel>
+  <Select
+  name="doctor" // Add name attribute
+  value={selectedAppointment?.doctor || ''}
+  onChange={handleFormChange}
+>
+  {doctors.map(doctor => (
+    <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
+      {doctor.doctorName}
+    </MenuItem>
+  ))}
+</Select>
+
+</FormControl>
+
+            </Grid>
+          </Grid>
+
+          {/* Submit Button */}
+          <Grid item xs={12} className="mt-4">
+            <Button variant="contained" color="primary" type="submit" disabled={loading}>
+              {loading ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </Grid>
+        </form>
+      </Box>
+    </Modal>
     </>
   );
 };
