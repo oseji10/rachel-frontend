@@ -30,57 +30,6 @@ type VisualAcuity = {
   deletedAt: string | null;
 };
 
-// type Consulting = {
-//   consultingId: number;
-//   createdAt: string;
-//   updatedAt: string;
-//   deletedAt: string | null;
-//   visualAcuityFarPresentingLeft?: VisualAcuity | null;
-//   visualAcuityFarPresentingRight?: VisualAcuity | null;
-//   visualAcuityFarPinholeRight?: VisualAcuity | null;
-//   visualAcuityFarPinholeLeft?: VisualAcuity | null;
-//   visualAcuityFarBestCorrectedLeft?: VisualAcuity | null;
-//   visualAcuityFarBestCorrectedRight?: VisualAcuity | null;
-//   visualAcuityNearLeft?: VisualAcuity | null;
-//   visualAcuityNearRight?: VisualAcuity | null;
-// };
-
-// type ContinueConsulting = {
-//   intraOccularPressureRight: string | null;
-//   intraOccularPressureLeft: string | null;
-//   otherComplaintsRight: string | null;
-//   otherComplaintsLeft: string | null;
-//   detailedHistoryRight: string | null;
-//   detailedHistoryLeft: string | null;
-//   findingsRight: string | null;
-//   findingsLeft: string | null;
-//   eyelidRight: string | null;
-//   eyelidLeft: string | null;
-//   conjunctivaRight: string | null;
-//   conjunctivaLeft: string | null;
-//   corneaRight: string | null;
-//   corneaLeft: string | null;
-//   ACRight: string | null;
-//   ACLeft: string | null;
-//   irisRight: string | null;
-//   irisLeft: string | null;
-//   pupilRight: string | null;
-//   pupilLeft: string | null;
-//   lensRight: string | null;
-//   lensLeft: string | null;
-//   vitreousRight: string | null;
-//   vitreousLeft: string | null;
-//   retinaRight: string | null;
-//   retinaLeft: string | null;
-//   otherFindingsRight: string | null;
-//   otherFindingsLeft: string | null;
-//   chiefComplaintRight: VisualAcuity | null;
-//   chiefComplaintLeft: VisualAcuity | null;
-  
-// };
-
-
-
 type Patient = {
   id: number;
   patientId: string;
@@ -106,96 +55,15 @@ type Encounter = {
   updatedAt: string;
   deletedAt?: string | null;
   patient: Patient;
-  // consulting?: Consulting | null;
-  // continueConsulting?: ContinueConsulting | null;
-
-
   visualAcuityFarPresentingLeft?: VisualAcuity | null;
-    visualAcuityFarPresentingRight?: VisualAcuity | null;
-    visualAcuityFarPinholeRight?: VisualAcuity | null;
-    visualAcuityFarPinholeLeft?: VisualAcuity | null;
-    visualAcuityFarBestCorrectedLeft?: VisualAcuity | null;
-    visualAcuityFarBestCorrectedRight?: VisualAcuity | null;
-    visualAcuityNearLeft?: VisualAcuity | null;
-    visualAcuityNearRight?: VisualAcuity | null;
-
-    intraOccularPressureRight: string | null;
+  visualAcuityFarPresentingRight?: VisualAcuity | null;
+  intraOccularPressureRight: string | null;
   intraOccularPressureLeft: string | null;
-  otherComplaintsRight: string | null;
-  otherComplaintsLeft: string | null;
   detailedHistoryRight: string | null;
   detailedHistoryLeft: string | null;
   findingsRight: string | null;
   findingsLeft: string | null;
-  eyelidRight: string | null;
-  eyelidLeft: string | null;
-  conjunctivaRight: string | null;
-  conjunctivaLeft: string | null;
-  corneaRight: string | null;
-  corneaLeft: string | null;
-  ACRight: string | null;
-  ACLeft: string | null;
-  irisRight: string | null;
-  irisLeft: string | null;
-  pupilRight: string | null;
-  pupilLeft: string | null;
-  lensRight: string | null;
-  lensLeft: string | null;
-  vitreousRight: string | null;
-  vitreousLeft: string | null;
-  retinaRight: string | null;
-  retinaLeft: string | null;
-  otherFindingsRight: string | null;
-  otherFindingsLeft: string | null;
-  chiefComplaintRight: VisualAcuity | null;
-  chiefComplaintLeft: VisualAcuity | null;
-
-  nearAddRight?: string | null;
-nearAddLeft?: string | null; 
-OCTRight?: string | null; 
-OCTLeft?: string | null; 
-FFARight?: string | null; 
-FFALeft?: string | null; 
-fundusPhotographyRight?: string | null;
-fundusPhotographyLeft?: string | null;
-pachymetryRight?: string | null;
-pachymetryLeft?: string | null; 
-CUFTRight?: string | null; 
-CUFTLeft?: string | null; 
-CUFTKineticRight?: string | null; 
-CUFTKineticLeft?: string | null; 
-pupilDistanceRight: string | null;
-pupilDistanceLeft: string | null;
-refractionSphereRight?: string | null;
-refractionSphereLeft?: string | null; 
-refractionCylinderRight?: string | null; 
-refractionCylinderLeft?: string | null; 
-refractionAxisRight?: string | null; 
-refractionAxisLeft?: string | null; 
-refractionPrismRight?: string | null;
-refractionPrismLeft?: string | null;
-diagnosisRight?: string | null;
-diagnosisLeft?: string | null;
-
-investigationsRequired?: string | null;  
-externalInvestigationRequired?: string | null; 
-investigationsDone?: string | null;
-HBP?: string | null; 
-diabetes?: string | null;  
-pregnancy?: string | null;  
-drugAllergy?: string | null;  
-currentMedication?: string | null;  
-documentId?: string | null;
-
-treatmentType?: string | null;  
-dosage?: string | null; 
-doseDuration?: string | null;
-doseInterval?: string | null; 
-time?: string | null;  
-comment?: string | null;  
-lensType?: string | null;  
-costOfLens?: string | null;
-costOfFrame?: string | null;
+  // Add other fields here...
 };
 
 const modalStyle = {
@@ -213,12 +81,10 @@ const modalStyle = {
   overflowY: 'auto',
 };
 
-
 const formatDate = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
-
 
 const EncountersTable = () => {
   const [encounters, setEncounters] = useState<Encounter[]>([]);
@@ -247,33 +113,19 @@ const EncountersTable = () => {
     fetchEncounters();
   }, []);
 
-  // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const query = e.target.value.toLowerCase();
-  //   setSearchQuery(query);
-  //   const filtered = encounters.filter(
-  //     (encounter) =>
-  //       `${encounter.patients.firstName} ${encounter.patients.lastName}`.toLowerCase().includes(query)
-  //   );
-  //   setFilteredEncounters(filtered);
-  //   setPage(0);
-  // };
-
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-  
+
     const filtered = encounters.filter((encounter) => {
-      const fullName = `${encounter.patients.firstName || ''} ${encounter.patients.lastName || ''} ${encounter.patients.otherNames || ''}`.toLowerCase();
-      
-      return (
-        fullName.includes(query)
-      );
+      const fullName = `${encounter.patient.firstName || ''} ${encounter.patient.lastName || ''} ${encounter.patient.otherNames || ''}`.toLowerCase();
+
+      return fullName.includes(query);
     });
-  
+
     setFilteredEncounters(filtered);
     setPage(0); // Reset to the first page after search
   };
-  
 
   const handleView = (encounter: Encounter) => {
     setSelectedEncounter(encounter);
@@ -332,12 +184,10 @@ const EncountersTable = () => {
           <TableBody>
             {displayedEncounters.map((encounter) => (
               <TableRow key={encounter.encounterId}>
-                <TableCell>{formatDate(encounter?.created_at)}</TableCell>
-                <TableCell>
-                  {encounter?.firstName} {encounter?.lastName}
-                </TableCell>
-                <TableCell>{encounter?.gender}</TableCell>
-                <TableCell>{encounter?.bloodGroup}</TableCell>
+                <TableCell>{formatDate(encounter.createdAt)}</TableCell>
+                <TableCell>{encounter.patients.firstName} {encounter.patients.lastName}</TableCell>
+                <TableCell>{encounter.patients.gender}</TableCell>
+                <TableCell>{encounter.patients.bloodGroup}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleView(encounter)} color="primary">
                     <Visibility />
@@ -358,341 +208,397 @@ const EncountersTable = () => {
         />
       </TableContainer>
 
-      {/* View Modal */}
-    
-      <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
+   {/* Modal to view patient details */}
+<Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
   <Box sx={modalStyle}>
-    <Typography variant="h5" gutterBottom>
-      Encounter Details
-    </Typography>
     {selectedEncounter && (
-      <>
-        <Typography variant="body1">
-          <strong>Full Name:</strong> {`${selectedEncounter?.firstName} ${selectedEncounter?.lastName}`}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Gender:</strong> {selectedEncounter?.gender}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Blood Group:</strong> {selectedEncounter?.bloodGroup}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Occupation:</strong> {selectedEncounter?.occupation || 'N/A'}
-        </Typography>
+      <div>
+        {/* Biodata */}
+        <h1>Patient Information</h1>
+        <p><strong>Full Name:</strong> {selectedEncounter.patients.firstName} {selectedEncounter.patients.lastName}</p>
+        <p><strong>Gender:</strong> {selectedEncounter.patients.gender}</p>
+        <p><strong>Hospital File Number:</strong> {selectedEncounter.patients.hospitalFileNumber}</p>
 
-        {/* <Typography variant="h6" gutterBottom mt={2}>
-          Visual Acuity
-        </Typography> */}
-        {selectedEncounter ? (
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead><br/>
-              <h4>Consulting</h4>
-                <TableRow>
-                  <TableCell><strong>Category</strong></TableCell>
-                  <TableCell><strong>Right Eye</strong></TableCell>
-                  <TableCell><strong>Left Eye</strong></TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                <TableRow>
-                  <TableCell>Visual Acuity Far Presenting</TableCell>
-                  <TableCell>{selectedEncounter.visualAcuityFarPresentingRight || 'N/A'}</TableCell>
-                  <TableCell>{selectedEncounter.visualAcuityFarPresentingLeft || 'N/A'}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Visual AcuityFar Pinhole</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityFarPinholeRight || 'N/A'}</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityFarPinholeLeft || 'N/A'}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Visual Acuity Far Best Corrected</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityFarBestCorrectedRight || 'N/A'}</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityFarBestCorrectedLeft || 'N/A'}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell>Visual Acuity Near</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityNearRight || 'N/A'}</TableCell>
-                  <TableCell>{selectedEncounter?.visualAcuityNearLeft || 'N/A'}</TableCell>
-                </TableRow>
-                
-               
-                    <TableRow>
-                      <TableCell>Intra Occular Pressure</TableCell>
-                      <TableCell>{selectedEncounter?.intraOccularPressureRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.intraOccularPressureLeft || 'N/A'}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Chief Complaint</TableCell>
-                      <TableCell>{selectedEncounter?.chiefComplaintRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.chiefComplaintLeft || 'N/A'}</TableCell>
-                    </TableRow>
+        {/* Eye and Pressure Data */}
+        <h2>Consulting Information</h2>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Right Eye</strong></TableCell>
+              <TableCell><strong>Left Eye</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            <TableRow>
+              <TableCell><strong>Visual Acuity Far Presenting</strong></TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_presenting_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_presenting_left?.name}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong>Visual Acuity Far Pinhole</strong></TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_pinhole_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_pinhole_left?.name}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong>Visual Acuity Far Best Corrected</strong></TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_best_corrected_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_far_best_corrected_left?.name}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong>Visual Acuity Near</strong></TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_near_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.consulting?.visual_acuity_near_left?.name}</TableCell>
+            </TableRow>
+            </TableBody>
+        </Table>
 
-                    <TableRow>
-                      <TableCell>Other Complaints</TableCell>
-                      <TableCell>{selectedEncounter?.otherComplaintsRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.otherComplaintsLeft || 'N/A'}</TableCell>
-                    </TableRow>
+        <h2>Other Consulting Information</h2>
+        <Table>
+        <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Right Eye</strong></TableCell>
+              <TableCell><strong>Left Eye</strong></TableCell>
+            </TableRow>
+          </TableHead>
+        <TableBody>
+        
+       
+        <TableRow>
+              <TableCell><strong>Intraocular Pressure</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.intraOccularPressureRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.intraOccularPressureLeft}</TableCell>
+            </TableRow>
+           
 
+            <TableRow>
+              <TableCell><strong>Other Complaints</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.otherComplaintsRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.otherComplaintsLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Detailed History</TableCell>
-                      <TableCell>{selectedEncounter?.detailedHistoryRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.detailedHistoryLeft || 'N/A'}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Findings</TableCell>
-                      <TableCell>{selectedEncounter?.findingsRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.findingsLeft || 'N/A'}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell>Eyelid </TableCell>
-                      <TableCell>{selectedEncounter?.eyelidRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.eyelidLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Detailed History</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.detailedHistoryRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.detailedHistoryLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Conjunctiva </TableCell>
-                      <TableCell>{selectedEncounter?.conjunctivaRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.conjunctivaLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Findings</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.findingsRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.findingsLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Cornea </TableCell>
-                      <TableCell>{selectedEncounter?.corneaRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.corneaLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Eyelid</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.eyelidRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.eyelidLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>AC </TableCell>
-                      <TableCell>{selectedEncounter?.ACRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.ACLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Conjunctiva</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.conjunctivaRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.conjunctivaLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Iris </TableCell>
-                      <TableCell>{selectedEncounter?.irisRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.irisLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Cornea</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.corneaRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.corneaRight}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Pupil </TableCell>
-                      <TableCell>{selectedEncounter?.pupilRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.pupilLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>AC</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.ACRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.ACLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Lens </TableCell>
-                      <TableCell>{selectedEncounter?.lensRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.lensLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Iris</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.irisRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.irisLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Retina </TableCell>
-                      <TableCell>{selectedEncounter?.retinaRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.retinaLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Pupil</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.pupilRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.pupilLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Vitreous </TableCell>
-                      <TableCell>{selectedEncounter?.vitreousRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.vitreousLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Lens</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.lensRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.lensLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Other Findings </TableCell>
-                      <TableCell>{selectedEncounter?.otherFindingsRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.otherFindingsLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Vitreous</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.vitreousRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.vitreousLeft}</TableCell>
+            </TableRow>
 
+            <TableRow>
+              <TableCell><strong>Retina</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.retinaRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.retinaLeft}</TableCell>
+            </TableRow>
 
-                    <h4>Refractions</h4>
+            <TableRow>
+              <TableCell><strong>Other Findings</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.otherFindingsRight}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.otherFindingsLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Near Add </TableCell>
-                      <TableCell>{selectedEncounter?.nearAddRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.nearAddLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Chief Complaint</strong></TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.chief_complaint_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.continue_consulting?.chief_complaint_left?.name}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
-                    <TableRow>
-                      <TableCell>OCT </TableCell>
-                      <TableCell>{selectedEncounter?.OCTRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.OCTLeft || 'N/A'}</TableCell>
-                    </TableRow>
+        
+      
+        {/* Refraction Data */}
+        <h2>Refraction Information</h2>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Right Eye</strong></TableCell>
+              <TableCell><strong>Left Eye</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+          
 
-                    <TableRow>
-                      <TableCell>FFA </TableCell>
-                      <TableCell>{selectedEncounter?.FFARight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.FFALeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Near Add</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.nearAddRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.nearAddLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Fundus Photography </TableCell>
-                      <TableCell>{selectedEncounter?.fundusPhotographyRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.fundusPhotographyLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>OCT</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.OCTRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.OCTLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Pachymetry</TableCell>
-                      <TableCell>{selectedEncounter?.pachymetryRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.pachymetryLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>FFA</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.FFARight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.FFALeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>CUFT</TableCell>
-                      <TableCell>{selectedEncounter?.CUFTRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.CUFTLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Fundus Photography</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.fundusPhotographyRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.fundusPhotographyLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>CUFT Kinetic</TableCell>
-                      <TableCell>{selectedEncounter?.CUFTKineticRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.CUFTKineticLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Pachymetry</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.pachymetryRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.pachymetryLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Pupil Distance</TableCell>
-                      <TableCell>{selectedEncounter?.pupilDistanceRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.pupilDistanceLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>CUFT</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.CUFTRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.CUFTLeft}</TableCell>
+            </TableRow>
 
+            <TableRow>
+              <TableCell><strong>CUFT Kinetic</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.CUFTKineticRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.CUFTKineticLeft}</TableCell>
+            </TableRow>
 
-                    <TableRow>
-                      <TableCell>Refraction Sphere</TableCell>
-                      <TableCell>{selectedEncounter?.refractionSphereRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.refractionSphereLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Pupil</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.pupilRight}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.pupilLeft}</TableCell>
+            </TableRow>
+            
+            <TableRow>
+              <TableCell><strong>Sph (Sphere)</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.sphere_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.sphere_left?.name}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell><strong>Cyl (Cylinder)</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.cylinder_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.cylinder_right?.name}</TableCell>
+            </TableRow>
+            <TableRow>
+  <TableCell><strong>Axis</strong></TableCell>
+  <TableCell dangerouslySetInnerHTML={{ __html: selectedEncounter.refractions?.axis_right?.name }} />
+  <TableCell dangerouslySetInnerHTML={{ __html: selectedEncounter.refractions?.axis_left?.name }} />
+</TableRow>
 
-                    <TableRow>
-                      <TableCell>Refraction Cylinder</TableCell>
-                      <TableCell>{selectedEncounter?.refractionCylinderRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.refractionCylinderLeft || 'N/A'}</TableCell>
-                    </TableRow>
+            <TableRow>
+              <TableCell><strong>Prism</strong></TableCell>
+              <TableCell>{selectedEncounter.refractions?.prism_right?.name}</TableCell>
+              <TableCell>{selectedEncounter.refractions?.prism_left?.name}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
 
+        <h2>Sketches</h2>
+        <Table>
+        <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Right Eye</strong></TableCell>
+              <TableCell><strong>Left Eye</strong></TableCell>
+            </TableRow>
+          </TableHead>
+        <TableBody>
+        <TableRow>
+  <TableCell><strong>Front</strong></TableCell>
+  <TableCell>
+    <img 
+      src={`${process.env.NEXT_PUBLIC_APP_URL}/storage/${selectedEncounter.sketches?.right_eye_front}`} 
+      alt="Right Eye Front" 
+      style={{ width: '100px', height: 'auto' }} // Adjust the size as needed
+    />
+  </TableCell>
+  <TableCell>
+    <img 
+      src={`${process.env.NEXT_PUBLIC_APP_URL}/storage/${selectedEncounter.sketches?.left_eye_front}`} 
+      alt="Left Eye Front" 
+      style={{ width: '100px', height: 'auto' }} // Adjust the size as needed
+    />
+  </TableCell>
+</TableRow>
 
-                    <TableRow>
-                      <TableCell>Refraction Axis</TableCell>
-                      <TableCell>{selectedEncounter?.refractionAxisRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.refractionAxisLeft || 'N/A'}</TableCell>
-                    </TableRow>
+<TableRow>
+  <TableCell><strong>Back</strong></TableCell>
+  <TableCell>
+    <img 
+      src={`${process.env.NEXT_PUBLIC_APP_URL}/storage/${selectedEncounter.sketches?.right_eye_back}`} 
+      alt="Right Eye Front" 
+      style={{ width: '100px', height: 'auto' }} // Adjust the size as needed
+    />
+  </TableCell>
+  <TableCell>
+    <img 
+      src={`${process.env.NEXT_PUBLIC_APP_URL}/storage/${selectedEncounter.sketches?.left_eye_back}`} 
+      alt="Left Eye Front" 
+      style={{ width: '100px', height: 'auto' }} // Adjust the size as needed
+    />
+  </TableCell>
+</TableRow>
 
-                    <TableRow>
-                      <TableCell>Refraction Prism</TableCell>
-                      <TableCell>{selectedEncounter?.refractionPrismRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.refractionPrismLeft || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <h4>Diagnosis</h4>
-                    <TableRow>
-                      <TableCell>Diagnosis</TableCell>
-                      <TableCell>{selectedEncounter?.diagnosisRight || 'N/A'}</TableCell>
-                      <TableCell>{selectedEncounter?.diagnosisLeft || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <h4>Investigations</h4>
-                    <TableRow>
-                      <TableCell>Investigations Required</TableCell>
-                      <TableCell>{selectedEncounter?.investigationsRequired || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>External Investigations Required</TableCell>
-                      <TableCell>{selectedEncounter?.externalInvestigationRequired || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Investigations Done</TableCell>
-                      <TableCell>{selectedEncounter?.investigationsDone || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>HBP</TableCell>
-                      <TableCell>{selectedEncounter?.HBP || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Diabetes</TableCell>
-                      <TableCell>{selectedEncounter?.diabetes || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Pregnancy</TableCell>
-                      <TableCell>{selectedEncounter?.pregnancy || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Drug Allergy</TableCell>
-                      <TableCell>{selectedEncounter?.drugAllergy || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Current Medication</TableCell>
-                      <TableCell>{selectedEncounter?.currentMedication || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Uploaded Dcoument</TableCell>
-                      <TableCell>{selectedEncounter?.documentId || 'N/A'}</TableCell>
-                    </TableRow>
-
-
-                  <h4>Treatment</h4>
-                    <TableRow>
-                      <TableCell>Treatment Type</TableCell>
-                      <TableCell>{selectedEncounter?.treatmentType || 'N/A'}</TableCell>
-                    </TableRow>
-
-
-                    <TableRow>
-                      <TableCell>Dosage</TableCell>
-                      <TableCell>{selectedEncounter?.documentId || 'N/A'}</TableCell>
-                    </TableRow>
-
-                    <TableRow>
-                      <TableCell>Dose Duration</TableCell>
-                      <TableCell>{selectedEncounter?.doseDuration || 'N/A'}</TableCell>
-                    </TableRow>
+          </TableBody>
+        </Table>
 
 
-                    <TableRow>
-                      <TableCell>Dose Interval</TableCell>
-                      <TableCell>{selectedEncounter?.doseInterval || 'N/A'}</TableCell>
-                    </TableRow>
+        <h2>Diagnoses</h2>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Right Eye</strong></TableCell>
+              <TableCell><strong>Left Eye</strong></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+          
+          <TableRow>
+              <TableCell><strong>Diagnosis</strong></TableCell>
+              <TableCell>{selectedEncounter.diagnoses?.diagnosis_right_details?.name}</TableCell>
+              <TableCell>{selectedEncounter.diagnoses?.diagnosis_left_details?.name}</TableCell>
+            </TableRow>
+         </TableBody>
+         </Table>
 
-                    <TableRow>
-                      <TableCell>Time</TableCell>
-                      <TableCell>{selectedEncounter?.time || 'N/A'}</TableCell>
-                    </TableRow>
+        <h2>Treatment</h2>
+        <Table>
+        <TableHead>
+            <TableRow>
+              <TableCell><strong>Medicine Type</strong></TableCell>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Dosage</strong></TableCell>
+              <TableCell><strong>Dose Duration</strong></TableCell>
+              <TableCell><strong>Dose Interval</strong></TableCell>
+              <TableCell><strong>Time</strong></TableCell>
+              <TableCell><strong>Comment</strong></TableCell>
+            </TableRow>
+          </TableHead>
+        <TableBody>
+        <TableRow>
+              <TableCell>{selectedEncounter.treatments?.treatmentType}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.medicine}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.dosage}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.doseDuration}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.doseInterval}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.time}</TableCell>
+              <TableCell>{selectedEncounter.treatments?.comment}</TableCell>
+            </TableRow>
+        </TableBody>
+        </Table>
 
-                    <TableRow>
-                      <TableCell>Comment</TableCell>
-                      <TableCell>{selectedEncounter?.comment || 'N/A'}</TableCell>
-                    </TableRow>
+  <h2>Investigation Details</h2>
+        <Table>
+        <TableHead>
+            <TableRow>
+              <TableCell><strong>Name</strong></TableCell>
+              <TableCell><strong>Response</strong></TableCell>
+            </TableRow>
+          </TableHead>
+        <TableBody>
+        <TableRow>
+              <TableCell>Investigations Required</TableCell>
+              <TableCell>{selectedEncounter.investigations?.investigationsRequired}</TableCell>
+        </TableRow>
 
+        <TableRow>
+              <TableCell>External Investigations Required</TableCell>
+              <TableCell>{selectedEncounter.investigations?.externalInvestigationRequired}</TableCell>
+        </TableRow>
 
-                    <TableRow>
-                      <TableCell>Lens Type</TableCell>
-                      <TableCell>{selectedEncounter?.lensType || 'N/A'}</TableCell>
-                    </TableRow>
+        <TableRow>
+              <TableCell>Investigations Done</TableCell>
+              <TableCell>{selectedEncounter.investigations?.investigationsDone}</TableCell>
+        </TableRow>
 
-                    <TableRow>
-                      <TableCell>Cost Of Lens</TableCell>
-                      <TableCell>{selectedEncounter?.costOfLens || 'N/A'}</TableCell>
-                    </TableRow>
+        <TableRow>
+              <TableCell>HBP</TableCell>
+              <TableCell>{selectedEncounter.investigations?.HBP}</TableCell>
+        </TableRow>
 
-                    <TableRow>
-                      <TableCell>Cost Of Frame</TableCell>
-                      <TableCell>{selectedEncounter?.costOfFrame || 'N/A'}</TableCell>
-                    </TableRow>
+        <TableRow>
+              <TableCell>Diabetes</TableCell>
+              <TableCell>{selectedEncounter.investigations?.diabetes}</TableCell>
+        </TableRow>
 
-               
-              </TableBody>
-            </Table>
-          </TableContainer>
-        ) : (
-          <Typography variant="body1">No consulting information available.</Typography>
-        )}
-      </>
+        <TableRow>
+              <TableCell>Pregnancy</TableCell>
+              <TableCell>{selectedEncounter.investigations?.pregnancy}</TableCell>
+        </TableRow>
+
+        <TableRow>
+              <TableCell>Drug Allergy</TableCell>
+              <TableCell>{selectedEncounter.investigations?.drugAllergy}</TableCell>
+        </TableRow>
+
+        <TableRow>
+              <TableCell>Current Medication</TableCell>
+              <TableCell>{selectedEncounter.investigations?.currentMedication}</TableCell>
+        </TableRow>
+
+        </TableBody>
+        </Table>
+        {/* Appointment Information */}
+        {/* <h2>Appointment Details</h2> */}
+        <br/><h3><strong>Next Appointment:</strong> {selectedEncounter.appointments?.appointmentDate} at {selectedEncounter.appointments?.appointmentTime}</h3>
+     
+    
+        {/* Close Button */}
+        <Button onClick={() => setOpenViewModal(false)}>Close</Button>
+      </div>
     )}
   </Box>
 </Modal>

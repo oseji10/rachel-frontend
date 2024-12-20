@@ -177,11 +177,16 @@ const Refraction = () => {
                         : refractionPrism
                       ).map((option: any) => (
                         <MenuItem key={option.id} value={option.id}>
-                          {option.name}
+                          {/* {option.name} */}
+                          <span dangerouslySetInnerHTML={{ __html: option.name }} />
                         </MenuItem>
                       ))}
                     </Select>
                   </FormControl>
+
+
+   
+
                 </Grid>
               ))
             )}

@@ -1,16 +1,17 @@
 'use client';
 
 
-import Diagnosis from '@/views/encounters/create/Diagnosis';
 
+
+import Investigation from '@/views/encounters/create/Investigation';
 import { Suspense } from 'react';
 
-const DiagnosisPage = () => {
+const InvestigationPage = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Diagnosis />
+      <Investigation/>
     </Suspense>
   );
 }
 
-export default DiagnosisPage
+export default InvestigationPage
