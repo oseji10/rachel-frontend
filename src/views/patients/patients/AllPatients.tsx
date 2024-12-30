@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRef } from 'react';
 import {
   Table,
   TableBody,
@@ -37,6 +38,8 @@ type Patient = {
   phoneNumber?: string;
   email?: string;
   hospitalFileNumber: string;
+  hmoId: string;
+  doctor: string;
 };
 
 const modalStyle = {
@@ -56,6 +59,8 @@ const modalStyle = {
 
 const PatientsTable = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [hmos, setHmos] = useState<HMO[]>([]);
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
@@ -71,8 +76,34 @@ const PatientsTable = () => {
   const [currentPage, setCurrentPage] = useState(0); // Initialize with 0 as the first page
   const [totalPages, setTotalPages] = useState(0); // Define totalPages state
   const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const genderOptions = ['Male', 'Female', ];
 
-  
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [doctorsResponse, hmosResponse] = await Promise.all([
+          
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`),
+        ]);
+
+        setDoctors(doctorsResponse.data);
+        setHmos(hmosResponse.data);
+
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load data.');
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
   const fetchPatients = async (currentPage: number, query: string = '') => {
     setLoading(true);
     setError(null);
@@ -95,35 +126,54 @@ const PatientsTable = () => {
 
   useEffect(() => {
     fetchPatients(page);
-  }, [page, rowsPerPage]);  // Added rowsPerPage as a dependency
+  }, [page, rowsPerPage]);  
+
+  
+  
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
-    fetchPatients(0, query); // Fetch data with the search query
+
+    // Clear the previous debounce timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Start a new debounce timer
+    debounceTimer.current = setTimeout(() => {
+      // Trigger the loader and fetch patients after debounce delay
+      fetchPatients(0, query);
+    }, 500); // Adjust debounce delay as needed (500ms in this case)
   
   
-  
-    const filtered = patients.filter((patient) => {
-      const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
-      const phone = (patient.phoneNumber || '').toLowerCase();
-      const email = (patient.email || '').toLowerCase();
-      const patientId = String(patient.patientId || '').toLowerCase(); 
-      const hospitalFileNumber = String(patient.hospitalFileNumber || '').toLowerCase(); 
-  
-      return (
-        fullName.includes(query) ||
-        phone.includes(query) ||
-        email.includes(query) ||
-        patientId.includes(query)||
-        hospitalFileNumber.includes(query)
-      );
-    });
-  
-    setFilteredPatients(filtered);
-    setPage(0); // Reset to the first page after search
-  };
-  
+
+  // Client-side filtering (optional)
+  const filtered = patients.filter((patient) => {
+    const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
+    const phone = (patient.phoneNumber || '').toLowerCase();
+    const email = (patient.email || '').toLowerCase();
+    const patientId = String(patient.patientId || '').toLowerCase();
+    const hospitalFileNumber = String(patient.hospitalFileNumber || '').toLowerCase();
+    const firstName = (patient.firstName || '').toLowerCase();
+    const otherNames = (patient.otherNames || '').toLowerCase();
+    const lastName = (patient.lastName || '').toLowerCase();
+    return (
+      fullName.includes(query) ||
+      phone.includes(query) ||
+      email.includes(query) ||
+      patientId.includes(query) ||
+      firstName.includes(query) ||
+      otherNames.includes(query) ||
+      lastName.includes(query) ||
+      hospitalFileNumber.includes(query)
+    );
+  });
+
+  setFilteredPatients(filtered);
+  setPage(0); // Reset to the first page after search
+};
+
 
   const handleView = (patient: Patient) => {
     setSelectedPatient(patient);
@@ -237,7 +287,10 @@ const PatientsTable = () => {
         variant="outlined"
         fullWidth
         margin="normal"
+        autoFocus="true"
       />
+
+      
       <TableContainer component={Paper}>
         <Table>
           <TableHead>
@@ -313,22 +366,28 @@ const PatientsTable = () => {
             <Box>
               {/* Patient Details */}
               <Typography variant="body1">
-                Patient ID: {selectedPatient.patientId}
+                Patient ID/Hospital File Number: {selectedPatient?.patientId}
               </Typography>
               <Typography variant="body1">
-                Full Name: {`${selectedPatient.firstName} ${selectedPatient.lastName}`}
+                Full Name: {`${selectedPatient?.firstName} ${selectedPatient?.lastName}`}
               </Typography>
               <Typography variant="body1">
-                Gender: {selectedPatient.gender}
+                Gender: {selectedPatient?.gender}
               </Typography>
               <Typography variant="body1">
-                Blood Group: {selectedPatient.bloodGroup}
+                Blood Group: {selectedPatient?.bloodGroup}
               </Typography>
               <Typography variant="body1">
-                Phone: {selectedPatient.phoneNumber}
+                HMO/Insurance: {selectedPatient?.hmo?.hmoName}
               </Typography>
               <Typography variant="body1">
-                Email: {selectedPatient.email}
+                Doctor: {selectedPatient?.doctor?.doctorName}
+              </Typography>
+              <Typography variant="body1">
+                Phone: {selectedPatient?.phoneNumber}
+              </Typography>
+              <Typography variant="body1">
+                Email: {selectedPatient?.email}
               </Typography>
             </Box>
           )}
@@ -381,13 +440,29 @@ const PatientsTable = () => {
           value={selectedPatient.otherNames || ''}
           onChange={(e) => setSelectedPatient({ ...selectedPatient, otherNames: e.target.value })}
         />
-        <TextField
+        {/* <TextField
           fullWidth
           margin="normal"
           label="Gender"
           value={selectedPatient.gender}
           onChange={(e) => setSelectedPatient({ ...selectedPatient, gender: e.target.value })}
-        />
+        /> */}
+
+<FormControl fullWidth margin="normal">
+                <InputLabel>Gender</InputLabel>
+                <Select
+                  value={selectedPatient.gender}
+                  onChange={(e) => handleInputChange('gender', e.target.value)}
+                >
+                  {genderOptions.map((group) => (
+                    <MenuItem key={group} value={group}>
+                      {group}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+
+
        <FormControl fullWidth margin="normal">
                 <InputLabel>Blood Group</InputLabel>
                 <Select
@@ -416,6 +491,39 @@ const PatientsTable = () => {
           value={selectedPatient.email || ''}
           onChange={(e) => setSelectedPatient({ ...selectedPatient, email: e.target.value })}
         />
+
+
+
+<FormControl fullWidth margin="normal">
+                <InputLabel>HMO/Insurance</InputLabel>
+                <Select
+                  value={selectedPatient.hmoId}
+                  onChange={(e) => handleInputChange('hmoId', e.target.value)}
+                >
+                  {hmos.map(hmo => (
+                    <MenuItem key={hmo.hmoId} value={hmo.hmoId}>
+                      {hmo.hmoName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            
+
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Doctor</InputLabel>
+                <Select
+                  value={selectedPatient.doctor}
+                  onChange={(e) => handleInputChange('doctor', e.target.value)}
+                >
+                  {doctors.map(doctor => (
+                    <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
+                      {doctor.doctorName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+         
+
 
         <Button
           type="submit"

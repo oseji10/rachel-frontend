@@ -20,44 +20,32 @@ import Swal from 'sweetalert2'
 // Type Definitions
 type FormData = {
   
-  medicineName: string
-  formulation: string
-  quantity: string
-  assignManufacturer: string
-  drugCategory: string
+  hmoName: string
 }
 
 const initialFormData: FormData = {
-  medicineName: '',
-  formulation: '',
-  quantity: '',
-  assignManufacturer: '',
-  drugCategory: ''
+  hmoName: '',
 }
 
 
-const medicine_type = [
-  { "id": "ointment", "option": "Ointment" },
-  { "id": "eye_drop", "option": "Eye Drop" },
-  { "id": "tablet", "option": "Tablet" },
- ];
 
 
-const CreateMedicine = () => {
+
+const CreateHmo = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData)
-  const [manufacturers, setManufacturers] = useState<{ manufacturerId: string; manufacturerName: string }[]>([])
+  const [hmos, setHmos] = useState<{ hmoId: string; hmoName: string }[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   // Fetch doctor names from the API
   useEffect(() => {
     const fetchRoles = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/manufacturers`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`)
         const data = await response.json()
-        setManufacturers(data)
+        setHmos(data)
         // console.log(allDoctors)
       } catch (error) {
-        console.error('Error fetching manufacturers:', error)
+        console.error('Error fetching hmos:', error)
       }
     }
     fetchRoles()
@@ -80,18 +68,14 @@ const CreateMedicine = () => {
     const payload = {
       
         
-        medicineName: formData.medicineName,
-        formulation: formData.formulation,
-        manufacturer: formData.assignManufacturer,
-        quantity: formData.quantity,
-        type: formData.drugCategory
+        hmoName: formData.hmoName,
         
       
     }
   
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_URL}/medicines`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/hmos`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -100,7 +84,7 @@ const CreateMedicine = () => {
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Medicine created successfully!',
+        text: 'HMO created successfully!',
         timer: 3000,
         showConfirmButton: false
       })
@@ -124,78 +108,22 @@ const CreateMedicine = () => {
     <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Create New Medicine
+          Create New Hmo
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             {/* Form Fields */}
            
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <TextField
               required
                 fullWidth
-                label="Medicine Name"
-                value={formData.medicineName}
-                onChange={e => handleFormChange('medicineName', e.target.value)}
+                label="Hmo Name"
+                value={formData.hmoName}
+                onChange={e => handleFormChange('hmoName', e.target.value)}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <TextField
-              required
-                fullWidth
-                label="Formulation"
-                value={formData.formulation}
-                onChange={e => handleFormChange('formulation', e.target.value)}
-              />
-            </Grid> */}
-         
-            
           
-            <Grid item xs={12} sm={6}>
-              <TextField
-              required
-                fullWidth
-                label="Quantity"
-                value={formData.quantity}
-                onChange={e => handleFormChange('quantity', e.target.value)}
-              />
-            </Grid>
-
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Drug Category</InputLabel>
-                <Select
-                required
-                  value={formData.drugCategory}
-                  onChange={e => handleFormChange('drugCategory', e.target.value)}
-                >
-                  {medicine_type.map(type => (
-                    <MenuItem key={type.id} value={type.id}>
-                      {type.option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-          
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Drug Manufacturer</InputLabel>
-                <Select
-                required
-                  value={formData.assignManufacturer}
-                  onChange={e => handleFormChange('assignManufacturer', e.target.value)}
-                >
-                  {manufacturers.map(manufacturer => (
-                    <MenuItem key={manufacturer.manufacturerId} value={manufacturer.manufacturerId}>
-                      {manufacturer.manufacturerName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
           
 
 
@@ -207,7 +135,7 @@ const CreateMedicine = () => {
           {/* Submit and Reset Buttons */}
           <Grid item xs={12} className="mt-4">
             <Button variant="contained" color="primary" type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Medicine'}
+              {loading ? 'Saving...' : 'Save Hmo'}
             </Button>
             <Button
               variant="outlined"
@@ -225,4 +153,4 @@ const CreateMedicine = () => {
   )
 }
 
-export default CreateMedicine
+export default CreateHmo

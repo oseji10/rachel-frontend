@@ -20,7 +20,7 @@ import Swal from 'sweetalert2'
 // Type Definitions
 type FormData = {
   
-  medicineName: string
+  manufacturerName: string
   formulation: string
   quantity: string
   assignManufacturer: string
@@ -28,7 +28,7 @@ type FormData = {
 }
 
 const initialFormData: FormData = {
-  medicineName: '',
+  manufacturerName: '',
   formulation: '',
   quantity: '',
   assignManufacturer: '',
@@ -36,14 +36,14 @@ const initialFormData: FormData = {
 }
 
 
-const medicine_type = [
+const manufacturer_type = [
   { "id": "ointment", "option": "Ointment" },
   { "id": "eye_drop", "option": "Eye Drop" },
   { "id": "tablet", "option": "Tablet" },
  ];
 
 
-const CreateMedicine = () => {
+const CreateManufacturer = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [manufacturers, setManufacturers] = useState<{ manufacturerId: string; manufacturerName: string }[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -80,7 +80,7 @@ const CreateMedicine = () => {
     const payload = {
       
         
-        medicineName: formData.medicineName,
+        manufacturerName: formData.manufacturerName,
         formulation: formData.formulation,
         manufacturer: formData.assignManufacturer,
         quantity: formData.quantity,
@@ -91,7 +91,7 @@ const CreateMedicine = () => {
   
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_URL}/medicines`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/manufacturers`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )
@@ -100,7 +100,7 @@ const CreateMedicine = () => {
       Swal.fire({
         icon: 'success',
         title: 'Success',
-        text: 'Medicine created successfully!',
+        text: 'Manufacturer created successfully!',
         timer: 3000,
         showConfirmButton: false
       })
@@ -124,78 +124,22 @@ const CreateMedicine = () => {
     <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Create New Medicine
+          Create New Manufacturer
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
             {/* Form Fields */}
            
-            <Grid item xs={12} sm={6}>
+            <Grid item xs={12} sm={12}>
               <TextField
               required
                 fullWidth
-                label="Medicine Name"
-                value={formData.medicineName}
-                onChange={e => handleFormChange('medicineName', e.target.value)}
+                label="Manufacturer Name"
+                value={formData.manufacturerName}
+                onChange={e => handleFormChange('manufacturerName', e.target.value)}
               />
             </Grid>
-            {/* <Grid item xs={12} sm={6}>
-              <TextField
-              required
-                fullWidth
-                label="Formulation"
-                value={formData.formulation}
-                onChange={e => handleFormChange('formulation', e.target.value)}
-              />
-            </Grid> */}
-         
-            
           
-            <Grid item xs={12} sm={6}>
-              <TextField
-              required
-                fullWidth
-                label="Quantity"
-                value={formData.quantity}
-                onChange={e => handleFormChange('quantity', e.target.value)}
-              />
-            </Grid>
-
-
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Drug Category</InputLabel>
-                <Select
-                required
-                  value={formData.drugCategory}
-                  onChange={e => handleFormChange('drugCategory', e.target.value)}
-                >
-                  {medicine_type.map(type => (
-                    <MenuItem key={type.id} value={type.id}>
-                      {type.option}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
-          
-            <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Drug Manufacturer</InputLabel>
-                <Select
-                required
-                  value={formData.assignManufacturer}
-                  onChange={e => handleFormChange('assignManufacturer', e.target.value)}
-                >
-                  {manufacturers.map(manufacturer => (
-                    <MenuItem key={manufacturer.manufacturerId} value={manufacturer.manufacturerId}>
-                      {manufacturer.manufacturerName}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
           
 
 
@@ -207,7 +151,7 @@ const CreateMedicine = () => {
           {/* Submit and Reset Buttons */}
           <Grid item xs={12} className="mt-4">
             <Button variant="contained" color="primary" type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Medicine'}
+              {loading ? 'Saving...' : 'Save Manufacturer'}
             </Button>
             <Button
               variant="outlined"
@@ -225,4 +169,4 @@ const CreateMedicine = () => {
   )
 }
 
-export default CreateMedicine
+export default CreateManufacturer

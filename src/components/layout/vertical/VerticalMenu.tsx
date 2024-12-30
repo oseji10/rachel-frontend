@@ -234,6 +234,22 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             <MenuItem href='/medicines'>
               All Medicines
             </MenuItem>
+            <MenuItem href='/manufacturers/new-manufacturer'>
+              New Manufacturer
+            </MenuItem>
+            <MenuItem href='/manufacturers'>
+              All Manufacturer
+            </MenuItem>
+          </SubMenu>
+
+          <SubMenu label='HMOs' icon={<i className='ri-hospital-line' />}>
+            <MenuItem href='/hmos/new-hmo'>
+              New HMO
+            </MenuItem>
+            <MenuItem href='/hmos'>
+              All HMOs
+            </MenuItem>
+          
           </SubMenu>
 
           <SubMenu label='Inventory' icon={<i className='ri-stock-line' />}>

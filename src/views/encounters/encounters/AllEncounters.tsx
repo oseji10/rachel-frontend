@@ -18,7 +18,7 @@ import {
   Button,
   TablePagination,
 } from '@mui/material';
-import { Edit, Visibility } from '@mui/icons-material';
+import { Edit, Print, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 
 type VisualAcuity = {
@@ -184,13 +184,17 @@ const EncountersTable = () => {
           <TableBody>
             {displayedEncounters.map((encounter) => (
               <TableRow key={encounter.encounterId}>
-                <TableCell>{formatDate(encounter.createdAt)}</TableCell>
+                <TableCell>{formatDate(encounter.created_at)}</TableCell>
                 <TableCell>{encounter.patients.firstName} {encounter.patients.lastName}</TableCell>
                 <TableCell>{encounter.patients.gender}</TableCell>
                 <TableCell>{encounter.patients.bloodGroup}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleView(encounter)} color="primary">
                     <Visibility />
+                  </IconButton>
+
+                  <IconButton color="primary">
+                    <Print />
                   </IconButton>
                 </TableCell>
               </TableRow>

@@ -31,6 +31,7 @@ type FormData = {
   phoneNumber: string
   address: string
   assignDoctor: string
+  assignHmo: string
 }
 
 const initialFormData: FormData = {
@@ -45,12 +46,14 @@ const initialFormData: FormData = {
   email: '',
   phoneNumber: '',
   address: '',
-  assignDoctor: ''
+  assignDoctor: '',
+  assignHmo: ''
 }
 
 const CreatePatient = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [doctors, setDoctors] = useState<{ id: string; doctorName: string }[]>([])
+  const [hmos, setHmos] = useState<{ hmoId: string; HmoName: string }[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   // Fetch doctor names from the API
@@ -67,6 +70,20 @@ const CreatePatient = () => {
       }
     }
     fetchDoctors()
+  }, [])
+
+
+  useEffect(() => {
+    const fetchHmos = async () => {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`)
+        const data = await response.json()
+        setHmos(data)
+      } catch (error) {
+        console.error('Error fetching HMOs:', error)
+      }
+    }
+    fetchHmos()
   }, [])
 
   // Handle form changes
@@ -96,6 +113,7 @@ const CreatePatient = () => {
         address: formData.address,
         // status: 'active',
         doctor: formData.assignDoctor,
+        hmoId: formData.assignHmo,
         email: formData.email,
         phoneNumber: formData.phoneNumber
       
@@ -248,6 +266,23 @@ const CreatePatient = () => {
                 onChange={e => handleFormChange('phoneNumber', e.target.value)}
               />
             </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>HMO/Insurance</InputLabel>
+                <Select
+                  value={formData.assignHmo}
+                  onChange={e => handleFormChange('assignHmo', e.target.value)}
+                >
+                  {hmos.map(hmo => (
+                    <MenuItem key={hmo.hmoId} value={hmo.hmoId}>
+                      {hmo.hmoName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Assign Doctor</InputLabel>

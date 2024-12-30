@@ -62,7 +62,7 @@ const Login = () => {
           <div className='flex flex-col gap-5'>
             <div>
               <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
-              <Typography className='mbs-1'>Please sign-in to your account and start the adventure</Typography>
+              <Typography className='mbs-1'>Please sign-in to your account with your email and password</Typography>
             </div>
             <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-5'>
               <TextField autoFocus fullWidth label='Email' />
@@ -95,13 +95,13 @@ const Login = () => {
               <Button fullWidth variant='contained' type='submit'>
                 Log In
               </Button>
-              <div className='flex justify-center items-center flex-wrap gap-2'>
+              {/* <div className='flex justify-center items-center flex-wrap gap-2'>
                 <Typography>New on our platform?</Typography>
                 <Typography component={Link} href='/register' color='primary'>
                   Create an account
                 </Typography>
-              </div>
-              <Divider className='gap-3'>or</Divider>
+              </div> */}
+              {/* <Divider className='gap-3'>or</Divider>
               <div className='flex justify-center items-center gap-2'>
                 <IconButton size='small' className='text-facebook'>
                   <i className='ri-facebook-fill' />
@@ -115,12 +115,12 @@ const Login = () => {
                 <IconButton size='small' className='text-googlePlus'>
                   <i className='ri-google-fill' />
                 </IconButton>
-              </div>
+              </div> */}
             </form>
           </div>
         </CardContent>
       </Card>
-      <Illustrations/>
+      {/* <Illustrations/> */}
     </div>
   )
 }
