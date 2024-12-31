@@ -3,13 +3,13 @@ import Grid from '@mui/material/Grid'
 
 // Component Imports
 
-import AllUsers from './AllUsers'
+import EditProfile from './EditProfile'
 
 const Account = () => {
   return (
     <Grid container spacing={6}>
        <Grid item xs={12}>
-        < AllUsers/>
+        < EditProfile/>
       </Grid>
     </Grid>
   )

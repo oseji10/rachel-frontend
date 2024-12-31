@@ -2,17 +2,17 @@
 import Grid from '@mui/material/Grid'
 
 // Component Imports
-import CreateUser from './CreateUser'
+import EditProfile from './EditProfile'
 
 
-const Create = () => {
+const Edit = () => {
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
-        <CreateUser />
+        <EditProfile />
       </Grid>
     </Grid>
   )
 }
 
-export default Create
+export default Edit

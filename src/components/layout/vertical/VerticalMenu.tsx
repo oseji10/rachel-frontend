@@ -32,366 +32,158 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
     <i className='ri-arrow-right-s-line' />
   </StyledVerticalNavExpandIcon>
 )
-
 const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectScrollbar: boolean) => void }) => {
-  
-  
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const { isBreakpointReached, transitionDuration } = useVerticalNav();
+  const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar;
+
+  const [role, setRole] = useState<string | null>(null);
+
   useEffect(() => {
-    const fetchUserData = async () => {
-      const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken');
+    const userRole = localStorage.getItem('role'); // Get roleId from localStorage
 
-      if (!token) {
-        router.push('/login'); 
-        return;
-      }
+    if (!token) {
+      router.push('/login'); // Redirect to login if no token
+      return;
+    }
 
-    };
-
-    fetchUserData();
+    setRole(userRole); // Set the role
   }, [router]);
 
-  const theme = useTheme()
-  const { isBreakpointReached, transitionDuration } = useVerticalNav()
-
-  const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar
+  // Function to check if a role can see a specific menu
+  // const canView = (allowedRoles: string[]) => role && allowedRoles.includes(role);
+  const canView = (allowedRoles: string[]) => role && (allowedRoles.includes(role) || role === '8');
 
   return (
-    // eslint-disable-next-line lines-around-comment
-    /* Custom scrollbar instead of browser scroll, remove if you want browser scroll only */
     <ScrollWrapper
       {...(isBreakpointReached
         ? {
             className: 'bs-full overflow-y-auto overflow-x-hidden',
-            onScroll: container => scrollMenu(container, false)
+            onScroll: container => scrollMenu(container, false),
           }
         : {
             options: { wheelPropagation: false, suppressScrollX: true },
-            onScrollY: container => scrollMenu(container, true)
+            onScrollY: container => scrollMenu(container, true),
           })}
     >
-      {/* Incase you also want to scroll NavHeader to scroll with Vertical Menu, remove NavHeader from above and paste it below this comment */}
-      {/* Vertical Menu */}
       <Menu
         menuItemStyles={menuItemStyles(theme)}
         renderExpandIcon={({ open }) => <RenderExpandIcon open={open} transitionDuration={transitionDuration} />}
-        renderExpandedMenuItemIcon={{ icon: <i className='ri-circle-line' /> }}
+        renderExpandedMenuItemIcon={{ icon: <i className="ri-circle-line" /> }}
         menuSectionStyles={menuSectionStyles(theme)}
       >
-         {/* <SubMenu
-          label='Dashboards'
-          icon={<i className='ri-home-smile-line' />}
-          suffix={<Chip label='5' size='small' color='error' />}
-        >
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/dashboards/crm`}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            CRM
-          </MenuItem>
-           <MenuItem href='/'>Analytics</MenuItem>
-         <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/dashboards/ecommerce`}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            eCommerce
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/dashboards/academy`}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Academy
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/dashboards/logistics`}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Logistics
-          </MenuItem> 
-        </SubMenu>*/}
-        {/* <SubMenu
-          label='Front Pages'
-          icon={<i className='ri-file-copy-line' />}
-          suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-        >
-          <MenuItem href={`${process.env.NEXT_PUBLIC_PRO_URL}/front-pages/landing-page`} target='_blank'>
-            Landing
-          </MenuItem>
-          <MenuItem href={`${process.env.NEXT_PUBLIC_PRO_URL}/front-pages/pricing`} target='_blank'>
-            Pricing
-          </MenuItem>
-          <MenuItem href={`${process.env.NEXT_PUBLIC_PRO_URL}/front-pages/payment`} target='_blank'>
-            Payment
-          </MenuItem>
-          <MenuItem href={`${process.env.NEXT_PUBLIC_PRO_URL}/front-pages/checkout`} target='_blank'>
-            Checkout
-          </MenuItem>
-          <MenuItem href={`${process.env.NEXT_PUBLIC_PRO_URL}/front-pages/help-center`} target='_blank'>
-            Help Center
-          </MenuItem>
-        </SubMenu> */}
-        <MenuSection label='Dashboard'>
-          {/* <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/apps/email`}
-            icon={<i className='ri-mail-open-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Email
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/apps/chat`}
-            icon={<i className='ri-wechat-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Chat
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/apps/calendar`}
-            icon={<i className='ri-calendar-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Calendar
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/apps/kanban`}
-            icon={<i className='ri-drag-drop-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Kanban
-          </MenuItem> */}
-          {/* <MenuItem href='/patients' icon={<i className='ri-user-settings-line' />}>
-            Patients
-          </MenuItem> */}
-          <SubMenu label='Patients' icon={<i className='ri-user-settings-line' />}>
-            <MenuItem href='/dashboard/patients'>
-              All Patients
-            </MenuItem>
-            {/* <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
-            <MenuItem href='/encounters/new-encounter'>
-              New Encounter
-            </MenuItem>
-            <MenuItem href='/encounters'>
-              All Encounters
-            </MenuItem>
-          </SubMenu> */}
-          
-          <MenuItem href='/dashboard/encounters' icon={<i className='ri-shield-keyhole-line' />}>
-            Encounters
-          </MenuItem> 
-          </SubMenu>
-          
+        <MenuSection label="Dashboard">
+          {/* Menu items based on roles */}
+          {canView(['2', '4', '6']) && (
+            <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
+              <MenuItem href="/dashboard/patients">All Patients</MenuItem>
+              {role ===  '4', '6' && (
+                <MenuItem href="/dashboard/encounters" icon={<i className="ri-shield-keyhole-line" />}>
+                  Encounters
+                </MenuItem>
+              )}
+            </SubMenu>
+          )}
 
-          {/* <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
-            <MenuItem href='/encounters/new-encounter'>
-              New Encounter
+          {canView(['3', '4']) && (
+            <MenuItem href="/dashboard/appointments" icon={<i className="ri-calendar-line" />}>
+              Appointments
             </MenuItem>
-            <MenuItem href='/encounters'>
-              All Encounters
-            </MenuItem>
-          </SubMenu> */}
+          )}
+
+          {canView(['7']) && (
+             <SubMenu label='Users' icon={<i className='ri-group-line' />}>
+             <MenuItem href='/dashboard/users/new-user'>
+               New User
+             </MenuItem>
+             <MenuItem href='/dashboard/users'>
+               All Users
+             </MenuItem>
+           
+           </SubMenu>
+          )}
 
 
-{/* <SubMenu label='Appointments' icon={<i className='ri-calendar-line' />}>
-            <MenuItem href='/appointments/new-appointment'>
-              New Appointment
-            </MenuItem>
-            <MenuItem href='/appointments'>
-              All Appointments
-            </MenuItem>
-          
-          </SubMenu> */}
-
-          <MenuItem href='/dashboard/appointments' icon={<i className='ri-calendar-line' />}>
-          Appointments
-          </MenuItem> 
-
-          <SubMenu label='Users' icon={<i className='ri-group-line' />}>
-            <MenuItem href='/dashboard/users/new-user'>
-              New User
-            </MenuItem>
-            <MenuItem href='/dashboard/users'>
-              All Users
-            </MenuItem>
-          
-          </SubMenu>
-
-          <MenuItem href='/dashboard/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
+{canView(['7']) && (
+            <MenuItem href='/dashboard/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
             Clinic Receptionists
           </MenuItem>
+)}
 
-          <MenuItem href='/dashboard/workshop_receptionists' icon={<i className='ri-table-line' />}>
-            Workshop Receptionists
-          </MenuItem>
-
-          <MenuItem href='/dashboard/front_desks' icon={<i className='ri-mac-line' />}>
-            Front Desk
-          </MenuItem>
-
-          <MenuItem href='/dashboard/doctors' icon={<i className='ri-stethoscope-line' />}>
-            Doctors
-          </MenuItem>
-
-          <MenuItem href='/dashboard/nurses' icon={<i className='ri-nurse-fill' />}>
-            Nurses
-          </MenuItem>
+{canView(['7']) && (
+         <MenuItem href='/dashboard/workshop_receptionists' icon={<i className='ri-table-line' />}>
+         Workshop Receptionists
+       </MenuItem>
+)}
 
 
-          <SubMenu label='Medicines' icon={<i className='ri-capsule-line' />}>
-            <MenuItem href='/dashboard/medicines/new-medicine'>
-              New Medicine
-            </MenuItem>
-            <MenuItem href='/dashboard/medicines'>
-              All Medicines
-            </MenuItem>
-            <MenuItem href='/dashboard/manufacturers/new-manufacturer'>
-              New Manufacturer
-            </MenuItem>
-            <MenuItem href='/dashboard/manufacturers'>
-              All Manufacturer
-            </MenuItem>
-          </SubMenu>
+{canView(['7']) && (
+        <MenuItem href='/dashboard/front_desks' icon={<i className='ri-mac-line' />}>
+        Front Desk
+      </MenuItem>
+)}
 
-          <SubMenu label='HMOs' icon={<i className='ri-hospital-line' />}>
-            <MenuItem href='/dashboard/hmos/new-hmo'>
-              New HMO
-            </MenuItem>
-            <MenuItem href='/dashboard/hmos'>
-              All HMOs
-            </MenuItem>
-          
-          </SubMenu>
+{canView(['7']) && (
+        <MenuItem href='/dashboard/doctors' icon={<i className='ri-stethoscope-line' />}>
+        Doctors
+      </MenuItem>
+)}
 
-          <SubMenu label='Inventory' icon={<i className='ri-stock-line' />}>
-            <MenuItem href='#'>
-              Lenses
-            </MenuItem>
-            <MenuItem href='#'>
-              Frames
-            </MenuItem>
-            <MenuItem href='#'>
-              Accessories
-            </MenuItem>
-          </SubMenu>
+{canView(['7']) && (
+      <MenuItem href='/dashboard/nurses' icon={<i className='ri-nurse-fill' />}>
+      Nurses
+    </MenuItem>
+)}
 
-       </MenuSection>
-        
-        {/* <MenuSection label='Forms & Tables'>
-          <MenuItem href='/form-layouts' icon={<i className='ri-layout-4-line' />}>
-            Form Layouts
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/forms/form-validation`}
-            icon={<i className='ri-checkbox-multiple-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Form Validation
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/forms/form-wizard`}
-            icon={<i className='ri-git-commit-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            Form Wizard
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_PRO_URL}/react-table`}
-            icon={<i className='ri-table-alt-line' />}
-            suffix={<Chip label='Pro' size='small' color='primary' variant='tonal' />}
-            target='_blank'
-          >
-            React Table
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/form-elements`}
-            icon={<i className='ri-radio-button-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Form Elements
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/mui-table`}
-            icon={<i className='ri-table-2' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            MUI Tables
-          </MenuItem>
-        </MenuSection>
-        <MenuSection label='Misc'>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/foundation`}
-            icon={<i className='ri-pantone-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Foundation
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/user-interface/components`}
-            icon={<i className='ri-toggle-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Components
-          </MenuItem>
-          <MenuItem
-            href={`${process.env.NEXT_PUBLIC_DOCS_URL}/docs/menu-examples/overview`}
-            icon={<i className='ri-menu-search-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Menu Examples
-          </MenuItem>
-          <MenuItem
-            href={`https://github.com/themeselection/${process.env.NEXT_PUBLIC_REPO_NAME}/issues`}
-            icon={<i className='ri-lifebuoy-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Raise Support
-          </MenuItem>
-          <MenuItem
-            href={process.env.NEXT_PUBLIC_DOCS_URL}
-            icon={<i className='ri-book-line' />}
-            suffix={<i className='ri-external-link-line text-xl' />}
-            target='_blank'
-          >
-            Documentation
-          </MenuItem>
-          <SubMenu label='Others' icon={<i className='ri-more-line' />}>
-            <MenuItem suffix={<Chip label='New' size='small' color='info' />}>Item With Badge</MenuItem>
-            <MenuItem
-              href='https://themeselection.com'
-              target='_blank'
-              suffix={<i className='ri-external-link-line text-xl' />}
-            >
-              External Link
-            </MenuItem>
-            <SubMenu label='Menu Levels'>
-              <MenuItem>Menu Level 2</MenuItem>
-              <SubMenu label='Menu Level 2'>
-                <MenuItem>Menu Level 3</MenuItem>
-                <MenuItem>Menu Level 3</MenuItem>
-              </SubMenu>
+
+{canView(['7']) && (
+     <SubMenu label='Medicines' icon={<i className='ri-capsule-line' />}>
+     <MenuItem href='/dashboard/medicines/new-medicine'>
+       New Medicine
+     </MenuItem>
+     <MenuItem href='/dashboard/medicines'>
+       All Medicines
+     </MenuItem>
+     <MenuItem href='/dashboard/manufacturers/new-manufacturer'>
+       New Manufacturer
+     </MenuItem>
+     <MenuItem href='/dashboard/manufacturers'>
+       All Manufacturer
+     </MenuItem>
+   </SubMenu>
+)}
+
+
+{canView(['7']) && (
+   <SubMenu label='HMOs' icon={<i className='ri-hospital-line' />}>
+     <MenuItem href='/dashboard/hmos/new-hmo'>
+       New HMO
+     </MenuItem>
+     <MenuItem href='/dashboard/hmos'>
+       All HMOs
+     </MenuItem>
+   
+   </SubMenu>
+)}
+
+
+
+         
+          {canView(['2', '5', '6']) && (
+            <SubMenu label="Inventory" icon={<i className="ri-stock-line" />}>
+              <MenuItem href="#">Lenses</MenuItem>
+              <MenuItem href="#">Frames</MenuItem>
+              <MenuItem href="#">Accessories</MenuItem>
             </SubMenu>
-            <MenuItem disabled>Disabled Menu</MenuItem>
-          </SubMenu>
-        </MenuSection> */}
+          )}
+
+      
+        </MenuSection>
       </Menu>
     </ScrollWrapper>
-  )
-}
+  );
+};
 
-export default VerticalMenu
+export default VerticalMenu;

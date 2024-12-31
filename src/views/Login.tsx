@@ -18,22 +18,16 @@ import InputAdornment from '@mui/material/InputAdornment'
 import Checkbox from '@mui/material/Checkbox'
 import Button from '@mui/material/Button'
 import FormControlLabel from '@mui/material/FormControlLabel'
-import Divider from '@mui/material/Divider'
-
-// Type Imports
-import type { Mode } from '@/@core/types'
+import CircularProgress from '@mui/material/CircularProgress'
 
 // Component Imports
 import Logo from '@/components/layout/shared/Logo'
-import Illustrations from '@/components/Illustrations'
 
 // Config Imports
 import themeConfig from '@/configs/themeConfig'
 
-// Hook Imports
-import { useImageVariant } from '@/@core/hooks/useImageVariant'
-import axios from 'axios';
-
+// Axios Import
+import axios from 'axios'
 
 type FormData = {
   email: string
@@ -48,47 +42,49 @@ const initialFormData: FormData = {
 const Login = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isPasswordShown, setIsPasswordShown] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
-  // Vars
-  const darkImg = '/images/pages/auth-v1-mask-dark.png'
-  const lightImg = '/images/pages/auth-v1-mask-light.png'
-
-  // Hooks
   const router = useRouter()
-  // const authBackground = useImageVariant(lightImg, darkImg)
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    router.push('/')
-  }
 
   const handleFormChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
     setFormData({ ...formData, [field]: value })
   }
 
-  const login = async (e) => {
+  const login = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsLoading(true)
+    setErrorMessage('')
+    setSuccessMessage('')
+
     const payload = {
       email: formData.email,
       password: formData.password
     }
+
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/login`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )
-  
-      setFormData(initialFormData); 
-      localStorage.setItem('authToken', response.data.token);
-      router.push('/dashboard')
-      return response.data.user;
-    } catch (error) {
-      throw new Error('Login failed');
+
+      setFormData(initialFormData)
+      localStorage.setItem('authToken', response.data.token)
+      localStorage.setItem('role', response.data.user.role)
+      localStorage.setItem('name', response.data.user.firstName + ' ' + response.data.user.lastName)
+      localStorage.setItem('email', response.data.user.email)
+      setSuccessMessage('Login successful! Redirecting...')
+      setTimeout(() => router.push('/dashboard'), 1500)
+    } catch (error: any) {
+      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
@@ -102,13 +98,15 @@ const Login = () => {
               <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
               <Typography className='mbs-1'>Please sign-in to your account with your email and password</Typography>
             </div>
+            {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
+            {successMessage && <Typography color='success'>{successMessage}</Typography>}
             <form noValidate autoComplete='off' onSubmit={login} className='flex flex-col gap-5'>
               <TextField 
-              autoFocus 
-              fullWidth 
-              label='Email'
-              value={formData.email}
-              onChange={e => handleFormChange('email', e.target.value)}
+                autoFocus 
+                fullWidth 
+                label='Email'
+                value={formData.email}
+                onChange={e => handleFormChange('email', e.target.value)}
               />
               <TextField
                 fullWidth
@@ -138,35 +136,19 @@ const Login = () => {
                   Forgot password?
                 </Typography>
               </div>
-              <Button fullWidth variant='contained' type='submit'>
-                Log In
+              <Button 
+                fullWidth 
+                variant='contained' 
+                type='submit' 
+                disabled={isLoading}
+                startIcon={isLoading && <CircularProgress size={20} />}
+              >
+                {isLoading ? 'Logging In...' : 'Log In'}
               </Button>
-              {/* <div className='flex justify-center items-center flex-wrap gap-2'>
-                <Typography>New on our platform?</Typography>
-                <Typography component={Link} href='/register' color='primary'>
-                  Create an account
-                </Typography>
-              </div> */}
-              {/* <Divider className='gap-3'>or</Divider>
-              <div className='flex justify-center items-center gap-2'>
-                <IconButton size='small' className='text-facebook'>
-                  <i className='ri-facebook-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-twitter'>
-                  <i className='ri-twitter-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-github'>
-                  <i className='ri-github-fill' />
-                </IconButton>
-                <IconButton size='small' className='text-googlePlus'>
-                  <i className='ri-google-fill' />
-                </IconButton>
-              </div> */}
             </form>
           </div>
         </CardContent>
       </Card>
-      {/* <Illustrations/> */}
     </div>
   )
 }

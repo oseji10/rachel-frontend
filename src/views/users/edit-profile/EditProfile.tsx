@@ -133,7 +133,7 @@ const formatDate = (dateString: string) => {
 };
 
 
-const UsersTable = () => {
+const EditProfile = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -345,87 +345,12 @@ const handleEditSubmit = async () => {
       </TableContainer>
 
       {/* View Modal */}
-    
-      <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
-  <Box sx={modalStyle}>
-    <Typography variant="h5" gutterBottom>
-      User Details
-    </Typography>
-    {selectedUser && (
-      <>
-        <Typography variant="body1">
-          <strong>Full Name:</strong> {`${selectedUser?.firstName} ${selectedUser?.lastName}`}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Email:</strong> {selectedUser?.email}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Phone Number:</strong> {selectedUser?.phoneNumber}
-        </Typography>
-        <Typography variant="body1">
-          <strong>Role:</strong> {selectedUser.role?.roleName || 'N/A'}
-        </Typography>
-</>
-       
-    )}
-  </Box>
-</Modal>
 
-<Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
-  <Box sx={modalStyle}>
-    <Typography variant="h5" gutterBottom>
-      Edit User Details
-    </Typography>
-    {editUser && (
-      <>
-        <TextField
-          label="First Name"
-          name="firstName"
-          value={editUser?.firstName}
-          onChange={handleFieldChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Last Name"
-          name="lastName"
-          value={editUser?.lastName}
-          onChange={handleFieldChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Email"
-          name="email"
-          value={editUser?.email}
-          onChange={handleFieldChange}
-          fullWidth
-          margin="normal"
-        />
-        <TextField
-          label="Phone Number"
-          name="phoneNumber"
-          value={editUser?.phoneNumber}
-          onChange={handleFieldChange}
-          fullWidth
-          margin="normal"
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleEditSubmit}
-          fullWidth
-          sx={{ mt: 2 }}
-        >
-          Submit
-        </Button>
-      </>
-    )}
-  </Box>
-</Modal>
+
+
 
     </>
   );
 };
 
-export default UsersTable;
+export default EditProfile;

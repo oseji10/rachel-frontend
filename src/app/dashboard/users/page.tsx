@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 
 // Component Imports
 import Patients from '@/views/patients'
-import Users from '@/views/users/all-users/AllUsers'
+import Users from '@/views/users/edit-profile/EditProfile'
 
 
 

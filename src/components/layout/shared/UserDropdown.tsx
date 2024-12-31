@@ -57,6 +57,34 @@ const UserDropdown = () => {
     setOpen(false)
   }
 
+
+  const name = localStorage.getItem('name');
+  const role = localStorage.getItem('role'); 
+
+  const getRoleName = (role) => {
+    switch (role) {
+      case "2":
+        return "Clinic Receptionist";
+      case "3":
+        return "Frontdesk Receptionist";
+      case "4":
+        return "Doctor";
+      case "5":
+        return "Workshop Receptionist";
+        case "6":
+        return "Nurse";
+        case "7":
+        return "Admin";
+        case "8":
+        return "Super Admin";
+      default:
+        return "Unknown Role"; 
+    }
+  };
+  
+  
+  const roleName = getRoleName(role);
+
   return (
     <>
       <Badge
@@ -96,17 +124,19 @@ const UserDropdown = () => {
                     <Avatar alt='John Doe' src='/images/avatars/1.png' />
                     <div className='flex items-start flex-col'>
                       <Typography className='font-medium' color='text.primary'>
-                        John Doe
+                        {name}
                       </Typography>
-                      <Typography variant='caption'>Admin</Typography>
+                      <Typography variant='caption'>{roleName}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
+                  <a href='/dashboard/profile'><MenuItem className='gap-3' 
+                  // onClick={e => handleDropdownClose(e)}
+                  >
                     <i className='ri-user-3-line' />
-                    <Typography color='text.primary'>My Profile</Typography>
-                  </MenuItem>
-                  <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
+                    <Typography color='text.primary'>Change Password</Typography>
+                  </MenuItem></a>
+                  {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='ri-settings-4-line' />
                     <Typography color='text.primary'>Settings</Typography>
                   </MenuItem>
@@ -117,7 +147,7 @@ const UserDropdown = () => {
                   <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='ri-question-line' />
                     <Typography color='text.primary'>FAQ</Typography>
-                  </MenuItem>
+                  </MenuItem> */}
                   <div className='flex items-center plb-2 pli-4'>
                     <Button
                       fullWidth
@@ -125,7 +155,7 @@ const UserDropdown = () => {
                       color='error'
                       size='small'
                       endIcon={<i className='ri-logout-box-r-line' />}
-                      onClick={e => handleDropdownClose(e, '/login')}
+                      onClick={e => handleDropdownClose(e, '/')}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
                       Logout
