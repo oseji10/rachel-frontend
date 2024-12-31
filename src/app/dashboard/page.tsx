@@ -1,4 +1,5 @@
 // MUI Imports
+"use client";
 import Grid from '@mui/material/Grid'
 
 // Components Imports
@@ -14,6 +15,8 @@ import CardStatVertical from '@/components/card-statistics/Vertical'
 import Table from '@/views/dashboard/Table'
 
 const DashboardAnalytics = () => {
+
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12} md={4}>

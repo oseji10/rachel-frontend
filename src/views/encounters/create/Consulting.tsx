@@ -81,7 +81,7 @@ const Consulting = () => {
         timer: 3000,
         showConfirmButton: false,
       })
-      router.push(`/encounters/continue-consulting?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
+      router.push(`/dashboard/encounters/continue-consulting?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
     } catch (error) {
       Swal.fire({
         icon: 'error',

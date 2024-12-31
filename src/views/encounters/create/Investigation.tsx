@@ -83,7 +83,7 @@ const Investigation = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/encounters/treatment?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/treatment?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       Swal.fire({

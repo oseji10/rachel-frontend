@@ -92,7 +92,7 @@ const Treatment = () => {
       await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/treatment`, payload);
       Swal.fire({ icon: "success", title: "Success", text: "Data submitted successfully!", timer: 3000, showConfirmButton: false });
       router.push(
-        `/appointments/encounter-appointment?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       Swal.fire({ icon: "error", title: "Error", text: "An error occurred while submitting data." });

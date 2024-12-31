@@ -73,7 +73,7 @@ const Diagnosis = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/encounters/sketch?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/sketch?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       Swal.fire({

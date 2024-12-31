@@ -83,7 +83,7 @@ const CreateUser = () => {
   
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_URL}/users`,
+        `${process.env.NEXT_PUBLIC_APP_URL}/register`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )

@@ -109,7 +109,7 @@ const Refraction = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/encounters/diagnosis?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/diagnosis?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       Swal.fire({

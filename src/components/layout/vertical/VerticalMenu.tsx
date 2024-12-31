@@ -20,7 +20,8 @@ import StyledVerticalNavExpandIcon from '@/@menu/styles/vertical/StyledVerticalN
 // Style Imports
 import menuItemStyles from '@/@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@/@core/styles/vertical/menuSectionStyles'
-
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 type RenderExpandIconProps = {
   open?: boolean
   transitionDuration?: VerticalMenuContextProps['transitionDuration']
@@ -33,7 +34,24 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
 )
 
 const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectScrollbar: boolean) => void }) => {
-  // Hooks
+  
+  
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const token = localStorage.getItem('authToken');
+
+      if (!token) {
+        router.push('/login'); 
+        return;
+      }
+
+    };
+
+    fetchUserData();
+  }, [router]);
+
   const theme = useTheme()
   const { isBreakpointReached, transitionDuration } = useVerticalNav()
 
@@ -154,7 +172,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             Patients
           </MenuItem> */}
           <SubMenu label='Patients' icon={<i className='ri-user-settings-line' />}>
-            <MenuItem href='/patients'>
+            <MenuItem href='/dashboard/patients'>
               All Patients
             </MenuItem>
             {/* <SubMenu label='Encounters' icon={<i className='ri-shield-keyhole-line' />}>
@@ -166,7 +184,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             </MenuItem>
           </SubMenu> */}
           
-          <MenuItem href='/encounters' icon={<i className='ri-shield-keyhole-line' />}>
+          <MenuItem href='/dashboard/encounters' icon={<i className='ri-shield-keyhole-line' />}>
             Encounters
           </MenuItem> 
           </SubMenu>
@@ -192,61 +210,61 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           
           </SubMenu> */}
 
-          <MenuItem href='/appointments' icon={<i className='ri-calendar-line' />}>
+          <MenuItem href='/dashboard/appointments' icon={<i className='ri-calendar-line' />}>
           Appointments
           </MenuItem> 
 
           <SubMenu label='Users' icon={<i className='ri-group-line' />}>
-            <MenuItem href='/users/new-user'>
+            <MenuItem href='/dashboard/users/new-user'>
               New User
             </MenuItem>
-            <MenuItem href='/users'>
+            <MenuItem href='/dashboard/users'>
               All Users
             </MenuItem>
           
           </SubMenu>
 
-          <MenuItem href='/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
+          <MenuItem href='/dashboard/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
             Clinic Receptionists
           </MenuItem>
 
-          <MenuItem href='/workshop_receptionists' icon={<i className='ri-table-line' />}>
+          <MenuItem href='/dashboard/workshop_receptionists' icon={<i className='ri-table-line' />}>
             Workshop Receptionists
           </MenuItem>
 
-          <MenuItem href='/front_desks' icon={<i className='ri-mac-line' />}>
+          <MenuItem href='/dashboard/front_desks' icon={<i className='ri-mac-line' />}>
             Front Desk
           </MenuItem>
 
-          <MenuItem href='/doctors' icon={<i className='ri-stethoscope-line' />}>
+          <MenuItem href='/dashboard/doctors' icon={<i className='ri-stethoscope-line' />}>
             Doctors
           </MenuItem>
 
-          <MenuItem href='/nurses' icon={<i className='ri-nurse-fill' />}>
+          <MenuItem href='/dashboard/nurses' icon={<i className='ri-nurse-fill' />}>
             Nurses
           </MenuItem>
 
 
           <SubMenu label='Medicines' icon={<i className='ri-capsule-line' />}>
-            <MenuItem href='/medicines/new-medicine'>
+            <MenuItem href='/dashboard/medicines/new-medicine'>
               New Medicine
             </MenuItem>
-            <MenuItem href='/medicines'>
+            <MenuItem href='/dashboard/medicines'>
               All Medicines
             </MenuItem>
-            <MenuItem href='/manufacturers/new-manufacturer'>
+            <MenuItem href='/dashboard/manufacturers/new-manufacturer'>
               New Manufacturer
             </MenuItem>
-            <MenuItem href='/manufacturers'>
+            <MenuItem href='/dashboard/manufacturers'>
               All Manufacturer
             </MenuItem>
           </SubMenu>
 
           <SubMenu label='HMOs' icon={<i className='ri-hospital-line' />}>
-            <MenuItem href='/hmos/new-hmo'>
+            <MenuItem href='/dashboard/hmos/new-hmo'>
               New HMO
             </MenuItem>
-            <MenuItem href='/hmos'>
+            <MenuItem href='/dashboard/hmos'>
               All HMOs
             </MenuItem>
           

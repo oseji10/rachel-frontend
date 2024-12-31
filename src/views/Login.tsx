@@ -32,9 +32,21 @@ import themeConfig from '@/configs/themeConfig'
 
 // Hook Imports
 import { useImageVariant } from '@/@core/hooks/useImageVariant'
+import axios from 'axios';
+
+
+type FormData = {
+  email: string
+  password: string
+}
+
+const initialFormData: FormData = {
+  email: '',
+  password: ''
+}
 
 const Login = () => {
-  // States
+  const [formData, setFormData] = useState<FormData>(initialFormData)
   const [isPasswordShown, setIsPasswordShown] = useState(false)
 
   // Vars
@@ -52,6 +64,32 @@ const Login = () => {
     router.push('/')
   }
 
+  const handleFormChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
+    setFormData({ ...formData, [field]: value })
+  }
+
+  const login = async (e) => {
+    e.preventDefault()
+    const payload = {
+      email: formData.email,
+      password: formData.password
+    }
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+        payload,
+        { headers: { 'Content-Type': 'application/json' } }
+      )
+  
+      setFormData(initialFormData); 
+      localStorage.setItem('authToken', response.data.token);
+      router.push('/dashboard')
+      return response.data.user;
+    } catch (error) {
+      throw new Error('Login failed');
+    }
+  };
+
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
       <Card className='flex flex-col sm:is-[450px]'>
@@ -64,13 +102,21 @@ const Login = () => {
               <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
               <Typography className='mbs-1'>Please sign-in to your account with your email and password</Typography>
             </div>
-            <form noValidate autoComplete='off' onSubmit={handleSubmit} className='flex flex-col gap-5'>
-              <TextField autoFocus fullWidth label='Email' />
+            <form noValidate autoComplete='off' onSubmit={login} className='flex flex-col gap-5'>
+              <TextField 
+              autoFocus 
+              fullWidth 
+              label='Email'
+              value={formData.email}
+              onChange={e => handleFormChange('email', e.target.value)}
+              />
               <TextField
                 fullWidth
                 label='Password'
                 id='outlined-adornment-password'
                 type={isPasswordShown ? 'text' : 'password'}
+                value={formData.password}
+                onChange={e => handleFormChange('password', e.target.value)}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position='end'>

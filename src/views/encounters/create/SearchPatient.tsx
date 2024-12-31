@@ -54,7 +54,7 @@ const SearchPatient = () => {
   
   const handleContinue = () => {
     if (patient) {
-      window.location.href = `/encounters/consulting?patientId=${patient.patientId}&patientName=${patient.firstName}%20${patient.lastName}` // Adjust the next-page URL as needed
+      window.location.href = `/dashboard/encounters/consulting?patientId=${patient.patientId}&patientName=${patient.firstName}%20${patient.lastName}` // Adjust the next-page URL as needed
     }
   }
 

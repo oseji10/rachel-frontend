@@ -42,7 +42,7 @@ const DualSketchpad = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/encounters/investigation?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/investigation?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       console.error("Error saving sketches:", error);
