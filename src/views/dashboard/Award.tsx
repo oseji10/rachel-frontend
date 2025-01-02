@@ -3,10 +3,12 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
+import Cookies from 'js-cookie';
 
 const Award = () => {
-  const name = localStorage.getItem('name'); 
-  const role = localStorage.getItem('role'); 
+  
+  const role = Cookies.get('role');
+  const name = Cookies.get('name');
 
   const getRoleName = (role) => {
     switch (role) {

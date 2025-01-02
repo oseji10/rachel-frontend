@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
-
+import Cookies from 'js-cookie';
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
   width: 8,
@@ -58,8 +58,10 @@ const UserDropdown = () => {
   }
 
 
-  const name = localStorage.getItem('name');
-  const role = localStorage.getItem('role'); 
+  
+  const role = Cookies.get('role');
+  const name = Cookies.get('name')
+
 
   const getRoleName = (role) => {
     switch (role) {

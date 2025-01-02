@@ -28,6 +28,7 @@ import themeConfig from '@/configs/themeConfig'
 
 // Axios Import
 import axios from 'axios'
+import Cookies from 'js-cookie';
 
 type FormData = {
   email: string
@@ -86,6 +87,44 @@ const Login = () => {
     }
   }
 
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage('');
+    setSuccessMessage('');
+  
+    const payload = {
+      email: formData.email,
+      password: formData.password,
+    };
+  
+    try {
+      // Use axios for the POST request
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/login`, payload);
+  
+      // Process response data
+      const data = response.data;
+  
+      if (data) {
+        // Set cookies
+        Cookies.set('authToken', data.token, { secure: true, sameSite: 'strict' });
+        Cookies.set('role', data.user.role, { secure: true, sameSite: 'strict' });
+        Cookies.set('name', response.data.user.firstName + ' ' + response.data.user.lastName)
+        Cookies.set('email', response.data.user.email)
+        // Set success message and redirect
+        setSuccessMessage('Login successful! Redirecting...');
+        setTimeout(() => router.push('/dashboard'), 1500);
+      } else {
+        setErrorMessage('Login failed. Please try again.');
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+
   return (
     <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
       <Card className='flex flex-col sm:is-[450px]'>
@@ -100,7 +139,7 @@ const Login = () => {
             </div>
             {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
             {successMessage && <Typography color='success'>{successMessage}</Typography>}
-            <form noValidate autoComplete='off' onSubmit={login} className='flex flex-col gap-5'>
+            <form noValidate autoComplete='off' onSubmit={handleLogin} className='flex flex-col gap-5'>
               <TextField 
                 autoFocus 
                 fullWidth 

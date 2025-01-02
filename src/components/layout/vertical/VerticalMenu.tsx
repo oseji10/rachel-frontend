@@ -1,7 +1,8 @@
 // MUI Imports
 import Chip from '@mui/material/Chip'
 import { useTheme } from '@mui/material/styles'
-
+import dynamic from 'next/dynamic';
+import Cookies from 'js-cookie';
 // Third-party Imports
 import PerfectScrollbar from 'react-perfect-scrollbar'
 
@@ -32,25 +33,48 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
     <i className='ri-arrow-right-s-line' />
   </StyledVerticalNavExpandIcon>
 )
-const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectScrollbar: boolean) => void }) => {
+const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectScrollbar: boolean) => void })  => {
+  // const VerticalMenu = dynamic(() => import('./VerticalMenu'), { ssr: false });
+
   const router = useRouter();
   const theme = useTheme();
   const { isBreakpointReached, transitionDuration } = useVerticalNav();
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar;
 
-  const [role, setRole] = useState<string | null>(null);
+  // const [role, setRole] = useState<string | null>(null);
 
-  useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    const userRole = localStorage.getItem('role'); // Get roleId from localStorage
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const token = localStorage.getItem('authToken');
+  //     const userRole = localStorage.getItem('role');
+  
+  //     if (!token) {
+  //       router.push('/login'); // Redirect to login if no token
+  //       return;
+  //     }
+  
+  //     setRole(userRole); // Set the role
+  //   }
+  // }, [router]);
+  // useEffect(() => {
+  //   const userRole = Cookies.get('role');
+  //   // const token = Cookies.get('authToken');
 
-    if (!token) {
-      router.push('/login'); // Redirect to login if no token
-      return;
+  //   if (!Cookies.get('authToken')) {
+  //     router.push('/login');
+  //     // return null;
+  //   }
+  //   setRole(userRole);
+  // });
+
+  const role = Cookies.get('role');
+  console.log(role)
+    // const token = Cookies.get('authToken');
+
+    if (!Cookies.get('authToken')) {
+      router.push('/login');
+      // return null;
     }
-
-    setRole(userRole); // Set the role
-  }, [router]);
 
   // Function to check if a role can see a specific menu
   // const canView = (allowedRoles: string[]) => role && allowedRoles.includes(role);
