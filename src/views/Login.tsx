@@ -29,6 +29,8 @@ import themeConfig from '@/configs/themeConfig'
 // Axios Import
 import axios from 'axios'
 import Cookies from 'js-cookie';
+import api, { initializeCsrf } from '../app/utils/api';
+
 
 type FormData = {
   email: string
@@ -97,7 +99,7 @@ const Login = () => {
       email: formData.email,
       password: formData.password,
     };
-  
+    await initializeCsrf();
     try {
       // Use axios for the POST request
       const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/login`, payload);
@@ -110,7 +112,10 @@ const Login = () => {
         Cookies.set('authToken', data.token, { secure: true, sameSite: 'strict' });
         Cookies.set('role', data.user.role, { secure: true, sameSite: 'strict' });
         Cookies.set('name', response.data.user.firstName + ' ' + response.data.user.lastName)
-        Cookies.set('email', response.data.user.email)
+        Cookies.set('firstName', response.data.user.firstName);
+        Cookies.set('lastName', response.data.user.lastName);
+        Cookies.set('phoneNumber', response.data.user.phoneNumber);
+        
         // Set success message and redirect
         setSuccessMessage('Login successful! Redirecting...');
         setTimeout(() => router.push('/dashboard'), 1500);

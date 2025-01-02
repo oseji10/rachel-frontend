@@ -1,7 +1,7 @@
 'use client';
 
 
-import Refraction from '@/views/encounters/create/Refraction';
+import Refraction from '@/views/encounters/create/Diagnosis';
 import { Suspense } from 'react';
 
 const RefractionPage = () => {

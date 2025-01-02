@@ -1,7 +1,7 @@
 'use client';
 
 // React Imports
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // MUI Imports
 import TextField from '@mui/material/TextField';
@@ -18,6 +18,23 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 // Axios Import
 import axios from 'axios';
+import Cookies from 'js-cookie';
+
+
+type FormData = {
+  
+  firstName: string
+  lastName: string
+  email: string
+  phoneNumber: string
+}
+
+const initialFormData: FormData = {
+  firstName: '',
+  lastName: '',
+  email: '',
+  phoneNumber: ''
+}
 
 const ChangePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -29,6 +46,8 @@ const ChangePassword = () => {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [formData, setFormData] = useState<FormData>(initialFormData)
+  const [selectedUser, setSelectedUser] = useState();
 
   const handleToggleVisibility = (field) => {
     if (field === 'current') setShowCurrentPassword((prev) => !prev);
@@ -36,6 +55,23 @@ const ChangePassword = () => {
     if (field === 'confirm') setShowConfirmPassword((prev) => !prev);
   };
 
+
+  useEffect(() => {
+    const fetchUser= async () => {
+      try {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/change-password`);
+        setSelectedUser(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError('Failed to load appointments data.');
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  const token = Cookies.get('authToken');
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -55,7 +91,7 @@ const ChangePassword = () => {
           newPassword,
           newPassword_confirmation
         },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('authToken')}` } }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       setSuccess(response.data.message || 'Password changed successfully!');
@@ -74,7 +110,7 @@ const ChangePassword = () => {
       <Card className="max-w-md w-full">
         <CardContent>
           <Typography variant="h5" className="mb-4">
-            Change Password
+            Update Profile
           </Typography>
 
           {error && <Alert severity="error" className="mb-4">{error}</Alert>}
@@ -82,6 +118,41 @@ const ChangePassword = () => {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <TextField
+              fullWidth
+              type='text'
+              label="First Name"
+              value={selectedUser.firstName}
+          onChange={(e) => setSelectedUser({ ...selectedUser, firstName: e.target.value })}
+       
+            />
+            <TextField
+              fullWidth
+              type='text'
+              label="Last Name"
+              value={selectedUser.lastName}
+          onChange={(e) => setSelectedUser({ ...selectedUser, lastName: e.target.value })}
+       
+            />
+
+<TextField
+              fullWidth
+              type='text'
+              label="Email"
+              value={selectedUser.email}
+          onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
+       
+            />
+
+<TextField
+              fullWidth
+              type='text'
+              label="Phone Number"
+              value={selectedUser.phoneNumber}
+          onChange={(e) => setSelectedUser({ ...selectedUser, phoneNumber: e.target.value })}
+       
+            />
+
+<TextField
               fullWidth
               type={showCurrentPassword ? 'text' : 'password'}
               label="Current Password"
@@ -98,6 +169,7 @@ const ChangePassword = () => {
                 ),
               }}
             />
+
             <TextField
               fullWidth
               type={showNewPassword ? 'text' : 'password'}

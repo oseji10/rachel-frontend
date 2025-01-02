@@ -1,7 +1,7 @@
 'use client';
 
 
-import Diagnosis from '@/views/encounters/create/Diagnosis';
+import Diagnosis from '@/views/encounters/create/Refraction';
 
 import { Suspense } from 'react';
 

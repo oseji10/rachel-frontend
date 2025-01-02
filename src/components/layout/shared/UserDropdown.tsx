@@ -87,6 +87,18 @@ const UserDropdown = () => {
   
   const roleName = getRoleName(role);
 
+  
+    const handleLogout = () => {
+      Cookies.remove('name');
+      Cookies.remove('email');
+      Cookies.remove('firstName');
+      Cookies.remove('lastName');
+      Cookies.remove('phoneNumber');
+      Cookies.remove('authToken');
+      Cookies.remove('role');
+      router.push('/login');
+    };
+    
   return (
     <>
       <Badge
@@ -157,7 +169,8 @@ const UserDropdown = () => {
                       color='error'
                       size='small'
                       endIcon={<i className='ri-logout-box-r-line' />}
-                      onClick={e => handleDropdownClose(e, '/')}
+                      // onClick={e => handleDropdownClose(e, '/')}
+                      onClick={handleLogout}
                       sx={{ '& .MuiButton-endIcon': { marginInlineStart: 1.5 } }}
                     >
                       Logout

@@ -208,14 +208,14 @@ const PatientsTable = () => {
   const handleAppointment = (patient) => {
     const { patientId, firstName, lastName } = patient; 
     const patientName = firstName + ' ' + lastName; // Extract patientName correctly
-    router.push(`/appointments/create-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
+    router.push(`/dashboard/appointments/create-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
   };
   
   
   const handleEncounter = (patient) => {
     const { patientId, firstName, lastName } = patient; 
     const patientName = firstName + ' ' + lastName; // Extract patientName correctly
-    router.push(`/encounters/consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
+    router.push(`/dashboard/encounters/consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
   };
   
 
