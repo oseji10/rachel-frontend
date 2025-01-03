@@ -148,7 +148,7 @@ const UserDropdown = () => {
                   // onClick={e => handleDropdownClose(e)}
                   >
                     <i className='ri-user-3-line' />
-                    <Typography color='text.primary'>Change Password</Typography>
+                    <Typography color='text.primary'>Edit Profile</Typography>
                   </MenuItem></a>
                   {/* <MenuItem className='gap-3' onClick={e => handleDropdownClose(e)}>
                     <i className='ri-settings-4-line' />
