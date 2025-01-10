@@ -13,9 +13,11 @@ import DepositWithdraw from '@/views/dashboard/DepositWithdraw'
 import SalesByCountries from '@/views/dashboard/SalesByCountries'
 import CardStatVertical from '@/components/card-statistics/Vertical'
 import Table from '@/views/dashboard/Table'
-
+import Cookies from 'js-cookie'
+// Get role from cookies
 const DashboardAnalytics = () => {
-
+  
+  const role = Cookies.get('role')
 
   return (
     <Grid container spacing={6}>
@@ -23,7 +25,10 @@ const DashboardAnalytics = () => {
         <Award />
       </Grid>
       <Grid item xs={12} md={8} lg={8}>
+      {role !== '2' && (
+              
         <Transactions />
+            )}
       </Grid>
       {/* <Grid item xs={12} md={6} lg={4}>
         <WeeklyOverview />

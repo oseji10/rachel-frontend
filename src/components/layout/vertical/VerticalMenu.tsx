@@ -68,7 +68,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
   // });
 
   const role = Cookies.get('role');
-  console.log(role)
+  // console.log(role)
     // const token = Cookies.get('authToken');
 
     if (!Cookies.get('authToken')) {
@@ -100,7 +100,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
       >
         <MenuSection label="Dashboard">
           {/* Menu items based on roles */}
-          {canView(['2', '4', '6']) && (
+          {canView(['2', '4', '6', '8']) && (
             <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
               <MenuItem href="/dashboard/patients">All Patients</MenuItem>
               {role ===  '4', '6' && (
@@ -111,13 +111,13 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             </SubMenu>
           )}
 
-          {canView(['3', '4']) && (
+          {canView(['3', '4', '8']) && (
             <MenuItem href="/dashboard/appointments" icon={<i className="ri-calendar-line" />}>
               Appointments
             </MenuItem>
           )}
 
-          {canView(['7']) && (
+          {canView(['7', '8']) && (
              <SubMenu label='Users' icon={<i className='ri-group-line' />}>
              <MenuItem href='/dashboard/users/new-user'>
                New User

@@ -27,6 +27,7 @@ import { Bed, CalendarMonth, Delete, Edit, Visibility } from '@mui/icons-materia
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie'
 
 type Patient = {
   patientId: string;
@@ -80,6 +81,8 @@ const PatientsTable = () => {
 
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
+  // Get role from cookies
+  const role = Cookies.get('role')
 
   useEffect(() => {
     const fetchData = async () => {
@@ -320,9 +323,13 @@ const PatientsTable = () => {
                   <IconButton onClick={() => handleEdit(patient)} color="warning">
                     <Edit />
                   </IconButton>
-                  <IconButton onClick={() => handleEncounter(patient)} color="success">
-                   <Bed />
-                  </IconButton>
+                  {!['2', '3', '5'].includes(role) && (
+  <IconButton onClick={() => handleEncounter(patient)} color="success">
+    <Bed />
+  </IconButton>
+)}
+
+                  
                   <IconButton onClick={() => handleAppointment(patient)} color="success">
                    <CalendarMonth />
                   </IconButton>

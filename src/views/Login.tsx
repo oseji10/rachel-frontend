@@ -74,7 +74,7 @@ const Login = () => {
         payload,
         { headers: { 'Content-Type': 'application/json' } }
       )
-
+      console.log(response.data)
       setFormData(initialFormData)
       localStorage.setItem('authToken', response.data.token)
       localStorage.setItem('role', response.data.user.role)

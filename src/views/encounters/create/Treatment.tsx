@@ -29,9 +29,11 @@ const Treatment = () => {
   const [loading, setLoading] = useState(false);
 
   const doseDurationOptions = ["1 Week", "2 Weeks", "1 Month", "3 Months"];
-  const timeOptions = ["Morning", "Afternoon", "Evening", "Night"];
-  const doseIntervals = ["Before Meal", "After Meal"];
-
+  const timeOptions = ["1 day", "2 days", "3 days", "4 days", "5 days", "6 days", "7 days"];
+  const quantityEyedrops = ["1 bottle", "2 bottles", "3 bottles"];
+  const quantityTablets = ["1 tablet", "2 tablets", "3 tablets", "4 tablets"];
+  const quantityOintments = ["1 bottle", "2 bottles", "3 bottles"];
+const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "When necessary"]
   useEffect(() => {
     const fetchMedicineList = async () => {
       try {
@@ -167,26 +169,29 @@ const Treatment = () => {
         <form onSubmit={handleSubmit}>
           {renderTable("Eye Drops", eyeDrops, setEyeDrops, [
             { name: "medicine", label: "Medicine" },
-            { name: "dosage", label: "Dosage" },
+            // { name: "dosage", label: "Dosage" },
+            { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Time", type: "select", options: timeOptions },
-            { name: "doseInterval", label: "Dose Interval", type: "select", options: doseIntervals },
+            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            { name: "doseInterval", label: "Quantity", type: "select", options: quantityEyedrops },
             { name: "comment", label: "Comment" },
           ])}
           {renderTable("Tablets", tablets, setTablets, [
             { name: "medicine", label: "Medicine" },
-            { name: "dosage", label: "Dosage" },
+            // { name: "dosage", label: "Dosage" },
+            { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Time", type: "select", options: timeOptions },
-            { name: "doseInterval", label: "Dose Interval", type: "select", options: doseIntervals },
+            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            { name: "doseInterval", label: "Quantity", type: "select", options: quantityTablets },
             { name: "comment", label: "Comment" },
           ])}
           {renderTable("Ointments", ointments, setOintments, [
             { name: "medicine", label: "Medicine" },
-            { name: "dosage", label: "Dosage" },
+            // { name: "dosage", label: "Dosage" },
+            { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Time", type: "select", options: timeOptions },
-            { name: "doseInterval", label: "Dose Interval", type: "select", options: doseIntervals },
+            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            { name: "doseInterval", label: "Quantity", type: "select", options: quantityOintments },
             { name: "comment", label: "Comment" },
           ])}
           {renderTable("Prescription Glasses", prescriptionGlasses, setPrescriptionGlasses, [
