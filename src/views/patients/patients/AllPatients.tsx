@@ -320,9 +320,16 @@ const PatientsTable = () => {
                   <IconButton onClick={() => handleView(patient)} color="primary">
                     <Visibility />
                   </IconButton>
-                  <IconButton onClick={() => handleEdit(patient)} color="warning">
+                  {/* <IconButton onClick={() => handleEdit(patient)} color="warning">
                     <Edit />
-                  </IconButton>
+                  </IconButton> */}
+
+                  {!['3'].includes(role) && (
+  <IconButton onClick={() => handleEdit(patient)} color="warning">
+    <Edit />
+  </IconButton>
+)}
+
                   {!['2', '3', '5'].includes(role) && (
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />

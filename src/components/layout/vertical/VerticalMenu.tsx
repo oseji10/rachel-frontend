@@ -100,16 +100,17 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
       >
         <MenuSection label="Dashboard">
           {/* Menu items based on roles */}
-          {canView(['2', '4', '6', '8']) && (
-            <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
-              <MenuItem href="/dashboard/patients">All Patients</MenuItem>
-              {role ===  '4', '6' && (
-                <MenuItem href="/dashboard/encounters" icon={<i className="ri-shield-keyhole-line" />}>
-                  Encounters
-                </MenuItem>
-              )}
-            </SubMenu>
-          )}
+          {canView(['2', '4', '6', '8', '3']) && (
+  <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
+    <MenuItem href="/dashboard/patients">All Patients</MenuItem>
+    {(role === '4' || role === '6') && (
+      <MenuItem href="/dashboard/encounters" icon={<i className="ri-shield-keyhole-line" />}>
+        Encounters
+      </MenuItem>
+    )}
+  </SubMenu>
+)}
+
 
           {canView(['3', '4', '8']) && (
             <MenuItem href="/dashboard/appointments" icon={<i className="ri-calendar-line" />}>

@@ -28,11 +28,62 @@ const Treatment = () => {
   const [prescriptionGlasses, setPrescriptionGlasses] = useState([{ frame: "", lensType: "", costOfLens: "", costOfFrame: "" }]);
   const [loading, setLoading] = useState(false);
 
-  const doseDurationOptions = ["1 Week", "2 Weeks", "1 Month", "3 Months"];
-  const timeOptions = ["1 day", "2 days", "3 days", "4 days", "5 days", "6 days", "7 days"];
-  const quantityEyedrops = ["1 bottle", "2 bottles", "3 bottles"];
-  const quantityTablets = ["1 tablet", "2 tablets", "3 tablets", "4 tablets"];
-  const quantityOintments = ["1 bottle", "2 bottles", "3 bottles"];
+  const doseDurationOptions = [
+    "1/7", 
+    "2/7", 
+    "3/7", 
+    "4/7",
+    "5/7",
+    "8/7",
+    "9/7",
+    "10/7",
+    "11/7",
+    "12/7",
+    "13/7",
+    "14/7",
+
+    "1/52",
+    "2/52",
+    "3/52",
+    "4/52",
+
+    "1/12",
+    "2/12",
+    "3/12",
+    "4/12",
+    "5/12",
+    "6/12",
+    "7/12",
+    "8/12",
+    "9/12",
+    "10/12",
+    "11/12",
+    "14/12"
+  ];
+    
+  // const timeOptions = [
+  //   "1 day", 
+  //   "2 days", 
+  //   "3 days", 
+  //   "4 days", 
+  //   "5 days", 
+  //   "6 days", 
+  //   "7 days"];
+  const quantityEyedrops = [ "1"];
+  for (let i = 2; i <= 150; i++) {
+    quantityEyedrops.push(i.toString());
+  }
+  const quantityTablets = ["1"];
+  for (let i = 2; i <= 150; i++) {
+    quantityTablets.push(i.toString());
+  }
+  const quantityOintments = 
+  [
+    "1"
+  ];
+  for (let i = 2; i <= 150; i++) {
+    quantityOintments.push(i.toString());
+  }
 const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four times daily", "When necessary"]
   useEffect(() => {
     const fetchMedicineList = async () => {
@@ -172,7 +223,7 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
             // { name: "dosage", label: "Dosage" },
             { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            // { name: "time", label: "Frequency", type: "select", options: timeOptions },
             { name: "doseInterval", label: "Quantity", type: "select", options: quantityEyedrops },
             { name: "comment", label: "Comment" },
           ])}
@@ -181,7 +232,7 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
             // { name: "dosage", label: "Dosage" },
             { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            // { name: "time", label: "Frequency", type: "select", options: timeOptions },
             { name: "doseInterval", label: "Quantity", type: "select", options: quantityTablets },
             { name: "comment", label: "Comment" },
           ])}
@@ -190,15 +241,15 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
             // { name: "dosage", label: "Dosage" },
             { name: "dosage", label: "Dosage", type: "select", options: dosageOptions },
             { name: "doseDuration", label: "Dosage Duration", type: "select", options: doseDurationOptions },
-            { name: "time", label: "Frequency", type: "select", options: timeOptions },
+            // { name: "time", label: "Frequency", type: "select", options: timeOptions },
             { name: "doseInterval", label: "Quantity", type: "select", options: quantityOintments },
             { name: "comment", label: "Comment" },
           ])}
           {renderTable("Prescription Glasses", prescriptionGlasses, setPrescriptionGlasses, [
-            { name: "frame", label: "Frame" },
+            // { name: "frame", label: "Frame" },
             { name: "lensType", label: "Lens Type" },
-            { name: "costOfLens", label: "Cost of Lens", type: "number" },
-            { name: "costOfFrame", label: "Cost of Frame", type: "number" },
+            // { name: "costOfLens", label: "Cost of Lens", type: "number" },
+            // { name: "costOfFrame", label: "Cost of Frame", type: "number" },
           ])}
           <Button variant="contained" color="primary" type="submit" disabled={loading} startIcon={loading && <CircularProgress size={20} />} className="mt-4">
             {loading ? "Submitting..." : "Submit"}

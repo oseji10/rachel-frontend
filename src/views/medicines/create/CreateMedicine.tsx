@@ -24,7 +24,8 @@ type FormData = {
   formulation: string
   quantity: string
   assignManufacturer: string
-  drugCategory: string
+  drugCategory: string,
+  price: string,
 }
 
 const initialFormData: FormData = {
@@ -32,14 +33,16 @@ const initialFormData: FormData = {
   formulation: '',
   quantity: '',
   assignManufacturer: '',
-  drugCategory: ''
+  drugCategory: '', 
+  price: ''
 }
 
 
 const medicine_type = [
-  { "id": "ointment", "option": "Ointment" },
-  { "id": "eye_drop", "option": "Eye Drop" },
-  { "id": "tablet", "option": "Tablet" },
+  { "id": "procedure", "option": "Procedure" },
+  { "id": "investigation", "option": "Investigation" },
+  { "id": "surgery", "option": "Surgery" },
+  { "id": "scan", "option": "Scan" },
  ];
 
 
@@ -84,7 +87,8 @@ const CreateMedicine = () => {
         formulation: formData.formulation,
         manufacturer: formData.assignManufacturer,
         quantity: formData.quantity,
-        type: formData.drugCategory
+        type: formData.drugCategory,
+        price: formData.price,
         
       
     }
@@ -124,7 +128,7 @@ const CreateMedicine = () => {
     <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Create New Medicine
+          Create New Procedures, Investigations, Surgeries and Scans
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
@@ -139,27 +143,19 @@ const CreateMedicine = () => {
                 onChange={e => handleFormChange('medicineName', e.target.value)}
               />
             </Grid>
+         
+            
+          
             {/* <Grid item xs={12} sm={6}>
               <TextField
               required
                 fullWidth
-                label="Formulation"
-                value={formData.formulation}
-                onChange={e => handleFormChange('formulation', e.target.value)}
-              />
-            </Grid> */}
-         
-            
-          
-            <Grid item xs={12} sm={6}>
-              <TextField
-              required
-                fullWidth
+                type="number"
                 label="Quantity"
                 value={formData.quantity}
                 onChange={e => handleFormChange('quantity', e.target.value)}
               />
-            </Grid>
+            </Grid> */}
 
 
             <Grid item xs={12} sm={6}>
@@ -179,7 +175,17 @@ const CreateMedicine = () => {
               </FormControl>
             </Grid>
 
-          
+            <Grid item xs={12} sm={6}>
+              <TextField
+              required
+                fullWidth
+                type="number"
+                label="Price"
+                value={formData.price}
+                onChange={e => handleFormChange('price', e.target.value)}
+              />
+            </Grid>
+{/*           
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
                 <InputLabel>Drug Manufacturer</InputLabel>
@@ -195,7 +201,7 @@ const CreateMedicine = () => {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
           
 
 

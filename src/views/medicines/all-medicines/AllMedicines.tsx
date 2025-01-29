@@ -18,8 +18,9 @@ import {
   Button,
   TablePagination,
 } from '@mui/material';
-import { Edit, Visibility } from '@mui/icons-material';
+import { Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 type VisualAcuity = {
   id: number;
@@ -75,6 +76,10 @@ const MedicinesTable = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
+  const [openEditModal, setOpenEditModal] = useState<boolean>(false);
+  // const [selectedMedicine, setSelectedMedicine] = useState<Medicine | null>(null);
+
+
   useEffect(() => {
     const fetchMedicines = async () => {
       try {
@@ -105,6 +110,39 @@ const MedicinesTable = () => {
   const handleView = (medicine: Medicine) => {
     setSelectedMedicine(medicine);
     setOpenViewModal(true);
+  };
+
+  const handleEdit = (medicine: Medicine) => {
+    setSelectedMedicine(medicine);
+    setOpenEditModal(true);
+  };
+
+
+  const handleDelete = (medicine) => {
+    setOpenViewModal(false);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this drug?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Make API request to delete the appointment
+        // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
+        axios
+          .delete(`${process.env.NEXT_PUBLIC_APP_URL}/medicine/${patient.patientId}`)
+          .then((response) => {
+            Swal.fire('Deleted!', 'The drug has been deleted.', 'success');
+            window.location.reload();
+          })
+          .catch((error) => {
+            Swal.fire('Error!', 'Failed to delete the drug.', 'error');
+          });
+      }
+    });
   };
 
   const handleChangePage = (_: unknown, newPage: number) => {
@@ -170,6 +208,12 @@ const MedicinesTable = () => {
                   <IconButton onClick={() => handleView(medicine)} color="primary">
                     <Visibility />
                   </IconButton>
+                  <IconButton onClick={() => handleEdit(medicine)} color="warning">
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(medicine)} color="error">
+                    <Delete />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -209,6 +253,82 @@ const MedicinesTable = () => {
         </Typography>
 </>
        
+    )}
+  </Box>
+</Modal>
+
+
+
+ {/* Edit Modal */}
+ <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
+  <Box sx={{ ...modalStyle }}>
+    <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+      Edit Patient
+    </Typography>
+
+    {selectedMedicine && (
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          try {
+            const response = await axios.put(
+              `${process.env.NEXT_PUBLIC_APP_URL}/medicines/${selectedMedicine.medicineId}`,
+              selectedMedicine
+            );
+            console.log('Update successful:', response.data);
+            setOpenEditModal(false);
+            fetchMedicines(page); // Refresh data
+          } catch (error) {
+            console.error('Error updating patient:', error);
+          }
+        }}
+      >
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Medicine Name"
+          value={selectedMedicine.medicineName}
+          onChange={(e) => selectedMedicine({ ...selectedMedicine, medicineName: e.target.value })}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Formulation"
+          value={selectedMedicine.formaulation}
+          onChange={(e) => setSelectedPatient({ ...selectedMedicine, formulation: e.target.value })}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Manufacturer"
+          value={selectedMedicine?.manufacturerName || ''}
+          onChange={(e) => setSelectedMedicine({ ...selectedMedicine, manufacturerName: e.target.value })}
+        />
+       
+
+
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Quantity"
+          value={selectedMedicine?.quantity || ''}
+          onChange={(e) => setSelectedMedicine({ ...selectedMedicine, quantity: e.target.value })}
+         />
+
+          
+         
+
+
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          sx={{ mt: 2 }}
+        >
+          Save Changes
+        </Button>
+      </form>
     )}
   </Box>
 </Modal>
