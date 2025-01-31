@@ -21,7 +21,7 @@ const NavbarContent = () => {
     <div className={classnames(verticalLayoutClasses.navbarContent, 'flex items-center justify-between gap-4 is-full')}>
       <div className='flex items-center gap-2 sm:gap-4'>
         <NavToggle />
-        <NavSearch />
+        {/* <NavSearch /> */}
       </div>
       <div className='flex items-center'>
         {/* <Link
@@ -35,10 +35,10 @@ const NavbarContent = () => {
             src={`https://img.shields.io/github/stars/themeselection/${process.env.NEXT_PUBLIC_REPO_NAME}`}
           />
         </Link> */}
-        <ModeDropdown />
-        <IconButton className='text-textPrimary'>
+        {/* <ModeDropdown /> */}
+        {/* <IconButton className='text-textPrimary'>
           <i className='ri-notification-2-line' />
-        </IconButton>
+        </IconButton> */}
         <UserDropdown />
       </div>
     </div>

@@ -24,12 +24,12 @@ const DashboardAnalytics = () => {
       <Grid item xs={12} md={4}>
         <Award />
       </Grid>
-      <Grid item xs={12} md={8} lg={8}>
+      {/* <Grid item xs={12} md={8} lg={8}>
       {role !== '2' && (
               
         <Transactions />
             )}
-      </Grid>
+      </Grid> */}
       {/* <Grid item xs={12} md={6} lg={4}>
         <WeeklyOverview />
       </Grid> */}

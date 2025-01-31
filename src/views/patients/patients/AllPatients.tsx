@@ -324,13 +324,13 @@ const PatientsTable = () => {
                     <Edit />
                   </IconButton> */}
 
-                  {!['3'].includes(role) && (
+                  {!['3', '8'].includes(role) && (
   <IconButton onClick={() => handleEdit(patient)} color="warning">
     <Edit />
   </IconButton>
 )}
 
-                  {!['2', '3', '5'].includes(role) && (
+                  {!['2', '3', '5', '8'].includes(role) && (
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />
   </IconButton>
