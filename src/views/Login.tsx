@@ -57,37 +57,37 @@ const Login = () => {
     setFormData({ ...formData, [field]: value })
   }
 
-  const login = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setErrorMessage('')
-    setSuccessMessage('')
+  // const login = async (e: FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault()
+  //   setIsLoading(true)
+  //   setErrorMessage('')
+  //   setSuccessMessage('')
 
-    const payload = {
-      email: formData.email,
-      password: formData.password
-    }
+  //   const payload = {
+  //     email: formData.email,
+  //     password: formData.password
+  //   }
 
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_APP_URL}/login`,
-        payload,
-        { headers: { 'Content-Type': 'application/json' } }
-      )
-      console.log(response.data)
-      setFormData(initialFormData)
-      localStorage.setItem('authToken', response.data.token)
-      localStorage.setItem('role', response.data.user.role)
-      localStorage.setItem('name', response.data.user.firstName + ' ' + response.data.user.lastName)
-      localStorage.setItem('email', response.data.user.email)
-      setSuccessMessage('Login successful! Redirecting...')
-      setTimeout(() => router.push('/dashboard'), 1500)
-    } catch (error: any) {
-      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.')
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+  //       payload,
+  //       { headers: { 'Content-Type': 'application/json' } }
+  //     )
+  //     console.log(response.data)
+  //     setFormData(initialFormData)
+  //     localStorage.setItem('authToken', response.data.token)
+  //     localStorage.setItem('role', response.data.user.role)
+  //     localStorage.setItem('name', response.data.user.firstName + ' ' + response.data.user.lastName)
+  //     localStorage.setItem('email', response.data.user.email)
+  //     setSuccessMessage('Login successful! Redirecting...')
+  //     setTimeout(() => router.push('/dashboard'), 1500)
+  //   } catch (error: any) {
+  //     setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.')
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
 
   const handleLogin = async (e) => {
     e.preventDefault();

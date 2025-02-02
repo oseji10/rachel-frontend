@@ -23,7 +23,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Bed, CalendarMonth, Delete, Edit, Visibility } from '@mui/icons-material';
+import { Bed, CalendarMonth, Delete, Edit, MoneyOutlined, ShoppingCart, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
@@ -214,6 +214,11 @@ const PatientsTable = () => {
     router.push(`/dashboard/appointments/create-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
   };
   
+  const handleBilling = (patient) => {
+    const { patientId, firstName, lastName } = patient; 
+    const patientName = firstName + ' ' + lastName; // Extract patientName correctly
+    router.push(`/dashboard/billings/create-billing?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
+  };
   
   const handleEncounter = (patient) => {
     const { patientId, firstName, lastName } = patient; 
@@ -324,13 +329,17 @@ const PatientsTable = () => {
                     <Edit />
                   </IconButton> */}
 
-                  {!['3', '8'].includes(role) && (
+                  {/* {!['3', '8'].includes(role) && ( */}
+                  {(role === '3' || role ==='8') && (
+                    
   <IconButton onClick={() => handleEdit(patient)} color="warning">
     <Edit />
   </IconButton>
 )}
 
-                  {!['2', '3', '5', '8'].includes(role) && (
+                  {/* {!['2' || '3', '5', '8'].includes(role) && ( */}
+                  {(role === '2' || role === '3' || role === '5' || role ==='8') && (
+                       
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />
   </IconButton>
@@ -340,6 +349,11 @@ const PatientsTable = () => {
                   <IconButton onClick={() => handleAppointment(patient)} color="success">
                    <CalendarMonth />
                   </IconButton>
+
+                  <IconButton color="info"  onClick={() => handleBilling(patient)}>
+                    <ShoppingCart />
+                  </IconButton>
+
                   <IconButton onClick={() => handleDelete(patient)} color="error">
                     <Delete />
                   </IconButton>

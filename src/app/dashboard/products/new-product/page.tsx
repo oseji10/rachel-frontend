@@ -3,8 +3,8 @@ import type { ReactElement } from 'react'
 
 // Next Imports
 import dynamic from 'next/dynamic'
-import Create from '@/views/medicines/create'
-import CreateMedicine from '@/views/medicines/create/CreateMedicine'
+import Create from '@/views/products/create'
+import CreateMedicine from '@/views/products/create/CreateProduct'
 
 
 const MedicinesPage = () => {

@@ -131,6 +131,13 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           )}
 
 
+{canView(['3', '4', '8']) && (
+            <MenuItem href="/dashboard/billings" icon={<i className="ri-shopping-cart-line" />}>
+              Billings
+            </MenuItem>
+          )}
+
+
 {canView(['7']) && (
             <MenuItem href='/dashboard/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
             Clinic Receptionists
@@ -163,7 +170,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 )}
 
 
-{canView(['7']) && (
+{/* {canView(['7']) && (
      <SubMenu label='Medicines' icon={<i className='ri-capsule-line' />}>
      <MenuItem href='/dashboard/medicines/new-medicine'>
        New Medicine
@@ -174,11 +181,9 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
      <MenuItem href='/dashboard/manufacturers/new-manufacturer'>
        New Manufacturer
      </MenuItem>
-     <MenuItem href='/dashboard/manufacturers'>
-       All Manufacturer
-     </MenuItem>
+     
    </SubMenu>
-)}
+)} */}
 
 
 {canView(['7']) && (
@@ -194,10 +199,17 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 )}
 
 
-
+{canView(['2', '5', '6']) && (
+            <SubMenu label="Price List" icon={<i className="ri-price-tag-3-line" />}>
+              <MenuItem href='/dashboard/products'>Products</MenuItem>
+              <MenuItem href='/dashboard/services'>Services</MenuItem>
+            </SubMenu>
+          )}
          
           {canView(['2', '5', '6']) && (
             <SubMenu label="Inventory" icon={<i className="ri-stock-line" />}>
+              <MenuItem href='/dashboard/medicines'>Medicines</MenuItem>
+              <MenuItem href='/dashboard/manufacturers'>Services</MenuItem>
               <MenuItem href="#">Lenses</MenuItem>
               <MenuItem href="#">Frames</MenuItem>
               <MenuItem href="#">Accessories</MenuItem>

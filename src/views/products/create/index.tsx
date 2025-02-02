@@ -2,7 +2,7 @@
 import Grid from '@mui/material/Grid'
 
 // Component Imports
-import CreateMedicine from './CreateMedicine'
+import CreateMedicine from './CreateProduct'
 
 
 const Create = () => {

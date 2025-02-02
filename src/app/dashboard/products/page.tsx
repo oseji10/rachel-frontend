@@ -6,12 +6,13 @@ import dynamic from 'next/dynamic'
 
 // Component Imports
 import Patients from '@/views/patients'
-import Medicine from '@/views/medicines/all-medicines/AllMedicines'
+
+import ProductsTable from '@/views/products/all-products/AllProducts'
 
 
 
 const MedicinePage = () => {
-  return <Medicine />
+  return <ProductsTable />
 }
 
 export default MedicinePage
