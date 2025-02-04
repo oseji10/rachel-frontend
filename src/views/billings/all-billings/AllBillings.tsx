@@ -23,10 +23,11 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Cancel, Delete, Edit, Visibility } from '@mui/icons-material';
+import { Cancel, ChangeCircleOutlined, ChangeHistoryOutlined, CheckCircle, Delete, Edit, Payment, Payments, StartOutlined, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 type VisualAcuity = {
   id: number;
@@ -86,10 +87,100 @@ const BillingsTable = () => {
   // const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 const router = useRouter();
 
+const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    paymentMethod: "",
+    paymentReference: "",
+  });
+
+
+    // Open modal when Payments icon is clicked
+    const handlePaymentsClick = (billing) => {
+      setSelectedBilling(billing);  // Set the correct billing information
+      setOpen(true);  // Open the modal
+    };
+    
+
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    };
+  
+    // Handle form submission
+    const [isUpdating, setIsUpdating] = useState(false); // State for spinner
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsUpdating(true); // Show spinner on button
+
+  try {
+    const token = Cookies.get('authToken');
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/confirm-payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        transactionId: selectedBilling.transactionId,
+        paymentMethod: formData.paymentMethod,
+        paymentReference: formData.paymentReference,
+      }),
+    });
+
+    if (response.ok) {
+      setOpen(false); // Close the modal
+      Swal.fire({
+        icon: 'success',
+        title: 'Payment confirmed successfully!',
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        // setOpen(false); // Close the modal after the alert
+      });
+
+      // Refresh the table by fetching updated billings
+      const updatedBillings = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBillings(updatedBillings.data);
+      setFilteredBillings(updatedBillings.data);
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Failed to confirm payment!',
+        text: 'There was an issue confirming the payment.',
+      });
+    }
+  } catch (error) {
+    console.error("Error submitting payment:", error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error!',
+      text: 'An error occurred while processing the payment.',
+    });
+  } finally {
+    setIsUpdating(false); // Hide spinner
+  }
+};
+
+
+    
+
   useEffect(() => {
     const fetchBillings = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`);
+        const token = Cookies.get('authToken');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`,{
+          headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+        }
+          
+        );
         setBillings(response.data);
         setFilteredBillings(response.data);
         setLoading(false);
@@ -124,7 +215,7 @@ const router = useRouter();
     setSearchQuery(query);
     const filtered = billings.filter(
       (billing) =>
-        `${billing.patients.firstName} ${billing.patients.lastName}`.toLowerCase().includes(query)
+        `${billing.patient.firstName} ${billing.patient.lastName}`.toLowerCase().includes(query)
     );
     setFilteredBillings(filtered);
     setPage(0);
@@ -145,55 +236,13 @@ const router = useRouter();
   };
 
 
-  const handleEdit = (billing: Billing) => {
-    setSelectedBilling(billing); // Store the full billing object if needed for editing
-    setOpenEditModal(true);
-  };
-
-  const handleEditSave = () => {
-    // Handle save logic (e.g., API call to update the patient)
-    setOpenEditModal(false);
-  };
+ 
 
  
 
   const displayedBillings = filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
-  // const handleUpdate =  (billing) => {
-  //   // e.preventDefault()
-  //   // setLoading(true)
-
-  //   try {
-  //     await axios.put(
-  //       `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billingId}`,
-  //       formData,
-  //       { headers: { 'Content-Type': 'application/json' } }
-  //     )
-
-  //     // Show success message
-  //     Swal.fire({
-  //       icon: 'success',
-  //       title: 'Success',
-  //       text: 'Billing updated successfully!',
-  //       timer: 3000,
-  //       showConfirmButton: false
-  //     })
-
-  //     // onClose() // Close the modal
-  //     router.push('/billings') // Redirect after successful update
-  //   } catch (error) {
-  //     console.error('Error updating billing:', error.response?.data || error.message)
-  //     Swal.fire({
-  //       icon: 'error',
-  //       title: 'Error',
-  //       text: error.response?.data?.message || 'An error occurred. Please try again.',
-  //       timer: 3000,
-  //       showConfirmButton: false
-  //     })
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
+  
 
   const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -220,33 +269,6 @@ const router = useRouter();
   
 
 
-
-  const handleDelete = (billing) => {
-    setOpenViewModal(false);
-    Swal.fire({
-      title: 'Are you sure?',
-      text: 'Do you want to cancel this billing?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, cancel it!',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Make API request to delete the billing
-        // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`);
-        axios
-          .delete(`${process.env.NEXT_PUBLIC_APP_URL}/billings/${billingId}`)
-          .then((response) => {
-            Swal.fire('Deleted!', 'The billing has been canceled.', 'success');
-            // Optionally, refresh the table or update state here
-          })
-          .catch((error) => {
-            Swal.fire('Error!', 'Failed to cancel the billing.', 'error');
-          });
-      }
-    });
-  };
 
 
   if (loading) {
@@ -281,10 +303,12 @@ const router = useRouter();
           <TableHead>
             <TableRow>
               <TableCell>Billing Date</TableCell>
+              <TableCell>TRX ID</TableCell>
               <TableCell>Patient Name</TableCell>
               <TableCell>Amount</TableCell>
               <TableCell>Payment Method</TableCell>
               <TableCell>Payment Status</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -292,8 +316,8 @@ const router = useRouter();
               <TableRow key={billing.id}>
                 
                 <TableCell>
-  {billing?.billingDate &&
-    new Date(`${billing?.billingDate}T${billing?.billingTime}`).toLocaleString('en-US', {
+  {billing?.created_at &&
+    new Date(`${billing?.created_at}`).toLocaleString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -303,23 +327,52 @@ const router = useRouter();
       hour12: true
     })}
 </TableCell>
+<TableCell>{billing?.transactionId}</TableCell>
 
                 <TableCell>
-                  {billing?.patients?.firstName} {billing?.patients?.lastName}
+                  {billing?.patient?.firstName} {billing?.patient?.lastName}
                 </TableCell>
-                <TableCell>{billing?.doctors.doctorName}</TableCell>
-                {/* <TableCell>{billing?.role?.roleName}</TableCell> */}
+                <TableCell>₦{billing?.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : "N/A"}</TableCell>
+                <TableCell>{billing?.paymentMethod}</TableCell>
+                <TableCell>
+  <span
+    style={{
+      backgroundColor: billing?.paymentStatus === "pending" ? "#FFC107" : "#4CAF50",
+      color: "white",
+      fontWeight: "bold",
+      padding: "4px 8px",
+      borderRadius: "4px",
+    }}
+  >
+    {billing?.paymentStatus === "pending" ? "PENDING" : "PAID"}
+  </span>
+</TableCell>
+
                 <TableCell>
                   <IconButton onClick={() => handleView(billing)} color="primary">
                     <Visibility />
                   </IconButton>
 
-                  <IconButton onClick={() => handleEdit(billing)}  color="warning">
-                    <Edit />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(billing)} color="error">
+                  
+                  <IconButton
+  onClick={() => billing?.paymentStatus === "pending" && handlePaymentsClick(billing)}  // Only trigger the handler for 'pending' status
+  color={billing?.paymentStatus === "pending" ? "warning" : "success"}
+>
+  {billing?.paymentStatus === "pending" ? (
+    <Payments />
+  ) : (
+    <CheckCircle />
+  )}
+</IconButton>
+
+
+
+
+
+
+                  {/* <IconButton onClick={() => handleDelete(billing)} color="error">
         <Cancel />
-      </IconButton>
+      </IconButton> */}
 
                 </TableCell>
               </TableRow>
@@ -347,36 +400,60 @@ const router = useRouter();
     {selectedBilling && (
       <>
         <Typography variant="body1">
-          <strong>Full Name:</strong> {`${selectedBilling?.patients?.firstName} ${selectedBilling?.patients?.lastName}`}
+          <strong>Full Name:</strong> {`${selectedBilling?.patient?.firstName} ${selectedBilling?.patient?.lastName}`}
         </Typography>
         <Typography variant="body1">
-          <strong>Email:</strong> {selectedBilling?.patients?.email}
+          <strong>Email:</strong> {selectedBilling?.patient?.email}
         </Typography>
         <Typography variant="body1">
-          <strong>Phone Number:</strong> {selectedBilling?.patients?.phoneNumber}
+          <strong>Phone Number:</strong> {selectedBilling?.patient?.phoneNumber}
         </Typography>
         <Typography variant="body1">
-          <strong>Doctor:</strong> {selectedBilling.doctors?.doctorName || 'N/A'}
+          <strong>Doctor:</strong> {selectedBilling?.patient?.doctor?.doctorName || 'N/A'}
         </Typography>
 
-        {/* <Typography variant="body1">
-          <strong>Billing Date:</strong> {selectedBilling.billingDate || 'N/A'}
-        </Typography> */}
-
         <Typography variant="body1">
-          <strong>Billing Date:</strong> {selectedBilling?.billingDate &&
-    new Date(`${selectedBilling?.billingDate}T${selectedBilling?.billingTime}`).toLocaleString('en-US', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true
-    })}
+          <strong>Billing Date:</strong> {selectedBilling?.created_at &&
+            new Date(`${selectedBilling?.created_at}`).toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            })}
         </Typography>
-</>
-       
+
+       {/* Item List Table */}
+<Typography variant="h6" gutterBottom>
+  Items
+</Typography>
+<Table>
+  <TableHead>
+    <TableRow>
+      <TableCell>Item Name</TableCell>
+      <TableCell>Quantity</TableCell>
+      <TableCell>Price</TableCell>
+      <TableCell>Total</TableCell>
+    </TableRow>
+  </TableHead>
+  <TableBody>
+    {selectedBilling?.relatedTransactions?.map((transaction, index) => (
+      <React.Fragment key={index}>
+        <TableRow>
+          {/* Display item name, for example categoryType or billingType */}
+          <TableCell>{transaction.categoryType || transaction.billingType}</TableCell>
+          <TableCell>{transaction.quantity}</TableCell>
+          <TableCell>₦{transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : "N/A"}</TableCell>
+          <TableCell>₦{transaction.cost && transaction.quantity ? new Intl.NumberFormat().format(transaction.cost * transaction.quantity) : "N/A"}</TableCell>
+        </TableRow>
+      </React.Fragment>
+    ))}
+  </TableBody>
+</Table>
+
+      </>
     )}
   </Box>
 </Modal>
@@ -460,6 +537,70 @@ const router = useRouter();
         </form>
       </Box>
     </Modal>
+
+
+    <Modal open={open} onClose={() => setOpen(false)}>
+  <Box
+    sx={{
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 400,
+      bgcolor: "background.paper",
+      borderRadius: 2,
+      boxShadow: 24,
+      p: 4,
+    }}
+  >
+    <Typography variant="h5" gutterBottom>
+      Confirm Payment
+    </Typography>
+    <form onSubmit={handleSubmit}>
+      {/* Payment Method Dropdown */}
+      <InputLabel id="payment-method-label">Payment Method</InputLabel>
+      <Select
+        labelId="payment-method-label"
+          label="Payment Method"
+        fullWidth
+        value={formData.paymentMethod}
+        onChange={handleChange}
+        name="paymentMethod"
+        required
+        margin="normal"
+      >
+        <MenuItem value="cash">Cash</MenuItem>
+        <MenuItem value="POS">POS</MenuItem>
+        <MenuItem value="transfer">Transfer</MenuItem>
+      </Select>
+
+      {/* Payment Reference */}
+      <TextField
+        label="Payment Reference"
+        fullWidth
+        margin="normal"
+        value={formData.paymentReference}
+        onChange={handleChange}
+        name="paymentReference"
+        
+      />
+
+      {/* Submit Button */}
+      <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+      <Button
+  variant="contained"
+  color="primary"
+  onClick={handleSubmit}
+  disabled={isUpdating}
+  startIcon={isUpdating ? <CircularProgress size={20} /> : null}
+>
+  {isUpdating ? "Updating..." : "Update Payment"}
+</Button>
+
+      </Box>
+    </form>
+  </Box>
+</Modal>
     </>
   );
 };

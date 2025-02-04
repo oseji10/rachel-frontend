@@ -81,11 +81,14 @@ const ServicesTable = () => {
   const [filteredServices, setFilteredServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [updateLoading, setUpdateLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [openViewModal, setOpenViewModal] = useState(false);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const [updateTrigger, setUpdateTrigger] = useState(false);
 
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   // const [selectedService, setSelectedService] = useState<Service | null>(null);
@@ -109,8 +112,8 @@ const router = useRouter();
   const serviceType = [
     'Proceedure',
     'Investigation',
-    'Surgery',
     'Diagnosis',
+    'Surgery',
   ];
 
   const drugCategory = [
@@ -160,13 +163,11 @@ const handleSubmit = async (event) => {
     });
 
     if (response.status === 201) {
-      const newService = await response.json(); // Get the newly created service from response
+      const newService = await response.json(); 
 
-      // Dynamically update state without reloading
       setServices((prevServices) => [newService, ...prevServices]);
       setFilteredServices((prevFiltered) => [newService, ...prevFiltered]);
 
-      // Reset form fields
       setFormData({
         serviceName: "",
         serviceDescription: "",
@@ -300,6 +301,11 @@ const handleSubmit = async (event) => {
     setPage(0);
   };
 
+
+  useEffect(() => {
+    setUpdateLoading(false); // Reset update loading when modal opens
+  }, [openEditModal]);
+  
   const displayedServices = filteredServices.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   if (loading) {
@@ -358,7 +364,7 @@ const handleSubmit = async (event) => {
                 <TableCell>{service?.serviceDescription}</TableCell>
                 <TableCell>{service?.serviceType}</TableCell>
                 <TableCell>{service?.serviceCategory}</TableCell>
-                <TableCell>{service?.serviceCost ? new Intl.NumberFormat().format(service.serviceCost) : "N/A"}</TableCell>
+                <TableCell>₦{service?.serviceCost ? new Intl.NumberFormat().format(service.serviceCost) : "N/A"}</TableCell>
                 
   
 
@@ -475,13 +481,13 @@ const handleSubmit = async (event) => {
           <strong>Service Name:</strong> {`${selectedService?.serviceName}`}
         </Typography>
         <Typography variant="body1">
-          <strong>Formulation:</strong> {selectedService?.formulation}
+          <strong>Description:</strong> {selectedService?.serviceDescription}
         </Typography>
         <Typography variant="body1">
-          <strong>Manufacturer:</strong> {selectedService?.manufacturer?.manufacturerName}
+          <strong>Service Type:</strong> {selectedService?.serviceType}
         </Typography>
         <Typography variant="body1">
-          <strong>Quantity:</strong> {selectedService?.quantity || 'N/A'}
+          <strong>Cost:</strong> ₦{selectedService?.serviceCost ? new Intl.NumberFormat().format(selectedService.serviceCost) : "N/A"}
         </Typography>
 </>
        
@@ -490,28 +496,84 @@ const handleSubmit = async (event) => {
 </Modal>
 
 
-
- {/* Edit Modal */}
- <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
+{/* Edit Modal */}
+<Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
   <Box sx={{ ...modalStyle }}>
-    <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
-      Edit Patient
+    <Typography variant="h5" gutterBottom sx={{ textAlign: "center" }}>
+      Edit Service
     </Typography>
 
     {selectedService && (
       <form
         onSubmit={async (e) => {
-          e.preventDefault();
+          e.preventDefault(); // Prevent default form submission
+
+          if (updateLoading) return; // Prevent multiple clicks
+          setUpdateLoading(true);
+
           try {
+            const token = Cookies.get("authToken");
+
             const response = await axios.put(
               `${process.env.NEXT_PUBLIC_APP_URL}/services/${selectedService.serviceId}`,
-              selectedService
+              selectedService,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  "Content-Type": "application/json",
+                },
+              }
             );
-            console.log('Update successful:', response.data);
-            setOpenEditModal(false);
-            fetchServices(page); // Refresh data
+
+            if (response.status === 200 || response.status === 201) {
+              const updatedService = response.data; // ✅ Use response.data with Axios
+
+            // ✅ Ensure service list updates immediately
+      setServices((prevServices) => {
+        const updated = prevServices.map((service) =>
+          service.serviceId === updatedService.serviceId ? updatedService : service
+        );
+        console.log('Updated Services:', updated);
+        return updated;
+      });
+
+      setFilteredServices((prevFiltered) => {
+        const updated = prevFiltered.map((service) =>
+          service.serviceId === updatedService.serviceId ? updatedService : service
+        );
+        console.log('Updated Filtered Services:', updated);
+        return updated;
+      });
+
+              // ✅ Close modal BEFORE showing success message
+              setOpenEditModal(false);
+              setUpdateLoading(false);
+
+              Swal.fire({
+                title: "Success!",
+                text: "Service updated successfully!",
+                icon: "success",
+                confirmButtonText: "Okay",
+              });
+            } else {
+              Swal.fire({
+                title: "Error!",
+                text: `Unexpected response: ${response.status}`,
+                icon: "error",
+                confirmButtonText: "Try Again",
+              });
+            }
           } catch (error) {
-            console.error('Error updating patient:', error);
+            console.error("Error updating service:", error);
+
+            Swal.fire({
+              title: "Oops!",
+              text: error.response?.data?.message || "An error occurred.",
+              icon: "error",
+              confirmButtonText: "Okay",
+            });
+          } finally {
+            setUpdateLoading(false); 
           }
         }}
       >
@@ -520,45 +582,52 @@ const handleSubmit = async (event) => {
           margin="normal"
           label="Service Name"
           value={selectedService.serviceName}
-          onChange={(e) => selectedService({ ...selectedService, serviceName: e.target.value })}
+          onChange={(e) =>
+            setSelectedService({
+              ...selectedService,
+              serviceName: e.target.value,
+            })
+          }
         />
         <TextField
           fullWidth
           margin="normal"
-          label="Formulation"
-          value={selectedService.formaulation}
-          onChange={(e) => setSelectedPatient({ ...selectedService, formulation: e.target.value })}
+          label="Description"
+          value={selectedService.serviceDescription}
+          onChange={(e) =>
+            setSelectedService({
+              ...selectedService,
+              serviceDescription: e.target.value,
+            })
+          }
         />
         <TextField
           fullWidth
           margin="normal"
-          label="Manufacturer"
-          value={selectedService?.manufacturerName || ''}
-          onChange={(e) => setSelectedService({ ...selectedService, manufacturerName: e.target.value })}
+          label="Service Type"
+          value={selectedService?.serviceType || ""}
+          onChange={(e) =>
+            setSelectedService({
+              ...selectedService,
+              serviceType: e.target.value,
+            })
+          }
         />
-       
-
-
         <TextField
           fullWidth
           margin="normal"
-          label="Quantity"
-          value={selectedService?.quantity || ''}
-          onChange={(e) => setSelectedService({ ...selectedService, quantity: e.target.value })}
-         />
+          label="Cost"
+          value={selectedService?.serviceCost || ""}
+          onChange={(e) =>
+            setSelectedService({
+              ...selectedService,
+              serviceCost: e.target.value,
+            })
+          }
+        />
 
-          
-         
-
-
-        <Button
-          type="submit"
-          fullWidth
-          variant="contained"
-          color="primary"
-          sx={{ mt: 2 }}
-        >
-          Save Changes
+        <Button type="submit" variant="contained" color="primary" disabled={updateLoading}>
+          {updateLoading ? <CircularProgress size={24} color="inherit" /> : "Update"}
         </Button>
       </form>
     )}

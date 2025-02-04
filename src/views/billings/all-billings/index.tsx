@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid'
 
 // Component Imports
 
-import AllAppointments from './AllAppointments'
+import AllAppointments from './AllBillings'
 
 const Account = () => {
   return (

@@ -2,17 +2,18 @@
 import Grid from '@mui/material/Grid'
 
 // Component Imports
-import CreateMedicine from './CreateProduct'
 
 
-const Create = () => {
+import Accessories from './Accessories'
+
+const Account = () => {
   return (
     <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <CreateMedicine />
+       <Grid item xs={12}>
+        < Accessories/>
       </Grid>
     </Grid>
   )
 }
 
-export default Create
+export default Account

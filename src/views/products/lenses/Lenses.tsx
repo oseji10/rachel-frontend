@@ -76,7 +76,7 @@ const formatDate = (dateString: string) => {
 };
 
 
-const ProductsTable = () => {
+const Lenses = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -89,6 +89,7 @@ const ProductsTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const [updateTrigger, setUpdateTrigger] = useState(false);
+  const [medicines, setMedicines] = useState([]);
 
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   // const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
@@ -96,17 +97,12 @@ const ProductsTable = () => {
 const router = useRouter();
 
   const [formData, setFormData] = useState({
-    productName: "",
-    productDescription: "",
-    productType: "",
-    productCategory: "",
-    productQuantity: "",
-    productCost: "",
-    productPrice: "",
-    productStatus: "available",
-    productImage: "",
-    productManufacturer: "",
-    uploadedBy: "",
+    productId: "",
+    batchNumber: "",
+    inventoryType: 'Lens',
+    quantityReceived: "",
+    expiryDate: "",
+   
   });
 
   const productType = [
@@ -153,7 +149,7 @@ const handleSubmit = async (event) => {
 
   try {
     const token = Cookies.get("authToken");
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/inventories`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -163,23 +159,17 @@ const handleSubmit = async (event) => {
     });
 
     if (response.status === 201) {
-      const newProduct = await response.json(); 
+      const newInventory = await response.json(); 
 
-      setProducts((prevProducts) => [newProduct, ...prevProducts]);
-      setFilteredProducts((prevFiltered) => [newProduct, ...prevFiltered]);
+      setProducts((prevProducts) => [newInventory, ...prevProducts]);
+      setFilteredProducts((prevFiltered) => [newInventory, ...prevFiltered]);
 
       setFormData({
-        productName: "",
-        productDescription: "",
-        productType: "",
-        productCategory: "",
-        productQuantity: "",
-        productCost: "",
-        productPrice: "",
-        productStatus: "available",
-        productImage: "",
-        productManufacturer: "",
-        uploadedBy: "",
+        productId: "",
+        quantityReceived: "",
+        expiryDate: "",
+        batchNumber: "",
+        inventoryType: "",
       });
 
       // Close modal and stop loading BEFORE showing the alert
@@ -189,7 +179,7 @@ const handleSubmit = async (event) => {
       // Show success message
       Swal.fire({
         title: "Success!",
-        text: "Product added successfully!",
+        text: "Inventory added successfully!",
         icon: "success",
         confirmButtonText: "Okay",
       });
@@ -203,7 +193,7 @@ const handleSubmit = async (event) => {
       title: "Oops!",
       text: "An error occurred while adding the product.",
       icon: "error",
-      confirmButtonText: "Okay",
+      confirmButtonText: "Ok",
     });
   } finally {
     setSubmitLoading(false); // Ensure spinner stops in case of success or error
@@ -213,10 +203,10 @@ const handleSubmit = async (event) => {
 
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchInventories = async () => {
       try {
         const token = Cookies.get('authToken');
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/lenses-inventories`, {
           headers: {
             Authorization: `Bearer ${token}`, 
           },
@@ -230,15 +220,42 @@ const handleSubmit = async (event) => {
       }
     };
 
-    fetchProducts();
+    fetchInventories();
   }, []);
+
+
+
+    // Fetch list of medicines from API
+    useEffect(() => {
+      const fetchMedicines = async () => {
+        try {
+          const token = Cookies.get('authToken');
+          const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/lenses`, {
+              headers: {
+                Authorization: `Bearer ${token}`, 
+              },
+            });
+          
+          const data = await response.json();
+          setMedicines(data);
+        } catch (error) {
+          console.error("Error fetching medicines:", error);
+        }
+      };
+  
+      if (openModal) {
+        fetchMedicines();
+      }
+    }, [openModal]);
+
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
     setSearchQuery(query);
     const filtered = products.filter(
       (product) =>
-        `${product.productName}`.toLowerCase().includes(query)
+        `${product?.product?.productName}`.toLowerCase().includes(query)
     );
     setFilteredProducts(filtered);
     setPage(0);
@@ -270,7 +287,7 @@ const handleSubmit = async (event) => {
         try {
           const token = Cookies.get("authToken");
           await axios.delete(
-            `${process.env.NEXT_PUBLIC_APP_URL}/products/${product.productId}`,
+            `${process.env.NEXT_PUBLIC_APP_URL}/inventories/${product.inventoryId}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -329,9 +346,9 @@ const handleSubmit = async (event) => {
        <div>
       {/* Header with aligned button */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3>Products</h3>
+        <h3>Lenses</h3>
         <Button variant="contained" color="primary" onClick={handleOpenModal}>
-          New Product
+          Receive New Inventory
         </Button>
       </div>
       <TextField
@@ -346,33 +363,35 @@ const handleSubmit = async (event) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Product Name</TableCell>
+              <TableCell>Date Received</TableCell>
+              <TableCell>Lens Name</TableCell>
               <TableCell>Description</TableCell>
-              <TableCell>Product Type</TableCell>
-              <TableCell>Category</TableCell>
-              <TableCell>Cost</TableCell>
+              <TableCell>Quantity Received</TableCell>
+              <TableCell>Quantity Sold</TableCell>
+              <TableCell>Balance</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {displayedProducts.map((product) => (
-              <TableRow key={product.id}>
+              <TableRow key={product.inventoryId}>
                 
+                <TableCell>{formatDate(product?.created_at)}</TableCell>
                 <TableCell>
-                  {product?.productName} 
+                  {product?.product?.productName} 
                 </TableCell>
-                <TableCell>{product?.productDescription}</TableCell>
-                <TableCell>{product?.productType}</TableCell>
-                <TableCell>{product?.productCategory}</TableCell>
-                <TableCell>₦{product?.productCost ? new Intl.NumberFormat().format(product.productCost) : "N/A"}</TableCell>
+                <TableCell>{product?.product?.productDescription}</TableCell>
+                <TableCell>{product?.quantityReceived}</TableCell>
+                <TableCell>{product?.quantitySold}</TableCell>
+                <TableCell>{(product?.quantityReceived || 0) - (product?.quantitySold || 0)}</TableCell>
                 
   
 
 
                 <TableCell>
-                  <IconButton onClick={() => handleView(product)} color="primary">
+                  {/* <IconButton onClick={() => handleView(product)} color="primary">
                     <Visibility />
-                  </IconButton>
+                  </IconButton> */}
                   <IconButton onClick={() => handleEdit(product)} color="warning">
                     <Edit />
                   </IconButton>
@@ -396,32 +415,31 @@ const handleSubmit = async (event) => {
       </TableContainer>
 
 
-{/* Modal for New Product */}
+{/* Modal for New Medicine Inventory */}
 <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
-        <DialogTitle>Add New Product</DialogTitle>
+        <DialogTitle>Add New Lens</DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit}>
+          <FormControl fullWidth margin="dense">
+            <InputLabel>Select Lens</InputLabel>
+            <Select name="productId" value={formData.productName} onChange={handleInputChange} required>
+              {medicines.map((medicine) => (
+                <MenuItem key={medicine.productId} value={medicine.productId}>
+                  {medicine.productName} {medicine.productDescription}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
             <TextField
               fullWidth
               margin="dense"
-              label="Product Name"
-              name="productName"
-              value={formData.productName}
+              label="Batch Number"
+              name="batchNumber"
+              value={formData.batchNumber}
               onChange={handleInputChange}
-              required
-            />
-            <TextField
-              fullWidth
-              margin="dense"
-              label="Description"
-              name="productDescription"
-              value={formData.productDescription}
-              onChange={handleInputChange}
-              multiline
-              rows={4}
             />
            
-            <FormControl fullWidth margin="dense">
+            {/* <FormControl fullWidth margin="dense">
               <InputLabel>Type</InputLabel>
               <Select name="productType" value={formData.productType} onChange={handleInputChange} required>
                 {productType.map((type) => (
@@ -439,15 +457,27 @@ const handleSubmit = async (event) => {
                   ))}
                 </Select>
               </FormControl>
-            )}
+            )} */}
 
            <FormControl fullWidth margin="dense">
             
             <TextField
+              type="date"
+              name="expiryDate"
+              label="Expiry Date"
+              value={formData.expiryDate}
+              onChange={handleInputChange}
+              required
+            />
+          </FormControl>
+
+          <FormControl fullWidth margin="dense">
+            
+            <TextField
               type="number"
-              name="productCost"
-              label="Cost"
-              value={formData.productCost}
+              name="quantityReceived"
+              label="Quantity Received"
+              value={formData.quantityReceived}
               onChange={handleInputChange}
               required
             />
@@ -639,4 +669,4 @@ const handleSubmit = async (event) => {
   );
 };
 
-export default ProductsTable;
+export default Lenses;

@@ -4,13 +4,13 @@ import Grid from '@mui/material/Grid'
 // Component Imports
 
 
-import ServicesTable from './AllServices'
+import ProductsTable from './AllProducts'
 
 const Account = () => {
   return (
     <Grid container spacing={6}>
        <Grid item xs={12}>
-        < ServicesTable/>
+        < ProductsTable/>
       </Grid>
     </Grid>
   )
