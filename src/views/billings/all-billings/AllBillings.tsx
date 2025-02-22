@@ -23,7 +23,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Cancel, ChangeCircleOutlined, ChangeHistoryOutlined, CheckCircle, Delete, Edit, Payment, Payments, StartOutlined, Visibility } from '@mui/icons-material';
+import { Cancel, ChangeCircleOutlined, ChangeHistoryOutlined, CheckCircle, Delete, Edit, Payment, Payments, Print, StartOutlined, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
@@ -100,6 +100,10 @@ const [open, setOpen] = useState(false);
       setOpen(true);  // Open the modal
     };
     
+    const handlePrintClick = (billing) => {
+      setSelectedBilling(billing);  // Set the correct billing information
+      // handlePrintReceipt()
+    };
 
     const handleChange = (e) => {
       const { name, value } = e.target;
@@ -266,8 +270,50 @@ const handleSubmit = async (e) => {
       }
     }
   };
+
+
+  const handleDelete = async (billing) => {
+    // if (selectedBilling) {
+      const token = Cookies.get('authToken');
+      try {
+        const response = await axios.delete(
+          `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billing.transactionId}`,
+         { headers: {
+            Authorization: `Bearer ${token}`, 
+          },
+      });
+        Swal.fire('Deleted!', 'The billing has been deleted.', 'success');
+        setOpenEditModal(false);
+      } catch (error) {
+        Swal.fire('Error!', 'Failed to delete the billing.', 'error');
+      }
+    // }
+  };
   
 
+  const handlePrintReceipt = async (billing) => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/print-receipt/${billing.transactionId}`, {
+        method: "GET",
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch receipt");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `receipt-${billing.transactionId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error downloading receipt:", error);
+    }
+  };
 
 
 
@@ -353,18 +399,27 @@ const handleSubmit = async (e) => {
                     <Visibility />
                   </IconButton>
 
-                  
+                  {billing?.paymentStatus === "paid" && (
+  <IconButton onClick={() => handlePrintReceipt(billing)}  color={billing?.paymentStatus === "paid" ? "success" : "warning"}>
+    <Print />
+  </IconButton>
+)}
+
+
                   <IconButton
   onClick={() => billing?.paymentStatus === "pending" && handlePaymentsClick(billing)}  // Only trigger the handler for 'pending' status
   color={billing?.paymentStatus === "pending" ? "warning" : "success"}
 >
-  {billing?.paymentStatus === "pending" ? (
+  {billing?.paymentStatus === "pending" && (
     <Payments />
-  ) : (
-    <CheckCircle />
   )}
 </IconButton>
 
+{billing?.paymentStatus === "pending" && (
+  <IconButton onClick={() => handleDelete(billing)}  color={billing?.paymentStatus === "pending" ? "error" : "warning"}>
+    <Delete />
+  </IconButton>
+)}
 
 
 

@@ -110,10 +110,21 @@ const router = useRouter();
   });
 
   const serviceType = [
-    'Proceedure',
+    'Consultation/Registration',
+    'Procedures',
+    'Clinic Procedures',
+    'Lasers',
+    'Cataract Procedures',
+    'Ptosis Procedures',
     'Investigation',
     'Diagnosis',
     'Surgery',
+  ];
+
+  const serviceCategory = [
+    'Per Eye',
+    'Both Eyes',
+    
   ];
 
   const drugCategory = [
@@ -121,6 +132,7 @@ const router = useRouter();
     'Ointment',
     'Tablet',
     'Injection',
+    'Syrup',
   ];
 
    // Open modal
@@ -430,16 +442,16 @@ const handleSubmit = async (event) => {
               </Select>
             </FormControl>
             
-            {formData.serviceType === 'Medicine' && (
+            {/* {formData.serviceType === 'Medicine' && ( */}
               <FormControl fullWidth margin="dense">
                 <InputLabel>Category</InputLabel>
                 <Select name="serviceCategory" value={formData.serviceCategory} onChange={handleInputChange} required>
-                  {drugCategory.map((category) => (
+                  {serviceCategory.map((category) => (
                     <MenuItem key={category} value={category}>{category}</MenuItem>
                   ))}
                 </Select>
               </FormControl>
-            )}
+            {/* )} */}
 
            <FormControl fullWidth margin="dense">
             

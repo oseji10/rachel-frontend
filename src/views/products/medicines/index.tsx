@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid'
 // Component Imports
 
 
-import ProductsTable from './AllProducts'
+import ProductsTable from './Medicines'
 
 const Account = () => {
   return (

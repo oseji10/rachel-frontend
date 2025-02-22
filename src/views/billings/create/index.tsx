@@ -2,7 +2,7 @@
 import Grid from '@mui/material/Grid'
 
 // Component Imports
-import CreateAppointment from './CreateAppointment'
+import CreateAppointment from './CreateBilling'
 import SearchPatient from './SearchPatient'
 
 
