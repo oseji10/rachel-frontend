@@ -111,7 +111,7 @@ const router = useRouter();
 
   const productType = [
     'Medicine',
-    'Lens',
+    'Opticals',
     'Frame',
     'Accessory',
   ];
@@ -120,6 +120,7 @@ const router = useRouter();
     'Eye Drop',
     'Ointment',
     'Tablet',
+    'Syrup',
     'Injection',
   ];
 
@@ -349,7 +350,7 @@ const handleSubmit = async (event) => {
               <TableCell>Product Name</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Product Type</TableCell>
-              <TableCell>Category</TableCell>
+              {/* <TableCell>Category</TableCell> */}
               <TableCell>Cost</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
@@ -363,7 +364,7 @@ const handleSubmit = async (event) => {
                 </TableCell>
                 <TableCell>{product?.productDescription}</TableCell>
                 <TableCell>{product?.productType}</TableCell>
-                <TableCell>{product?.productCategory}</TableCell>
+                {/* <TableCell>{product?.productCategory}</TableCell> */}
                 <TableCell>₦{product?.productCost ? new Intl.NumberFormat().format(product.productCost) : "N/A"}</TableCell>
                 
   

@@ -23,10 +23,21 @@ const inventoryOptions = [
   { value: 'Services', label: 'Services' }
 ]
 
+// const categoryOptions = {
+//   Products: ['Medicine', 'Lens', 'Frame', 'Accessory'],
+//   Services: ['Investigation', 'Surgery', 'Procedure']
+// }
+
 const categoryOptions = {
   Products: ['Medicine', 'Lens', 'Frame', 'Accessory'],
-  Services: ['Investigation', 'Surgery', 'Procedure']
+  Services: ['Consultation/Registration', 'Procedures', 'Clinic Procedures', 'Lasers', 'Cataract Procedures', 'Ptosis Procedures', 'Investigation', 'Diagnosis', 'Surgery']
 }
+
+const serviceCategory = [
+  'Per Eye',
+  'Both Eyes',
+  
+];
 
 const CreateBilling = () => {
   const [inventoryType, setInventoryType] = useState('')

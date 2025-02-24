@@ -29,18 +29,6 @@ import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
-type VisualAcuity = {
-  id: number;
-  name: string;
-  status: string | null;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string | null;
-};
-
-
-
-
 type Billing = {
   billingId: number;
   status: number;
@@ -93,6 +81,27 @@ const [open, setOpen] = useState(false);
     paymentReference: "",
   });
 
+
+  const [inventoryType, setInventoryType] = useState("");
+  const [categoryType, setCategoryType] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [remainingStock, setRemainingStock] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [billingItems, setBillingItems] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editItemIndex, setEditItemIndex] = useState(null);
+
+
+  const inventoryOptions = [
+    { value: 'Products', label: 'Products' },
+    { value: 'Services', label: 'Services' }
+  ]
+  
+  const categoryOptions = {
+    Products: ['Medicine', 'Lens', 'Frame', 'Accessory'],
+    Services: ['Consultation/Registration', 'Procedures', 'Clinic Procedures', 'Lasers', 'Cataract Procedures', 'Ptosis Procedures', 'Investigation', 'Diagnosis', 'Surgery']
+  }
 
     // Open modal when Payments icon is clicked
     const handlePaymentsClick = (billing) => {
@@ -171,9 +180,6 @@ const handleSubmit = async (e) => {
   }
 };
 
-
-    
-
   useEffect(() => {
     const fetchBillings = async () => {
       try {
@@ -196,8 +202,6 @@ const handleSubmit = async (e) => {
 
     fetchBillings();
   }, []);
-
-
 
   const [doctors, setDoctors] = useState<{ doctorId: string; doctorName: string }[]>([])
   useEffect(() => {
@@ -239,11 +243,6 @@ const handleSubmit = async (e) => {
     setPage(0);
   };
 
-
- 
-
- 
-
   const displayedBillings = filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
 
   
@@ -273,21 +272,39 @@ const handleSubmit = async (e) => {
 
 
   const handleDelete = async (billing) => {
-    // if (selectedBilling) {
-      const token = Cookies.get('authToken');
-      try {
-        const response = await axios.delete(
-          `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billing.transactionId}`,
-         { headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-      });
-        Swal.fire('Deleted!', 'The billing has been deleted.', 'success');
-        setOpenEditModal(false);
-      } catch (error) {
-        Swal.fire('Error!', 'Failed to delete the billing.', 'error');
+    // setOpenViewModal(false);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this transaction?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const token = Cookies.get("authToken");
+          await axios.delete(
+            `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billing.transactionId}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+  
+          // Remove deleted billing from state
+          setBillings((prevBillings) => prevBillings.filter((p) => p.billingId !== billing.billingId));
+          setFilteredBillings((prevFilteredBillings) => prevFilteredBillings.filter((p) => p.billingId !== billing.serviceId));
+  
+          Swal.fire("Deleted!", "The transaction has been deleted.", "success");
+        } catch (error) {
+          console.error("Delete error:", error);
+          Swal.fire("Error!", "Failed to delete the transaction.", "error");
+        }
       }
-    // }
+    });
   };
   
 
@@ -315,6 +332,44 @@ const handleSubmit = async (e) => {
     }
   };
 
+
+    // Open modal and populate fields
+    const handleEdit = (index) => {
+      const itemToEdit = billingItems[index];
+      setInventoryType(itemToEdit.inventoryType);
+      setCategoryType(itemToEdit.categoryType);
+      setSelectedItem(itemToEdit.inventoryId);
+      setQuantity(itemToEdit.quantity);
+      setEditItemIndex(index);
+      setModalOpen(true);
+    };
+
+
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const updatedItem = {
+      inventoryType,
+      categoryType,
+      inventoryId: selectedItem,
+      quantity,
+    };
+
+    if (editItemIndex !== null) {
+      // Update existing item
+      const updatedItems = [...billingItems];
+      updatedItems[editItemIndex] = updatedItem;
+      setBillingItems(updatedItems);
+      setEditItemIndex(null);
+    } else {
+      // Add new item
+      setBillingItems([...billingItems, updatedItem]);
+    }
+
+    setModalOpen(false);
+    setLoading(false);
+  };
 
 
   if (loading) {
@@ -414,6 +469,12 @@ const handleSubmit = async (e) => {
     <Payments />
   )}
 </IconButton>
+
+{billing?.paymentStatus === "pending" && (
+  <IconButton onClick={() => handleEdit(billing)}  color={billing?.paymentStatus === "pending" ? "secondary" : "error"}>
+    <Edit />
+  </IconButton>
+)}
 
 {billing?.paymentStatus === "pending" && (
   <IconButton onClick={() => handleDelete(billing)}  color={billing?.paymentStatus === "pending" ? "error" : "warning"}>
@@ -656,6 +717,64 @@ const handleSubmit = async (e) => {
     </form>
   </Box>
 </Modal>
+
+
+
+ {/* Modal for Editing */}
+ <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography variant="h6">Edit Item</Typography>
+          <form onSubmit={handleEditSubmit}>
+            <FormControl fullWidth>
+              <InputLabel>Inventory Type</InputLabel>
+              <Select value={inventoryType} onChange={(e) => setInventoryType(e.target.value)}>
+                {inventoryOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <FormControl fullWidth>
+              <InputLabel>Category Type</InputLabel>
+              <Select value={categoryType} onChange={(e) => setCategoryType(e.target.value)}>
+                {inventoryType &&
+                  categoryOptions[inventoryType]?.map((cat) => (
+                    <MenuItem key={cat} value={cat}>
+                      {cat}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              fullWidth
+              type="number"
+              label="Quantity"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+            />
+
+            <Button variant="contained" color="primary" type="submit">
+              Save Changes
+            </Button>
+          </form>
+        </Box>
+      </Modal>
+
+
     </>
   );
 };

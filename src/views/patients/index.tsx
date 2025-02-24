@@ -29,7 +29,7 @@ const Patients = ({ tabContentList }: { tabContentList: { [key: string]: ReactEl
         <Grid item xs={12}>
           <TabList onChange={handleChange} variant='scrollable'>
             <Tab label='Patients' icon={<i className='ri-user-3-line' />} iconPosition='start' value='patients' />
-            {role !== '4' && (
+            {role == '3' && (
               <Tab label='Create Patient' icon={<i className='ri-user-3-line' />} iconPosition='start' value='create' />
             )}
           </TabList>

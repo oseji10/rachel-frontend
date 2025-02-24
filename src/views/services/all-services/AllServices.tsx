@@ -123,7 +123,7 @@ const router = useRouter();
 
   const serviceCategory = [
     'Per Eye',
-    'Both Eyes',
+    'Regular',
     
   ];
 

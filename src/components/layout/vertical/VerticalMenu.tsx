@@ -199,18 +199,18 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 )}
 
 
-{canView(['2', '5', '6']) && (
+{canView(['8']) && (
             <SubMenu label="Price List" icon={<i className="ri-price-tag-3-line" />}>
               <MenuItem href='/dashboard/products'>Products</MenuItem>
               <MenuItem href='/dashboard/services'>Services</MenuItem>
             </SubMenu>
           )}
          
-          {canView(['2', '5', '6']) && (
+          {canView(['8']) && (
             <SubMenu label="Inventory" icon={<i className="ri-stock-line" />}>
               <MenuItem href='/dashboard/inventories/medicines'>Medicines</MenuItem>
               {/* <MenuItem href='/dashboard/inventories/services'>Services</MenuItem> */}
-              <MenuItem href="/dashboard/inventories/lenses">Lenses</MenuItem>
+              <MenuItem href="/dashboard/inventories/lenses">Opticals</MenuItem>
               <MenuItem href="/dashboard/inventories/frames">Frames</MenuItem>
               <MenuItem href="/dashboard/inventories/accessories">Accessories</MenuItem>
             </SubMenu>

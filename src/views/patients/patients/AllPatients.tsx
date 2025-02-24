@@ -338,7 +338,7 @@ const PatientsTable = () => {
 )}
 
                   {/* {!['2' || '3', '5', '8'].includes(role) && ( */}
-                  {(role === '2' || role === '3' || role === '5' || role ==='8') && (
+                  {(role === '4') && (
                        
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />

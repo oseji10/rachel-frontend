@@ -346,7 +346,7 @@ const handleSubmit = async (event) => {
        <div>
       {/* Header with aligned button */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h3>Lenses</h3>
+        <h3>Opticals</h3>
         <Button variant="contained" color="primary" onClick={handleOpenModal}>
           Receive New Inventory
         </Button>
@@ -364,7 +364,7 @@ const handleSubmit = async (event) => {
           <TableHead>
             <TableRow>
               <TableCell>Date Received</TableCell>
-              <TableCell>Lens Name</TableCell>
+              <TableCell>Optical Name</TableCell>
               <TableCell>Description</TableCell>
               <TableCell>Quantity Received</TableCell>
               <TableCell>Quantity Sold</TableCell>
@@ -417,7 +417,7 @@ const handleSubmit = async (event) => {
 
 {/* Modal for New Medicine Inventory */}
 <Dialog open={openModal} onClose={handleCloseModal} fullWidth maxWidth="sm">
-        <DialogTitle>Add New Lens</DialogTitle>
+        <DialogTitle>Add New Optical</DialogTitle>
         <DialogContent>
           <form onSubmit={handleSubmit}>
           <FormControl fullWidth margin="dense">
