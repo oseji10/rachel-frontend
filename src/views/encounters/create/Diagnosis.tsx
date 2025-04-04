@@ -73,8 +73,11 @@ const Diagnosis = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/dashboard/encounters/sketch?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/investigation?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
+      // router.push(
+      //   `/dashboard/encounters/sketch?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+      // );
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -92,7 +95,7 @@ const Diagnosis = () => {
     <Card>
       <CardContent>
         <Typography variant="h4" gutterBottom>
-          Page 4: Diagnosis
+          Page 5: Diagnosis
         </Typography>
         <Typography variant="h6" gutterBottom>
           Patient Details: {patientName}

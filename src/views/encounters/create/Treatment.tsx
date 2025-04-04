@@ -214,8 +214,11 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
   return (
     <Card>
       <CardContent>
-        <Typography variant="h4" gutterBottom>
-          Treatment
+      <Typography variant="h4" gutterBottom>
+         Page 7: Treatment
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Patient Details: {patientName}
         </Typography>
         <form onSubmit={handleSubmit}>
           {renderTable("Eye Drops", eyeDrops, setEyeDrops, [

@@ -109,8 +109,11 @@ const Refraction = () => {
         showConfirmButton: false,
       });
       router.push(
-        `/dashboard/encounters/diagnosis?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/sketch?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
+      // router.push(
+      //   `/dashboard/encounters/diagnosis?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+      // );
     } catch (error) {
       Swal.fire({
         icon: 'error',

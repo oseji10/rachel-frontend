@@ -41,8 +41,11 @@ const DualSketchpad = () => {
         timer: 3000,
         showConfirmButton: false,
       });
+      // router.push(
+      //   `/dashboard/encounters/investigation?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+      // );
       router.push(
-        `/dashboard/encounters/investigation?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
+        `/dashboard/encounters/diagnosis?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`
       );
     } catch (error) {
       console.error("Error saving sketches:", error);
@@ -65,6 +68,12 @@ const DualSketchpad = () => {
       minHeight="100vh"
       padding={2}
     >
+      <Typography variant="h4" gutterBottom>
+         Page 4: Sketch Pad
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Patient Details: {patientName}
+        </Typography>
       <Typography variant="h4" marginBottom={3}>
         Dual Sketchpad
       </Typography>

@@ -23,7 +23,7 @@ const ContinueConsulting = () => {
   const router = useRouter();
   const patientId = searchParams.get('patientId'); // Retrieve patientId from the URL
   const patientName = searchParams.get('patientName');
-  const encounterId = searchParams.get('encounterId');
+  // const encounterId = searchParams.get('encounterId');
   
   const [formData, setFormData] = useState({
     chiefComplaintRight: '',
@@ -67,6 +67,7 @@ const ContinueConsulting = () => {
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/chief_complaint`);
         setChiefComplaintOptions(response.data);
+        const  encounterId  = response.data.encounterId
       } catch (error) {
         console.error('Error fetching chief complaints:', error);
         Swal.fire({
@@ -90,12 +91,13 @@ const ContinueConsulting = () => {
 
     const payload = {
       patientId,
-      encounterId,
+      // encounterId,
       ...formData,
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/continue_consulting`, payload);
+     const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/continue_consulting`, payload);
+      const  encounterId  = response.data.encounterId
       Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -103,7 +105,8 @@ const ContinueConsulting = () => {
         timer: 3000,
         showConfirmButton: false,
       });
-      router.push(`/dashboard/encounters/refraction?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
+      router.push(`/dashboard/encounters/consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}&encounterId=${encounterId}`)
+      // router.push(`/dashboard/encounters/refraction?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -121,7 +124,7 @@ const ContinueConsulting = () => {
     <Card>
       <CardContent>
         <Typography variant="h4" gutterBottom>
-         Page 2: Consulting
+         Page 1: Consulting
         </Typography>
         <Typography variant="h6" gutterBottom>
           Patient Details: {patientName}

@@ -102,7 +102,7 @@ const Investigation = () => {
     <Card>
       <CardContent>
         <Typography variant="h4" gutterBottom>
-          Page 7: Investigation
+          Page 6: Investigation
         </Typography>
         <Typography variant="h6" gutterBottom>
           Patient Details: {patientName}

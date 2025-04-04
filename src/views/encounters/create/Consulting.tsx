@@ -22,6 +22,7 @@ const Consulting = () => {
   const router = useRouter()
   const patientId = searchParams.get('patientId') // Retrieve patientId from the URL
   const patientName = searchParams.get('patientName')
+  const encounterId = searchParams.get('encounterId');
 
   const [visualAcuityFar, setVisualAcuityFar] = useState<any[]>([])
   const [visualAcuityNear, setVisualAcuityNear] = useState<any[]>([])
@@ -66,13 +67,14 @@ const Consulting = () => {
     setLoading(true) // Start spinner
 
     const payload = {
-      patientId, // Include patientId in the payload
+      patientId, 
+      encounterId,
       ...formData,
     }
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload)
-      const  encounterId  = response.data.encounterId
+      // const  encounterId  = response.data.encounterId
       // console.log(response.data.encounterId)
       Swal.fire({
         icon: 'success',
@@ -81,7 +83,8 @@ const Consulting = () => {
         timer: 3000,
         showConfirmButton: false,
       })
-      router.push(`/dashboard/encounters/continue-consulting?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
+      router.push(`/dashboard/encounters/refraction?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
+      // router.push(`/dashboard/encounters/continue-consulting?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`) // Redirect to another page upon success
     } catch (error) {
       Swal.fire({
         icon: 'error',
@@ -99,7 +102,7 @@ const Consulting = () => {
     <Card>
       <CardContent>
         <Typography variant="h4" gutterBottom>
-          Page 1: Consulting
+          Page 2: Consulting
         </Typography>
         <Typography variant="h6" gutterBottom>
           Patient Details: {patientName} 

@@ -169,6 +169,7 @@ const CreatePatient = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+              required
                 fullWidth
                 label="First Name"
                 value={formData.firstName}
@@ -177,6 +178,7 @@ const CreatePatient = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+              required
                 fullWidth
                 label="Last Name"
                 value={formData.lastName}
@@ -232,6 +234,7 @@ const CreatePatient = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+              required
                 fullWidth
                 type="date"
                 label="Date of Birth"
@@ -252,6 +255,7 @@ const CreatePatient = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+              required
                 fullWidth
                 label="Email"
                 value={formData.email}
@@ -260,6 +264,7 @@ const CreatePatient = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
+              required
                 fullWidth
                 label="Phone Number"
                 value={formData.phoneNumber}

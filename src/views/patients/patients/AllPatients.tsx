@@ -223,7 +223,7 @@ const PatientsTable = () => {
   const handleEncounter = (patient) => {
     const { patientId, firstName, lastName } = patient; 
     const patientName = firstName + ' ' + lastName; // Extract patientName correctly
-    router.push(`/dashboard/encounters/consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
+    router.push(`/dashboard/encounters/continue-consulting?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}`);
   };
   
 
@@ -338,7 +338,7 @@ const PatientsTable = () => {
 )}
 
                   {/* {!['2' || '3', '5', '8'].includes(role) && ( */}
-                  {(role === '4') && (
+                  {(role === '4' || role === '8') && (
                        
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />
