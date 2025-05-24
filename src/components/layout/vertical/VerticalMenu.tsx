@@ -33,6 +33,7 @@ const RenderExpandIcon = ({ open, transitionDuration }: RenderExpandIconProps) =
     <i className='ri-arrow-right-s-line' />
   </StyledVerticalNavExpandIcon>
 )
+
 const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectScrollbar: boolean) => void })  => {
   // const VerticalMenu = dynamic(() => import('./VerticalMenu'), { ssr: false });
 
@@ -100,10 +101,10 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
       >
         <MenuSection label="Dashboard">
           {/* Menu items based on roles */}
-          {canView(['2', '4', '6', '8', '3']) && (
+          {canView(['2', '4', '5', '6', '8', '3']) && (
   <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
     <MenuItem href="/dashboard/patients">All Patients</MenuItem>
-    {( role === '2' || role === '4' || role === '6' || role ==='8') && (
+    {( role === '2' || role === '4' || role === '5' || role === '6' || role ==='8') && (
       <MenuItem href="/dashboard/encounters" icon={<i className="ri-shield-keyhole-line" />}>
         Encounters
       </MenuItem>
@@ -111,6 +112,13 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
   </SubMenu>
 )}
 
+{canView(['2', '5']) && (
+
+      <MenuItem href="/dashboard/receptionist-encounters" icon={<i className="ri-capsule-line" />}>
+        Prescriptions
+      </MenuItem>
+
+)}
 
           {canView(['3', '4', '8']) && (
             <MenuItem href="/dashboard/appointments" icon={<i className="ri-calendar-line" />}>
@@ -131,7 +139,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           )}
 
 
-{canView(['3', '6', '8']) && (
+{canView(['2', '3', '5', '6', '8']) && (
             <MenuItem href="/dashboard/billings" icon={<i className="ri-shopping-cart-line" />}>
               Billings
             </MenuItem>

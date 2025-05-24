@@ -466,7 +466,7 @@ const BillingsTable = () => {
                   </span>
                   </TableCell>
                   <TableCell>
-                    {(role === "3" || role === "8") && (
+                    {(role === "2" || role === "3" || role === "8") && (
                       <>
                         {/* View Button (Always Visible) */}
                         <IconButton onClick={() => handleView(billing)} color="primary">

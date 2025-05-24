@@ -353,10 +353,11 @@ const PatientsTable = () => {
                   <IconButton color="info"  onClick={() => handleBilling(patient)}>
                     <ShoppingCart />
                   </IconButton>
-
+                  {(role === '8') && (
                   <IconButton onClick={() => handleDelete(patient)} color="error">
                     <Delete />
                   </IconButton>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
