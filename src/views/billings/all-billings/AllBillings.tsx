@@ -562,6 +562,7 @@ const BillingsTable = () => {
                 <TableHead>
                   <TableRow>
                     <TableCell>Item Name</TableCell>
+                    <TableCell>Category</TableCell>
                     <TableCell>Quantity</TableCell>
                     <TableCell>Price</TableCell>
                     <TableCell>Total</TableCell>
@@ -572,6 +573,7 @@ const BillingsTable = () => {
                     <React.Fragment key={index}>
                       <TableRow>
                         {/* Display item name, for example categoryType or billingType */}
+                        <TableCell>{transaction?.product?.productName || transaction?.service?.serviceName}</TableCell>
                         <TableCell>{transaction.categoryType || transaction.billingType}</TableCell>
                         <TableCell>{transaction.quantity}</TableCell>
                         <TableCell>₦{transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : "N/A"}</TableCell>
