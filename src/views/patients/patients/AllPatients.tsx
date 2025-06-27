@@ -35,7 +35,7 @@ type Patient = {
   lastName: string;
   otherNames?: string;
   gender: string;
-  bloodGroup: string;
+  cardNumber: string;
   phoneNumber?: string;
   email?: string;
   hospitalFileNumber: string;
@@ -76,7 +76,7 @@ const PatientsTable = () => {
   const [totalPatients, setTotalPatients] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(0); // Initialize with 0 as the first page
   const [totalPages, setTotalPages] = useState(0); // Define totalPages state
-  const bloodGroupOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  const cardNumberOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const genderOptions = ['Male', 'Female', ];
 
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
@@ -132,12 +132,11 @@ const PatientsTable = () => {
   }, [page, rowsPerPage]);  
 
   
-  
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value.toLowerCase());
+  };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearchQuery(query);
-
+  const handleSearch = () => {
     // Clear the previous debounce timer
     if (debounceTimer.current) {
       clearTimeout(debounceTimer.current);
@@ -145,37 +144,36 @@ const PatientsTable = () => {
 
     // Start a new debounce timer
     debounceTimer.current = setTimeout(() => {
-      // Trigger the loader and fetch patients after debounce delay
-      fetchPatients(0, query);
-    }, 500); // Adjust debounce delay as needed (500ms in this case)
-  
-  
+      fetchPatients(0, searchQuery);
+    }, 500);
 
-  // Client-side filtering (optional)
-  const filtered = patients.filter((patient) => {
-    const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
-    const phone = (patient.phoneNumber || '').toLowerCase();
-    const email = (patient.email || '').toLowerCase();
-    const patientId = String(patient.patientId || '').toLowerCase();
-    const hospitalFileNumber = String(patient.hospitalFileNumber || '').toLowerCase();
-    const firstName = (patient.firstName || '').toLowerCase();
-    const otherNames = (patient.otherNames || '').toLowerCase();
-    const lastName = (patient.lastName || '').toLowerCase();
-    return (
-      fullName.includes(query) ||
-      phone.includes(query) ||
-      email.includes(query) ||
-      patientId.includes(query) ||
-      firstName.includes(query) ||
-      otherNames.includes(query) ||
-      lastName.includes(query) ||
-      hospitalFileNumber.includes(query)
-    );
-  });
+    // Client-side filtering
+    const filtered = patients.filter((patient) => {
+      const fullName = `${patient.firstName || ''} ${patient.lastName || ''} ${patient.otherNames || ''}`.toLowerCase();
+      const phone = (patient.phoneNumber || '').toLowerCase();
+      const email = (patient.email || '').toLowerCase();
+      const patientId = String(patient.patientId || '').toLowerCase();
+      const hospitalFileNumber = String(patient.hospitalFileNumber || '').toLowerCase();
+      const firstName = (patient.firstName || '').toLowerCase();
+      const otherNames = (patient.otherNames || '').toLowerCase();
+      const lastName = (patient.lastName || '').toLowerCase();
+      const cardNumber = (patient.cardNumber || '').toLowerCase();
+      return (
+        fullName.includes(searchQuery) ||
+        phone.includes(searchQuery) ||
+        email.includes(searchQuery) ||
+        patientId.includes(searchQuery) ||
+        firstName.includes(searchQuery) ||
+        otherNames.includes(searchQuery) ||
+        lastName.includes(searchQuery) ||
+        cardNumber.includes(searchQuery) ||
+        hospitalFileNumber.includes(searchQuery)
+      );
+    });
 
-  setFilteredPatients(filtered);
-  setPage(0); // Reset to the first page after search
-};
+    setFilteredPatients(filtered);
+    setPage(0);
+  };
 
 
   const handleView = (patient: Patient) => {
@@ -288,15 +286,20 @@ const PatientsTable = () => {
     
   return (
     <>
-      <TextField
-        placeholder="Search by name, date of birth, Hospital ID, phone number, or email"
-        value={searchQuery}
-        onChange={handleSearch}
-        variant="outlined"
-        fullWidth
-        margin="normal"
-        autoFocus="true"
-      />
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: 2 }}>
+        <TextField
+          placeholder="Search by name, date of birth, Hospital ID, phone number, or email"
+          value={searchQuery}
+          onChange={handleSearchInput}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          autoFocus
+        />
+        <Button variant="contained" color="primary" onClick={handleSearch}>
+          Search
+        </Button>
+      </Box>
 
       
       <TableContainer component={Paper}>
@@ -307,7 +310,7 @@ const PatientsTable = () => {
               <TableCell>Patient Name</TableCell>
               <TableCell>Phone</TableCell>
               <TableCell>Gender</TableCell>
-              <TableCell>Blood Group</TableCell>
+              <TableCell>Card Number</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -320,7 +323,7 @@ const PatientsTable = () => {
                 </TableCell>
                 <TableCell>{patient.phoneNumber}</TableCell>
                 <TableCell>{patient.gender}</TableCell>
-                <TableCell>{patient.bloodGroup}</TableCell>
+                <TableCell>{patient.cardNumber}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleView(patient)} color="primary">
                     <Visibility />
@@ -404,7 +407,7 @@ const PatientsTable = () => {
                 Gender: {selectedPatient?.gender}
               </Typography>
               <Typography variant="body1">
-                Blood Group: {selectedPatient?.bloodGroup}
+                Blood Group: {selectedPatient?.cardNumber}
               </Typography>
               <Typography variant="body1">
                 HMO/Insurance: {selectedPatient?.hmo?.hmoName}
@@ -495,10 +498,10 @@ const PatientsTable = () => {
        <FormControl fullWidth margin="normal">
                 <InputLabel>Blood Group</InputLabel>
                 <Select
-                  value={selectedPatient.bloodGroup}
-                  onChange={(e) => handleInputChange('bloodGroup', e.target.value)}
+                  value={selectedPatient.cardNumber}
+                  onChange={(e) => handleInputChange('cardNumber', e.target.value)}
                 >
-                  {bloodGroupOptions.map((group) => (
+                  {cardNumberOptions.map((group) => (
                     <MenuItem key={group} value={group}>
                       {group}
                     </MenuItem>

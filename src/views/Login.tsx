@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 // React Imports
 import { useState } from 'react'
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import TextField from '@mui/material/TextField'
+import TextField from '@mui/material/TextField';
 import IconButton from '@mui/material/IconButton'
 import InputAdornment from '@mui/material/InputAdornment'
 import Checkbox from '@mui/material/Checkbox'
@@ -30,7 +30,6 @@ import themeConfig from '@/configs/themeConfig'
 import axios from 'axios'
 import Cookies from 'js-cookie';
 import api, { initializeCsrf } from '../app/utils/api';
-
 
 type FormData = {
   email: string
@@ -57,38 +56,6 @@ const Login = () => {
     setFormData({ ...formData, [field]: value })
   }
 
-  // const login = async (e: FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault()
-  //   setIsLoading(true)
-  //   setErrorMessage('')
-  //   setSuccessMessage('')
-
-  //   const payload = {
-  //     email: formData.email,
-  //     password: formData.password
-  //   }
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.NEXT_PUBLIC_APP_URL}/login`,
-  //       payload,
-  //       { headers: { 'Content-Type': 'application/json' } }
-  //     )
-  //     console.log(response.data)
-  //     setFormData(initialFormData)
-  //     localStorage.setItem('authToken', response.data.token)
-  //     localStorage.setItem('role', response.data.user.role)
-  //     localStorage.setItem('name', response.data.user.firstName + ' ' + response.data.user.lastName)
-  //     localStorage.setItem('email', response.data.user.email)
-  //     setSuccessMessage('Login successful! Redirecting...')
-  //     setTimeout(() => router.push('/dashboard'), 1500)
-  //   } catch (error: any) {
-  //     setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.')
-  //   } finally {
-  //     setIsLoading(false)
-  //   }
-  // }
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -101,14 +68,11 @@ const Login = () => {
     };
     await initializeCsrf();
     try {
-      // Use axios for the POST request
       const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/login`, payload);
   
-      // Process response data
       const data = response.data;
   
       if (data) {
-        // Set cookies
         Cookies.set('authToken', data.token, { secure: true, sameSite: 'strict' });
         Cookies.set('role', data.user.role, { secure: true, sameSite: 'strict' });
         Cookies.set('name', response.data.user.firstName + ' ' + response.data.user.lastName)
@@ -116,7 +80,6 @@ const Login = () => {
         Cookies.set('lastName', response.data.user.lastName);
         Cookies.set('phoneNumber', response.data.user.phoneNumber);
         
-        // Set success message and redirect
         setSuccessMessage('Login successful! Redirecting...');
         setTimeout(() => router.push('/dashboard'), 1500);
       } else {
@@ -128,71 +91,94 @@ const Login = () => {
       setIsLoading(false);
     }
   };
-  
 
   return (
-    <div className='flex flex-col justify-center items-center min-bs-[100dvh] relative p-6'>
-      <Card className='flex flex-col sm:is-[450px]'>
-        <CardContent className='p-6 sm:!p-12'>
-          <Link href='/about' className='flex justify-center items-center mbe-6'>
-            <Logo />
-          </Link>
-          <div className='flex flex-col gap-5'>
-            <div>
-              <Typography variant='h4'>{`Welcome to ${themeConfig.templateName}!👋🏻`}</Typography>
-              <Typography className='mbs-1'>Please sign-in to your account with your email and password</Typography>
-            </div>
-            {errorMessage && <Typography color='error'>{errorMessage}</Typography>}
-            {successMessage && <Typography color='success'>{successMessage}</Typography>}
-            <form noValidate autoComplete='off' onSubmit={handleLogin} className='flex flex-col gap-5'>
-              <TextField 
-                autoFocus 
-                fullWidth 
-                label='Email'
-                value={formData.email}
-                onChange={e => handleFormChange('email', e.target.value)}
-              />
-              <TextField
-                fullWidth
-                label='Password'
-                id='outlined-adornment-password'
-                type={isPasswordShown ? 'text' : 'password'}
-                value={formData.password}
-                onChange={e => handleFormChange('password', e.target.value)}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position='end'>
-                      <IconButton
-                        size='small'
-                        edge='end'
-                        onClick={handleClickShowPassword}
-                        onMouseDown={e => e.preventDefault()}
-                      >
-                        <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
-                      </IconButton>
-                    </InputAdornment>
-                  )
-                }}
-              />
-              <div className='flex justify-between items-center gap-x-3 gap-y-1 flex-wrap'>
-                <FormControlLabel control={<Checkbox />} label='Remember me' />
-                <Typography className='text-end' color='primary' component={Link} href='/forgot-password'>
-                  Forgot password?
+    <div className='min-h-screen flex bg-cover bg-center bg-no-repeat' style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80)' }}>
+      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-black bg-opacity-50'>
+        <Card className='w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden'>
+          <CardContent className='p-8 sm:p-12'>
+            <Link href='/about' className='flex justify-center items-center mb-8'>
+              <Logo />
+            </Link>
+            <div className='flex flex-col gap-6'>
+              <div>
+                <Typography variant='h3' className='text-3xl font-bold text-gray-800'>
+                  {/* {`Welcome to ${themeConfig.templateName}! 👋`} */}
+                </Typography>
+                <Typography className='mt-2 text-gray-600'>
+                  Sign in with your email and password
                 </Typography>
               </div>
-              <Button 
-                fullWidth 
-                variant='contained' 
-                type='submit' 
-                disabled={isLoading}
-                startIcon={isLoading && <CircularProgress size={20} />}
-              >
-                {isLoading ? 'Logging In...' : 'Log In'}
-              </Button>
-            </form>
-          </div>
-        </CardContent>
-      </Card>
+              {errorMessage && <Typography className='text-red-500 bg-red-100 p-3 rounded'>{errorMessage}</Typography>}
+              {successMessage && <Typography className='text-green-500 bg-green-100 p-3 rounded'>{successMessage}</Typography>}
+              <form noValidate autoComplete='off' onSubmit={handleLogin} className='flex flex-col gap-6'>
+                <TextField
+                  autoFocus
+                  fullWidth
+                  label='Email'
+                  value={formData.email}
+                  onChange={e => handleFormChange('email', e.target.value)}
+                  variant='outlined'
+                  className='rounded-lg'
+                  InputProps={{
+                    className: 'bg-white'
+                  }}
+                />
+                <TextField
+                  fullWidth
+                  label='Password'
+                  id='outlined-adornment-password'
+                  type={isPasswordShown ? 'text' : 'password'}
+                  value={formData.password}
+                  onChange={e => handleFormChange('password', e.target.value)}
+                  variant='outlined'
+                  className='rounded-lg'
+                  InputProps={{
+                    className: 'bg-white',
+                    endAdornment: (
+                      <InputAdornment position='end'>
+                        <IconButton
+                          size='small'
+                          edge='end'
+                          onClick={handleClickShowPassword}
+                          onMouseDown={e => e.preventDefault()}
+                        >
+                          <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
+                        </IconButton>
+                      </InputAdornment>
+                    )
+                  }}
+                />
+                <div className='flex justify-between items-center flex-wrap gap-4'>
+                  <FormControlLabel
+                    control={<Checkbox color='primary' />}
+                    label='Remember me'
+                    className='text-gray-700'
+                  />
+                  <Typography
+                    component={Link}
+                    href='/forgot-password'
+                    className='text-blue-600 hover:text-blue-800 transition-colors'
+                  >
+                    Forgot password?
+                  </Typography>
+                </div>
+                <Button
+                  fullWidth
+                  variant='contained'
+                  type='submit'
+                  disabled={isLoading}
+                  className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg shadow-md transition-all duration-300'
+                  startIcon={isLoading && <CircularProgress size={20} />}
+                >
+                  {isLoading ? 'Logging In...' : 'Log In'}
+                </Button>
+              </form>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className='hidden md:block w-1/2 bg-gradient-to-b from-transparent to-black/50'></div>
     </div>
   )
 }
