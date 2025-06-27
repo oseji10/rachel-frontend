@@ -93,11 +93,11 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen flex bg-cover bg-center bg-no-repeat' style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80)' }}>
-      <div className='w-full md:w-1/2 flex items-center justify-center p-6 bg-black bg-opacity-50'>
+    <div className='min-h-screen flex bg-cover bg-center bg-no-repeat' style={{ backgroundImage: 'url(/images/eyeglasses.jpeg)' }}>
+      <div className='w-full md:w-1/2 flex items-center justify-end p-6 bg-black bg-opacity-50'>
         <Card className='w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden'>
           <CardContent className='p-8 sm:p-12'>
-            <Link href='/about' className='flex justify-center items-center mb-8'>
+            <Link href='/' className='flex justify-center items-center mb-8'>
               <Logo />
             </Link>
             <div className='flex flex-col gap-6'>
