@@ -23,7 +23,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Cancel, ChangeCircleOutlined, ChangeHistoryOutlined, CheckCircle, Delete, Edit, Payment, Payments, Print, StartOutlined, Visibility } from '@mui/icons-material';
+import { Cancel, ChangeCircleOutlined, ChangeHistoryOutlined, CheckCircle, Delete, Edit, Outbound, Payment, Payments, Print, StartOutlined, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
@@ -35,7 +35,25 @@ type Billing = {
   createdAt: string;
   updatedAt: string;
   deletedAt?: string | null;
-
+  transactionId: string;
+  patient: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phoneNumber: string;
+    doctor?: { doctorName: string };
+  };
+  total_cost: number;
+  paymentMethod: string;
+  paymentStatus: string;
+  relatedTransactions: Array<{
+    product?: { productName: string };
+    service?: { serviceName: string };
+    categoryType?: string;
+    billingType?: string;
+    quantity: number;
+    cost: number;
+  }>;
 };
 
 const modalStyle = {
@@ -53,12 +71,10 @@ const modalStyle = {
   overflowY: 'auto',
 };
 
-
 const formatDate = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
-
 
 const BillingsTable = () => {
   const [billings, setBillings] = useState<Billing[]>([]);
@@ -70,49 +86,37 @@ const BillingsTable = () => {
   const [selectedBilling, setSelectedBilling] = useState<Billing | null>(null);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
-  // const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const router = useRouter();
-  const role = Cookies.get('role')
-
+  const role = Cookies.get('role');
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     paymentMethod: "",
     paymentReference: "",
   });
-
-
   const [inventoryType, setInventoryType] = useState("");
   const [categoryType, setCategoryType] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
   const [remainingStock, setRemainingStock] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [billingItems, setBillingItems] = useState([]);
-  // const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editItemIndex, setEditItemIndex] = useState(null);
-
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const inventoryOptions = [
     { value: 'Products', label: 'Products' },
     { value: 'Services', label: 'Services' }
-  ]
+  ];
 
   const categoryOptions = {
     Products: ['Medicine', 'Lens', 'Frame', 'Accessory'],
     Services: ['Consultation/Registration', 'Procedures', 'Clinic Procedures', 'Lasers', 'Cataract Procedures', 'Ptosis Procedures', 'Investigation', 'Diagnosis', 'Surgery']
-  }
-
-  // Open modal when Payments icon is clicked
-  const handlePaymentsClick = (billing) => {
-    setSelectedBilling(billing);  // Set the correct billing information
-    setOpen(true);  // Open the modal
   };
 
-  const handlePrintClick = (billing) => {
-    setSelectedBilling(billing);  // Set the correct billing information
-    // handlePrintReceipt()
+  const handlePaymentsClick = (billing) => {
+    setSelectedBilling(billing);
+    setOpen(true);
   };
 
   const handleChange = (e) => {
@@ -123,13 +127,9 @@ const BillingsTable = () => {
     }));
   };
 
-  // Handle form submission
-  const [isUpdating, setIsUpdating] = useState(false); // State for spinner
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsUpdating(true); // Show spinner on button
-
+    setIsUpdating(true);
     try {
       const token = Cookies.get('authToken');
       const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/confirm-payment`, {
@@ -139,24 +139,20 @@ const BillingsTable = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          transactionId: selectedBilling.transactionId,
+          transactionId: selectedBilling?.transactionId,
           paymentMethod: formData.paymentMethod,
           paymentReference: formData.paymentReference,
         }),
       });
 
       if (response.ok) {
-        setOpen(false); // Close the modal
+        setOpen(false);
         Swal.fire({
           icon: 'success',
           title: 'Payment confirmed successfully!',
           showConfirmButton: false,
           timer: 1500
-        }).then(() => {
-          // setOpen(false); // Close the modal after the alert
         });
-
-        // Refresh the table by fetching updated billings
         const updatedBillings = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -177,7 +173,7 @@ const BillingsTable = () => {
         text: 'An error occurred while processing the payment.',
       });
     } finally {
-      setIsUpdating(false); // Hide spinner
+      setIsUpdating(false);
     }
   };
 
@@ -189,9 +185,7 @@ const BillingsTable = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
-
-        );
+        });
         setBillings(response.data);
         setFilteredBillings(response.data);
         setLoading(false);
@@ -200,24 +194,22 @@ const BillingsTable = () => {
         setLoading(false);
       }
     };
-
     fetchBillings();
   }, []);
 
-  const [doctors, setDoctors] = useState<{ doctorId: string; doctorName: string }[]>([])
+  const [doctors, setDoctors] = useState<{ doctorId: string; doctorName: string }[]>([]);
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
-        const data = await response.json()
-        setDoctors(data)
-        // console.log(allDoctors)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`);
+        const data = await response.json();
+        setDoctors(data);
       } catch (error) {
-        console.error('Error fetching doctors:', error)
+        console.error('Error fetching doctors:', error);
       }
-    }
-    fetchDoctors()
-  }, [])
+    };
+    fetchDoctors();
+  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
@@ -244,24 +236,19 @@ const BillingsTable = () => {
     setPage(0);
   };
 
-  const displayedBillings = filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-
-
-
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setSelectedBilling((prev) =>
       prev ? { ...prev, [name]: value } : null
     );
   };
 
-
   const handleUpdate = async () => {
     if (selectedBilling) {
       try {
         const response = await axios.put(
           `${process.env.NEXT_PUBLIC_APP_URL}/billings/${selectedBilling.billingId}`,
-          selectedBilling // Send updated billing data
+          selectedBilling
         );
         Swal.fire('Updated!', 'The billing has been updated.', 'success');
         setOpenEditModal(false);
@@ -271,9 +258,7 @@ const BillingsTable = () => {
     }
   };
 
-
   const handleDelete = async (billing) => {
-    // setOpenViewModal(false);
     Swal.fire({
       title: "Are you sure?",
       text: "Do you want to delete this transaction?",
@@ -294,11 +279,8 @@ const BillingsTable = () => {
               },
             }
           );
-
-          // Remove deleted billing from state
           setBillings((prevBillings) => prevBillings.filter((p) => p.billingId !== billing.billingId));
-          setFilteredBillings((prevFilteredBillings) => prevFilteredBillings.filter((p) => p.billingId !== billing.serviceId));
-
+          setFilteredBillings((prevFilteredBillings) => prevFilteredBillings.filter((p) => p.billingId !== billing.billingId));
           Swal.fire("Deleted!", "The transaction has been deleted.", "success");
         } catch (error) {
           console.error("Delete error:", error);
@@ -308,82 +290,198 @@ const BillingsTable = () => {
     });
   };
 
-
-  const handlePrintReceipt = async (billing) => {
-    try {
-      const url = `${process.env.NEXT_PUBLIC_APP_URL}/print-receipt/${billing.transactionId}`;
-
-      // Open the PDF in a new tab
-      window.open(url, "_blank");
-    } catch (error) {
-      console.error("Error opening receipt:", error);
+  const handlePrintReceipt = (billing: Billing) => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      Swal.fire('Error!', 'Failed to open print window.', 'error');
+      return;
     }
+
+    const receiptContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Receipt - ${billing.transactionId}</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+          body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 10mm;
+            width: 90mm;
+            background-color: #fff;
+            color: #333;
+            font-size: 12px;
+            line-height: 1.4;
+          }
+          .receipt-container {
+            border: 2px solid #4a90e2;
+            border-radius: 8px;
+            padding: 10px;
+            background: linear-gradient(to bottom, #f5faff, #ffffff);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            text-align: center;
+            border-bottom: 2px dashed #4a90e2;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+          }
+          .header h1 {
+            font-size: 18px;
+            color: #2c5282;
+            margin: 0;
+          }
+          .header p {
+            margin: 2px 0;
+            color: #4a5568;
+            font-size: 10px;
+          }
+          .details, .items {
+            margin: 8px 0;
+          }
+          .details p, .items p {
+            margin: 4px 0;
+          }
+          .items table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+          }
+          .items th, .items td {
+            padding: 4px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+          }
+          .items th {
+            background-color: #e6f0fa;
+            font-weight: bold;
+            color: #2c5282;
+          }
+          .total {
+            border-top: 2px dashed #4a90e2;
+            padding-top: 8px;
+            text-align: right;
+            font-weight: bold;
+            color: #2c5282;
+          }
+          .footer {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 10px;
+            color: #718096;
+          }
+          @media print {
+            body {
+              margin: 0;
+              padding: 0;
+            }
+            .receipt-container {
+              box-shadow: none;
+            }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-container">
+          <div class="header">
+          <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Rachel Eye Clinic Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
+            <h1>Rachel Eye Clinic</h1>
+            <h3>Payment Receipt</h3>
+            <p> No. 23 Onitsha Crescent, off Gimbiya street,<br/> Garki Area 11</p>
+            <p>Phone: +234 814 801 9410</p>
+            <p>Email: info@racheleyeemr.com.ng</p>
+          </div>
+          <div class="details">
+            <p><strong>Transaction ID:</strong> ${billing.transactionId}</p>
+            <p><strong>Date:</strong> ${billing.created_at ? new Date(billing.created_at).toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }) : 'N/A'}</p>
+            <p><strong>Patient:</strong> ${billing.patient.firstName} ${billing.patient.lastName}</p>
+            <p><strong>Doctor:</strong> ${billing.patient.doctor?.doctorName || 'N/A'}</p>
+            <p><strong>Payment Method:</strong> ${billing.paymentMethod || 'N/A'}</p>
+            <p><strong>Payment Status:</strong> ${billing.paymentStatus.toUpperCase()}</p>
+          </div>
+          <div class="items">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qty</th>
+                  <th>Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${billing.relatedTransactions.map((transaction) => `
+                  <tr>
+                    <td>${transaction.product?.productName || transaction.service?.serviceName || 'N/A'}</td>
+                    <td>${transaction.quantity}</td>
+                    <td>₦${transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : '0'}</td>
+                    <td>₦${transaction.cost && transaction.quantity ? new Intl.NumberFormat().format(transaction.cost * transaction.quantity) : '0'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+          <div class="total">
+            <p>Total: ₦${billing.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : '0'}</p>
+          </div>
+          <div class="footer">
+            <p>Thank you for choosing Eye Clinic!</p>
+            <p>Visit us at www.eyeclinic.ng</p>
+          </div>
+        </div>
+        <script>
+          window.onload = () => {
+            window.print();
+            setTimeout(() => window.close(), 1000);
+          };
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(receiptContent);
+    printWindow.document.close();
   };
 
-
-  // const handlePrintReceipt = async (billing) => {
-  //   try {
-  //     const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/print-receipt/${billing.transactionId}`, {
-  //       method: "GET",
-  //     });
-
-  //     if (!response.ok) {
-  //       throw new Error("Failed to fetch receipt");
-  //     }
-
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = `receipt-${billing.transactionId}.pdf`;
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //     document.body.removeChild(a);
-  //   } catch (error) {
-  //     console.error("Error downloading receipt:", error);
-  //   }
-  // };
-
-
-  // Open modal and populate fields
   const handleEdit = (index) => {
-    // const itemToEdit = billingItems[index];
-    // setInventoryType(itemToEdit.inventoryType);
-    // setCategoryType(itemToEdit.categoryType);
-    // setSelectedItem(itemToEdit.inventoryId);
-    // setQuantity(itemToEdit.quantity);
-    // setEditItemIndex(index);
     setModalOpen(true);
   };
 
+  const handleDispense = (index) => {
+    setModalOpen(true);
+  };
 
   const handleEditSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-
     const updatedItem = {
       inventoryType,
       categoryType,
       inventoryId: selectedItem,
       quantity,
     };
-
     if (editItemIndex !== null) {
-      // Update existing item
       const updatedItems = [...billingItems];
       updatedItems[editItemIndex] = updatedItem;
       setBillingItems(updatedItems);
       setEditItemIndex(null);
     } else {
-      // Add new item
       setBillingItems([...billingItems, updatedItem]);
     }
-
     setModalOpen(false);
     setLoading(false);
   };
-
 
   if (loading) {
     return (
@@ -422,20 +520,17 @@ const BillingsTable = () => {
               <TableCell>Amount</TableCell>
               <TableCell>Payment Method</TableCell>
               <TableCell>Payment Status</TableCell>
-              {(role === "3" || role === "8") && (
-                      <>
-              <TableCell>Action</TableCell>
-              </>
+              {(role === "3" || role === "8" || role === "6") && (
+                <TableCell>Action</TableCell>
               )}
             </TableRow>
           </TableHead>
           <TableBody>
-            {displayedBillings.map((billing) => (
-              <TableRow key={billing.id}>
-
+            {filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((billing) => (
+              <TableRow key={billing.billingId}>
                 <TableCell>
-                  {billing?.created_at &&
-                    new Date(`${billing?.created_at}`).toLocaleString('en-US', {
+                  {billing.created_at &&
+                    new Date(billing.created_at).toLocaleString('en-US', {
                       weekday: 'long',
                       year: 'numeric',
                       month: 'long',
@@ -445,65 +540,57 @@ const BillingsTable = () => {
                       hour12: true
                     })}
                 </TableCell>
-                <TableCell>{billing?.transactionId}</TableCell>
-
-                <TableCell>
-                  {billing?.patient?.firstName} {billing?.patient?.lastName}
-                </TableCell>
-                <TableCell>₦{billing?.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : "N/A"}</TableCell>
-                <TableCell>{billing?.paymentMethod}</TableCell>
+                <TableCell>{billing.transactionId}</TableCell>
+                <TableCell>{billing.patient.firstName} {billing.patient.lastName}</TableCell>
+                <TableCell>₦{billing.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : "N/A"}</TableCell>
+                <TableCell>{billing.paymentMethod}</TableCell>
                 <TableCell>
                   <span
                     style={{
-                      backgroundColor: billing?.paymentStatus === "pending" ? "#FFC107" : "#4CAF50",
+                      backgroundColor: billing.paymentStatus === "pending" ? "#FFC107" : "#4CAF50",
                       color: "white",
                       fontWeight: "bold",
                       padding: "4px 8px",
                       borderRadius: "4px",
                     }}
                   >
-                    {billing?.paymentStatus === "pending" ? "PENDING" : "PAID"}
+                    {billing.paymentStatus.toUpperCase()}
                   </span>
-                  </TableCell>
-                  <TableCell>
-                    {(role === "2" || role === "3" || role === "8") && (
-                      <>
-                        {/* View Button (Always Visible) */}
-                        <IconButton onClick={() => handleView(billing)} color="primary">
-                          <Visibility />
+                </TableCell>
+                <TableCell>
+                  {(role === "2" || role === "3" || role === "8") && (
+                    <>
+                      <IconButton onClick={() => handleView(billing)} color="primary">
+                        <Visibility />
+                      </IconButton>
+                      {billing.paymentStatus === "paid" && (
+                        <IconButton onClick={() => handlePrintReceipt(billing)} color="success">
+                          <Print />
                         </IconButton>
-
-                        {/* Print Receipt (Only if Paid) */}
-                        {billing?.paymentStatus === "paid" && (
-                          <IconButton onClick={() => handlePrintReceipt(billing)} color="success">
-                            <Print />
-                          </IconButton>
-                        )}
-
-                        {/* Payment Button (Only if Pending) */}
-                        {billing?.paymentStatus === "pending" && (
-                          <IconButton onClick={() => handlePaymentsClick(billing)} color="warning">
-                            <Payments />
-                          </IconButton>
-                        )}
-
-                        {/* Edit Button (Only if Pending) */}
-                        {billing?.paymentStatus === "pending" && (
-                          <IconButton onClick={() => handleEdit(billing)} color="secondary">
-                            <Edit />
-                          </IconButton>
-                        )}
-
-                        {/* Delete Button (Only if Pending) */}
-                        {billing?.paymentStatus === "pending" && (
-                          <IconButton onClick={() => handleDelete(billing)} color="error">
-                            <Delete />
-                          </IconButton>
-                        )}
-                      </>
-                    )}
-                  </TableCell>
-
+                      )}
+                      {billing.paymentStatus === "pending" && (
+                        <IconButton onClick={() => handlePaymentsClick(billing)} color="warning">
+                          <Payments />
+                        </IconButton>
+                      )}
+                      {billing.paymentStatus === "pending" && (
+                        <IconButton onClick={() => handleEdit(billing)} color="secondary">
+                          <Edit />
+                        </IconButton>
+                      )}
+                      {billing.paymentStatus === "pending" && (
+                        <IconButton onClick={() => handleDelete(billing)} color="error">
+                          <Delete />
+                        </IconButton>
+                      )}
+                    </>
+                  )}
+                  {role === "6" && billing.paymentStatus === "paid" && (
+                    <IconButton onClick={() => handleDispense(billing)} color="success">
+                      <Outbound />
+                    </IconButton>
+                  )}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -519,8 +606,6 @@ const BillingsTable = () => {
         />
       </TableContainer>
 
-      {/* View Modal */}
-
       <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
         <Box sx={modalStyle}>
           <Typography variant="h5" gutterBottom>
@@ -529,21 +614,20 @@ const BillingsTable = () => {
           {selectedBilling && (
             <>
               <Typography variant="body1">
-                <strong>Full Name:</strong> {`${selectedBilling?.patient?.firstName} ${selectedBilling?.patient?.lastName}`}
+                <strong>Full Name:</strong> {`${selectedBilling.patient.firstName} ${selectedBilling.patient.lastName}`}
               </Typography>
               <Typography variant="body1">
-                <strong>Email:</strong> {selectedBilling?.patient?.email}
+                <strong>Email:</strong> {selectedBilling.patient.email}
               </Typography>
               <Typography variant="body1">
-                <strong>Phone Number:</strong> {selectedBilling?.patient?.phoneNumber}
+                <strong>Phone Number:</strong> {selectedBilling.patient.phoneNumber}
               </Typography>
               <Typography variant="body1">
-                <strong>Doctor:</strong> {selectedBilling?.patient?.doctor?.doctorName || 'N/A'}
+                <strong>Doctor:</strong> {selectedBilling.patient.doctor?.doctorName || 'N/A'}
               </Typography>
-
               <Typography variant="body1">
-                <strong>Billing Date:</strong> {selectedBilling?.created_at &&
-                  new Date(`${selectedBilling?.created_at}`).toLocaleString('en-US', {
+                <strong>Billing Date:</strong> {selectedBilling.created_at &&
+                  new Date(selectedBilling.created_at).toLocaleString('en-US', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -553,8 +637,6 @@ const BillingsTable = () => {
                     hour12: true
                   })}
               </Typography>
-
-              {/* Item List Table */}
               <Typography variant="h6" gutterBottom>
                 Items
               </Typography>
@@ -569,29 +651,21 @@ const BillingsTable = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {selectedBilling?.relatedTransactions?.map((transaction, index) => (
-                    <React.Fragment key={index}>
-                      <TableRow>
-                        {/* Display item name, for example categoryType or billingType */}
-                        <TableCell>{transaction?.product?.productName || transaction?.service?.serviceName}</TableCell>
-                        <TableCell>{transaction.categoryType || transaction.billingType}</TableCell>
-                        <TableCell>{transaction.quantity}</TableCell>
-                        <TableCell>₦{transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : "N/A"}</TableCell>
-                        <TableCell>₦{transaction.cost && transaction.quantity ? new Intl.NumberFormat().format(transaction.cost * transaction.quantity) : "N/A"}</TableCell>
-                      </TableRow>
-                    </React.Fragment>
+                  {selectedBilling.relatedTransactions.map((transaction, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{transaction.product?.productName || transaction.service?.serviceName}</TableCell>
+                      <TableCell>{transaction.categoryType || transaction.billingType}</TableCell>
+                      <TableCell>{transaction.quantity}</TableCell>
+                      <TableCell>₦{transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : "N/A"}</TableCell>
+                      <TableCell>₦{transaction.cost && transaction.quantity ? new Intl.NumberFormat().format(transaction.cost * transaction.quantity) : "N/A"}</TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>
-
             </>
           )}
         </Box>
       </Modal>
-
-
-
-
 
       <Modal open={openEditModal} onClose={() => setOpenEditModal(false)}>
         <Box sx={modalStyle}>
@@ -600,7 +674,6 @@ const BillingsTable = () => {
           </Typography>
           <form onSubmit={handleUpdate}>
             <Grid container spacing={4}>
-              {/* Form Fields */}
               <Grid item xs={12} sm={6}>
                 <TextField
                   name="billingDate"
@@ -608,14 +681,10 @@ const BillingsTable = () => {
                   fullWidth
                   label="Billing Date"
                   value={selectedBilling?.billingDate || ''}
-                  // onChange={handleFormChange}
                   onChange={handleFormChange}
-                  InputLabelProps={{
-                    shrink: true
-                  }}
+                  InputLabelProps={{ shrink: true }}
                 />
               </Grid>
-
               <Grid item xs={12} sm={6}>
                 <TextField
                   name="billingTime"
@@ -623,27 +692,23 @@ const BillingsTable = () => {
                   fullWidth
                   label="Billing Time"
                   value={selectedBilling?.billingTime || ''}
-                  // onChange={e => handleFormChange('billingTime', e.target.value)}
                   onChange={handleFormChange}
                 />
               </Grid>
-
               <Grid item xs={12} sm={6}>
                 <TextField
                   name="comment"
                   fullWidth
                   label="Comment"
                   value={selectedBilling?.comment || ''}
-                  // onChange={e => handleFormChange('comment', e.target.value)}
                   onChange={handleFormChange}
                 />
               </Grid>
-
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth>
                   <InputLabel>Doctor</InputLabel>
                   <Select
-                    name="doctor" // Add name attribute
+                    name="doctor"
                     value={selectedBilling?.doctor || ''}
                     onChange={handleFormChange}
                   >
@@ -653,13 +718,9 @@ const BillingsTable = () => {
                       </MenuItem>
                     ))}
                   </Select>
-
                 </FormControl>
-
               </Grid>
             </Grid>
-
-            {/* Submit Button */}
             <Grid item xs={12} className="mt-4">
               <Button variant="contained" color="primary" type="submit" disabled={loading}>
                 {loading ? 'Saving...' : 'Save Changes'}
@@ -668,7 +729,6 @@ const BillingsTable = () => {
           </form>
         </Box>
       </Modal>
-
 
       <Modal open={open} onClose={() => setOpen(false)}>
         <Box
@@ -688,7 +748,6 @@ const BillingsTable = () => {
             Confirm Payment
           </Typography>
           <form onSubmit={handleSubmit}>
-            {/* Payment Method Dropdown */}
             <InputLabel id="payment-method-label">Payment Method</InputLabel>
             <Select
               labelId="payment-method-label"
@@ -703,9 +762,9 @@ const BillingsTable = () => {
               <MenuItem value="cash">Cash</MenuItem>
               <MenuItem value="POS">POS</MenuItem>
               <MenuItem value="transfer">Transfer</MenuItem>
+              <MenuItem value="hmo">HMO</MenuItem>
+              <MenuItem value="retainership">Retainership</MenuItem>
             </Select>
-
-            {/* Payment Reference */}
             <TextField
               label="Payment Reference"
               fullWidth
@@ -713,10 +772,7 @@ const BillingsTable = () => {
               value={formData.paymentReference}
               onChange={handleChange}
               name="paymentReference"
-
             />
-
-            {/* Submit Button */}
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
               <Button
                 variant="contained"
@@ -727,15 +783,11 @@ const BillingsTable = () => {
               >
                 {isUpdating ? "Updating..." : "Update Payment"}
               </Button>
-
             </Box>
           </form>
         </Box>
       </Modal>
 
-
-
-      {/* Modal for Editing */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <Box
           sx={{
@@ -761,7 +813,6 @@ const BillingsTable = () => {
                 ))}
               </Select>
             </FormControl>
-
             <FormControl fullWidth>
               <InputLabel>Category Type</InputLabel>
               <Select value={categoryType} onChange={(e) => setCategoryType(e.target.value)}>
@@ -773,7 +824,6 @@ const BillingsTable = () => {
                   ))}
               </Select>
             </FormControl>
-
             <TextField
               fullWidth
               type="number"
@@ -781,15 +831,12 @@ const BillingsTable = () => {
               value={quantity}
               onChange={(e) => setQuantity(e.target.value)}
             />
-
             <Button variant="contained" color="primary" type="submit">
               Save Changes
             </Button>
           </form>
         </Box>
       </Modal>
-
-
     </>
   );
 };

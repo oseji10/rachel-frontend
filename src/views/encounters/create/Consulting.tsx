@@ -487,7 +487,36 @@ const investigationsDoneList = [
   { id: 999, name: 'Other' }
 ];
 
-
+// New options for refraction fields
+const frameTypeOptions = [
+  { id: 1, name: 'Full Rim' },
+  { id: 2, name: 'Half Rim' },
+  { id: 3, name: 'Rimless' }
+];
+const frameColorOptions = [
+  { id: 1, name: 'Black' },
+  { id: 2, name: 'Silver' },
+  { id: 3, name: 'Gold' },
+  { id: 4, name: 'Blue' },
+  { id: 5, name: 'Red' }
+];
+const lensTypeOptions = [
+  { id: 1, name: 'Single Vision' },
+  { id: 2, name: 'Bifocal' },
+  { id: 3, name: 'Progressive' },
+  { id: 4, name: 'Photochromic' }
+];
+const lensColorOptions = [
+  { id: 1, name: 'Clear' },
+  { id: 2, name: 'Tinted' },
+  { id: 3, name: 'Polarized' }
+];
+const surfacingOptions = [
+  { id: 1, name: 'Standard' },
+  { id: 2, name: 'Anti-Reflective' },
+  { id: 3, name: 'Scratch-Resistant' },
+  { id: 4, name: 'UV Protection' }
+];
 
 const dosageOptions = ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', '2 hourly', 'Nocte', 'When necessary'];
 const quantityOptions = Array.from({ length: 150 }, (_, i) => (i + 1).toString());
@@ -586,7 +615,23 @@ const Consulting = () => {
     food: '',
     drugAllergy: '',
     currentMedication: '',
-    visualAcuityNear: ''
+    visualAcuityNear: '',
+
+      pd: '',
+    bridge: '',
+    eyeSize: '',
+    temple: '',
+    decentration: '',
+    segmentMeasurement: '',
+    frameType: '',
+    frameColor: '',
+    frameCost: '',
+    lensType: '',
+    lensColor: '',
+    lensCost: '',
+    other: '',
+    surfacing: '',
+    caseSize: ''
   });
 
   const [eyeDrops, setEyeDrops] = useState([{ medicine: '', dosage: '', doseDuration: '', doseInterval: '', comment: '' }]);
@@ -778,7 +823,23 @@ const Consulting = () => {
     </div>
   );
 
-  const steps = ['Chief Complaints & History', 'Visual Acuity', 'Examination Findings', 'Refraction', 'Sketch', 'Diagnosis', 'Investigation', 'Treatment'];
+  const renderSummaryTable = (title, data) => (
+    <Box mt={4}>
+      <Typography variant="h6" className="text-gray-700 mb-2">{title}</Typography>
+      <Grid container spacing={2}>
+        {data.map(({ label, value }) => (
+          <Grid item xs={12} sm={6} key={label}>
+            <Typography variant="body1" className="text-gray-600">
+              <strong>{label}:</strong> {value || 'Not provided'}
+            </Typography>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+
+  
+  const steps = ['Consultation', 'Findings', 'Refraction', 'Sketch Pad', 'Diagnosis', 'Investigations', 'Treatment', 'Summary'];
 
   const getStepContent = (step) => {
     switch (step) {
@@ -821,10 +882,59 @@ const Consulting = () => {
             )}
           </Grid>
         );
+      // case 1:
+      //   return (
+      //     <Grid container spacing={4}>
+      //       {[
+      //         { label: 'Far Best Corrected Left', field: 'visualAcuityFarBestCorrectedLeft' },
+      //         { label: 'Far Best Corrected Right', field: 'visualAcuityFarBestCorrectedRight' },
+      //         { label: 'Far Presenting Left', field: 'visualAcuityFarPresentingLeft' },
+      //         { label: 'Far Presenting Right', field: 'visualAcuityFarPresentingRight' },
+      //         { label: 'Far Pinhole Right', field: 'visualAcuityFarPinholeRight' },
+      //         { label: 'Far Pinhole Left', field: 'visualAcuityFarPinholeLeft' },
+      //         { label: 'Near Left', field: 'visualAcuityNearLeft' },
+      //         { label: 'Near Right', field: 'visualAcuityNearRight' },
+      //       ].map(({ label, field }) => (
+      //         <Grid item xs={12} sm={6} key={field}>
+      //           <FormControl fullWidth>
+      //             <InputLabel>{label}</InputLabel>
+      //             <Select
+      //               value={formData[field]}
+      //               onChange={(e) => handleFormChange(field, e.target.value)}
+      //               className="rounded-lg"
+      //             >
+      //               {(field.includes('Near') ? visualAcuityNear : visualAcuityFar).map((option) => (
+      //                 <MenuItem key={option.id} value={option.id}>
+      //                   {option.name}
+      //                 </MenuItem>
+      //               ))}
+      //             </Select>
+      //           </FormControl>
+      //         </Grid>
+      //       ))}
+      //     </Grid>
+      //   );
       case 1:
         return (
           <Grid container spacing={4}>
-            {[
+            {['findings', 'eyelid', 'conjunctiva', 'cornea', 'AC', 'iris', 'lens', 'vitreous', 'retina', 'OCT', 'FFA', 'fundusPhotography', 'pachymetry', 'CVFT', 'CVFTKinetic', 'otherFindings'].map((field) =>
+              ['Right', 'Left'].map((side) => (
+                <Grid item xs={12} sm={6} key={`${field}${side}`}>
+                  <TextField
+                    label={`${field.replace(/([A-Z])/g, ' $1').trim()} (${side})`}
+                    multiline
+                    rows={3}
+                    fullWidth
+                    value={formData[`${field}${side}`]}
+                    onChange={(e) => handleFormChange(`${field}${side}`, e.target.value)}
+                    className="rounded-lg"
+                    variant="outlined"
+                  />
+                </Grid>
+              ))
+            )}
+
+             {[
               { label: 'Far Best Corrected Left', field: 'visualAcuityFarBestCorrectedLeft' },
               { label: 'Far Best Corrected Right', field: 'visualAcuityFarBestCorrectedRight' },
               { label: 'Far Presenting Left', field: 'visualAcuityFarPresentingLeft' },
@@ -851,64 +961,97 @@ const Consulting = () => {
                 </FormControl>
               </Grid>
             ))}
+
           </Grid>
         );
       case 2:
         return (
           <Grid container spacing={4}>
-            {['findings', 'eyelid', 'conjunctiva', 'cornea', 'AC', 'iris', 'lens', 'vitreous', 'retina', 'OCT', 'FFA', 'fundusPhotography', 'pachymetry', 'CVFT', 'CVFTKinetic', 'otherFindings'].map((field) =>
-              ['Right', 'Left'].map((side) => (
-                <Grid item xs={12} sm={6} key={`${field}${side}`}>
-                  <TextField
-                    label={`${field.replace(/([A-Z])/g, ' $1').trim()} (${side})`}
-                    multiline
-                    rows={3}
-                    fullWidth
-                    value={formData[`${field}${side}`]}
-                    onChange={(e) => handleFormChange(`${field}${side}`, e.target.value)}
+            {/* Refraction Measurements */}
+            {[
+              { field: 'nearAddRight', label: 'Near Add (Right)', options: nearAdd },
+              { field: 'nearAddLeft', label: 'Near Add (Left)', options: nearAdd },
+              { field: 'refractionSphereRight', label: 'Refraction Sphere (Right)', options: refractionSphere },
+              { field: 'refractionSphereLeft', label: 'Refraction Sphere (Left)', options: refractionSphere },
+              { field: 'refractionCylinderRight', label: 'Refraction Cylinder (Right)', options: refractionCylinder },
+              { field: 'refractionCylinderLeft', label: 'Refraction Cylinder (Left)', options: refractionCylinder },
+              { field: 'refractionAxisRight', label: 'Refraction Axis (Right)', options: refractionAxis },
+              { field: 'refractionAxisLeft', label: 'Refraction Axis (Left)', options: refractionAxis },
+              { field: 'refractionPrismRight', label: 'Refraction Prism (Right)', options: refractionPrism },
+              { field: 'refractionPrismLeft', label: 'Refraction Prism (Left)', options: refractionPrism },
+            ].map(({ field, label, options }) => (
+              <Grid item xs={12} sm={6} key={field}>
+                <FormControl fullWidth>
+                  <InputLabel>{label}</InputLabel>
+                  <Select
+                    value={formData[field] || ''}
+                    onChange={(e) => handleFormChange(field, e.target.value)}
                     className="rounded-lg"
-                    variant="outlined"
-                  />
-                </Grid>
-              ))
-            )}
+                  >
+                    {options.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        <span dangerouslySetInnerHTML={{ __html: option.name }} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            ))}
+            {/* Frame and Lens Measurements */}
+            {[
+              { field: 'pd', label: 'Pupillary Distance (PD)', type: 'number' },
+              { field: 'bridge', label: 'Bridge', type: 'number' },
+              { field: 'eyeSize', label: 'Eye Size', type: 'number' },
+              { field: 'temple', label: 'Temple', type: 'number' },
+              { field: 'decentration', label: 'Decentration', type: 'number' },
+              { field: 'segmentMeasurement', label: 'Segment Measurement', type: 'number' },
+              { field: 'caseSize', label: 'Case Size', type: 'number' },
+              { field: 'frameCost', label: 'Frame Cost', type: 'number' },
+              { field: 'lensCost', label: 'Lens Cost', type: 'number' },
+              { field: 'other', label: 'Other Notes', multiline: true },
+            ].map(({ field, label, type, multiline }) => (
+              <Grid item xs={12} sm={6} key={field}>
+                <TextField
+                  label={label}
+                  type={type || 'text'}
+                  multiline={multiline || false}
+                  rows={multiline ? 3 : 1}
+                  fullWidth
+                  value={formData[field] || ''}
+                  onChange={(e) => handleFormChange(field, e.target.value)}
+                  className="rounded-lg"
+                  variant="outlined"
+                />
+              </Grid>
+            ))}
+            {/* Frame and Lens Options */}
+            {[
+              { field: 'frameType', label: 'Frame Type', options: frameTypeOptions },
+              { field: 'frameColor', label: 'Frame Color', options: frameColorOptions },
+              { field: 'lensType', label: 'Lens Type', options: lensTypeOptions },
+              { field: 'lensColor', label: 'Lens Color', options: lensColorOptions },
+              { field: 'surfacing', label: 'Surfacing', options: surfacingOptions },
+            ].map(({ field, label, options }) => (
+              <Grid item xs={12} sm={6} key={field}>
+                <FormControl fullWidth>
+                  <InputLabel>{label}</InputLabel>
+                  <Select
+                    value={formData[field] || ''}
+                    onChange={(e) => handleFormChange(field, e.target.value)}
+                    className="rounded-lg"
+                  >
+                    {options.map((option) => (
+                      <MenuItem key={option.id} value={option.id}>
+                        {option.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+            ))}
           </Grid>
         );
       case 3:
-        return (
-          <Grid container spacing={4}>
-            {['nearAdd', 'refractionSphere', 'refractionCylinder', 'refractionAxis', 'refractionPrism'].map((field) =>
-              ['Right', 'Left'].map((side) => (
-                <Grid item xs={12} sm={6} key={`${field}${side}`}>
-                  <FormControl fullWidth>
-                    <InputLabel>{`${field.replace(/([A-Z])/g, ' $1').trim()} (${side})`}</InputLabel>
-                    <Select
-                      value={formData[`${field}${side}`]}
-                      onChange={(e) => handleFormChange(`${field}${side}`, e.target.value)}
-                      className="rounded-lg"
-                    >
-                      {(field === 'refractionSphere'
-                        ? refractionSphere
-                        : field === 'refractionCylinder'
-                        ? refractionCylinder
-                        : field === 'refractionAxis'
-                        ? refractionAxis
-                        : field === 'refractionPrism'
-                        ? refractionPrism
-                        : nearAdd
-                      ).map((option) => (
-                        <MenuItem key={option.id} value={option.id}>
-                          <span dangerouslySetInnerHTML={{ __html: option.name }} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-              ))
-            )}
-          </Grid>
-        );
-      case 4:
         return (
           <Box display="flex" flexDirection="column" alignItems="center">
             <Typography variant="h6" className="text-gray-700 mb-4">Sketch Pad</Typography>
@@ -1017,7 +1160,7 @@ const Consulting = () => {
             </Box>
           </Box>
         );
-      case 5:
+      case 4:
         return (
           <Grid container spacing={4}>
             {fields.map((field) => (
@@ -1057,7 +1200,7 @@ const Consulting = () => {
             ))}
           </Grid>
         );
-      case 6:
+      case 5:
         return (
           <Grid container spacing={4}>
             {/* Investigations Required */}
@@ -1189,7 +1332,7 @@ const Consulting = () => {
             ))}
           </Grid>
         );
-      case 7:
+      case 6:
         return (
           <Grid container spacing={4}>
             {renderTable('Eye Drops', eyeDrops, setEyeDrops, [
@@ -1217,6 +1360,84 @@ const Consulting = () => {
               { name: 'lensType', label: 'Lens Type' },
             ])}
           </Grid>
+        );
+
+        case 7:
+        return (
+          <Box>
+            <Typography variant="h4" className="text-2xl font-bold text-gray-800 mb-4">
+              Consultation Summary
+            </Typography>
+            {renderSummaryTable('Consultation', [
+              { label: 'Chief Complaint (Right)', value: chiefComplaintOptions.find(o => o.id === formData.chiefComplaintRight)?.name },
+              { label: 'Chief Complaint (Left)', value: chiefComplaintOptions.find(o => o.id === formData.chiefComplaintLeft)?.name },
+              { label: 'Intra Occular Pressure (Right)', value: formData.intraOccularPressureRight },
+              { label: 'Intra Occular Pressure (Left)', value: formData.intraOccularPressureLeft },
+              { label: 'Other Complaints (Right)', value: formData.otherComplaintsRight },
+              { label: 'Other Complaints (Left)', value: formData.otherComplaintsLeft },
+              { label: 'Detailed History (Right)', value: formData.detailedHistoryRight },
+              { label: 'Detailed History (Left)', value: formData.detailedHistoryLeft },
+            ])}
+            {renderSummaryTable('Findings', [
+              { label: 'Findings (Right)', value: formData.findingsRight },
+              { label: 'Findings (Left)', value: formData.findingsLeft },
+
+              { label: 'Eyelid (Right)', value: formData.eyelidRight },
+              { label: 'Eyelid (Left)', value: formData.eyelidLeft },
+              { label: 'Conjunctiva (Right)', value: formData.conjunctivaRight },
+              { label: 'Conjunctiva (Left)', value: formData.conjunctivaLeft },
+              { label: 'Cornea (Right)', value: formData.corneaRight },
+              { label: 'Cornea (Left)', value: formData.corneaLeft },
+              { label: 'AC (Right)', value: formData.ACRight },
+              { label: 'AC (Left)', value: formData.ACLeft },
+              { label: 'Iris (Right)', value: formData.irisRight },
+              { label: 'Iris (Left)', value: formData.irisLeft },
+              { label: 'Lens (Right)', value: formData.lensRight },
+              { label: 'Lens (Left)', value: formData.lensLeft },
+              { label: 'Vitreous (Right)', value: formData.vitreousRight },
+              { label: 'Vitreous (Left)', value: formData.vitreousLeft },
+              { label: 'Retina (Right)', value: formData.retinaRight },
+              { label: 'Retina (Left)', value: formData.retinaLeft },
+              { label: 'OCT (Right)', value: formData.OCTRight },
+              { label: 'OCT (Left)', value: formData.OCTLeft },
+              { label: 'FFA (Right)', value: formData.FFARight },
+              { label: 'FFA (Left)', value: formData.FFALeft },
+              { label: 'Fundus Photography (Right)', value: formData.fundusPhotographyRight },
+              { label: 'Fundus Photography (Left)', value: formData.fundusPhotographyLeft },
+              { label: 'Pachymetry (Right)', value: formData.pachymetryRight },
+              { label: 'Pachymetry (Left)', value: formData.pachymetryLeft },
+              { label: 'CVFT (Right)', value: formData.CVFTRight },
+              { label: 'CVFT (Left)', value: formData.CVFTLeft },
+              { label: 'CVFT Kinetic (Right)', value: formData.CVFTKineticRight },
+              { label: 'CVFT Kinetic (Left)', value: formData.CVFTKineticLeft },
+              { label: 'Other Findings', value: formData.otherFindings },
+            ])}
+            {renderSummaryTable('Refraction', [
+              { label: 'Near Add (Right)', value: nearAdd.find(o => o.id === formData.nearAddRight)?.name },
+              { label: 'Near Add (Left)', value: nearAdd.find(o => o.id === formData.nearAddLeft)?.name },
+              { label: 'Refraction Sphere (Right)', value: refractionSphere.find(o => o.id === formData.refractionSphereRight)?.name },
+              { label: 'Refraction Sphere (Left)', value: refractionSphere.find(o => o.id === formData.refractionSphereLeft)?.name },
+              { label: 'Refraction Cylinder (Right)', value: refractionCylinder.find(o => o.id === formData.refractionCylinderRight)?.name },
+              { label: 'Refraction Cylinder (Left)', value: refractionCylinder.find(o => o.id === formData.refractionCylinderLeft)?.name },
+              { label: 'Refraction Axis (Right)', value: refractionAxis.find(o => o.id === formData.refractionAxisRight)?.name },
+              { label: 'Refraction Axis (Left)', value: refractionAxis.find(o => o.id === formData.refractionAxisLeft)?.name },
+              { label: 'Refraction Prism (Right)', value: refractionPrism.find(o => o.id === formData.refractionPrismRight)?.name },
+              { label: 'Refraction Prism (Left)', value: refractionPrism.find(o => o.id === formData.refractionPrismLeft)?.name },
+            ])}
+            {renderSummaryTable('Sketch Pad', [
+              { label: 'Right Eye Front', value: rightEyeRef.current?.getSaveData() || 'No drawing' },
+              { label: 'Right Eye Back', value: rightEyeBackRef.current?.getSaveData() || 'No drawing' },
+              { label: 'Left Eye Front', value: leftEyeRef.current?.getSaveData() || 'No drawing' },
+              { label: 'Left Eye Back', value: leftEyeBackRef.current?.getSaveData() || 'No drawing' },
+            ])}
+            {renderSummaryTable('Other Findings', [
+              { label: 'Comments', value: formData.comments || 'No comments' },
+            ])}
+            {renderSummaryTable('Additional Information', [
+              { label: 'Date of Exam', value: formData.dateOfExam || 'No date provided' },
+              { label: 'Referring Physician', value: formData.referringPhysician || 'No physician provided' },
+            ])}
+          </Box>
         );
       default:
         return null;
