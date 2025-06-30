@@ -143,7 +143,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
     <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>
-          Creating Appointment for <b>{patientName}</b>
+          Booking Appointment for <b>{patientName}</b>
         </Typography>
         <form onSubmit={handleSubmit}>
           <Grid container spacing={4}>
@@ -218,7 +218,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
           {/* Submit and Reset Buttons */}
           <Grid item xs={12} className="mt-4">
             <Button variant="contained" color="primary" type="submit" disabled={loading}>
-              {loading ? 'Saving...' : 'Save Appointment'}
+              {loading ? 'Booking...' : 'Book Next Appointment'}
             </Button>
             <a href='/encounters'><Button
               variant="outlined"

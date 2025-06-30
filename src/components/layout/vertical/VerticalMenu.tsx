@@ -126,6 +126,12 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
             </MenuItem>
           )}
 
+           {canView(['3', '4', '8']) && (
+            <MenuItem href="/dashboard/appointment-queue" icon={<i className="ri-calendar-check-line" />}>
+              Appointment Queue
+            </MenuItem>
+          )}
+
           {canView(['7', '8']) && (
              <SubMenu label='Users' icon={<i className='ri-group-line' />}>
              <MenuItem href='/dashboard/users/new-user'>

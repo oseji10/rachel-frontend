@@ -1,6 +1,6 @@
 'use client';
 
-import ContinueConsulting from '@/views/encounters/create/ContinueConsulting'
+import ContinueConsulting from '@/views/encounters/create/Consulting'
 import { Suspense } from 'react';
 
 const EncountersPage = () => {

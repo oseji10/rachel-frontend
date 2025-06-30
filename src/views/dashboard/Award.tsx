@@ -15,7 +15,7 @@ const Award = () => {
       case "2":
         return "Clinic Receptionist";
       case "3":
-        return "Frontdesk Receptionist";
+        return "Frontdesk";
       case "4":
         return "Doctor";
       case "5":

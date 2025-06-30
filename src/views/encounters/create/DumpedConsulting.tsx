@@ -22,11 +22,9 @@ import Step from '@mui/material/Step';
 import StepButton from '@mui/material/StepButton';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-// import RemoveCircleIcon from '@mui/icons-material-RemoveCircle';
-import RemoveCircle from '@mui/icons-material/RemoveCircle'
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import Swal from 'sweetalert2';
 import { StepLabel } from '@mui/material';
-
 
 const Consulting = () => {
   const searchParams = useSearchParams();
@@ -35,22 +33,21 @@ const Consulting = () => {
   const patientName = searchParams.get('patientName');
   const encounterId = searchParams.get('encounterId');
 
-  const rightEyeRef = useRef(null);
+  const rightEyeFrontRef = useRef(null);
   const rightEyeBackRef = useRef(null);
-  const leftEyeRef = useRef(null);
+  const leftEyeFrontRef = useRef(null);
   const leftEyeBackRef = useRef(null);
 
-  // const [visualAcuityFar, setVisualAcuityFar] = useState([]);
-  // const [visualAcuityNear, setVisualAcuityNear] = useState([]);
-  // const [chiefComplaintOptions, setChiefComplaintOptions] = useState([]);
-  // const [diagnosisList, setDiagnosisList] = useState([]);
-  // const [refractionAxis, setRefractionAxis] = useState([]);
+  const [visualAcuityFar, setVisualAcuityFar] = useState([]);
+  const [visualAcuityNear, setVisualAcuityNear] = useState([]);
+  const [chiefComplaintOptions, setChiefComplaintOptions] = useState([]);
+  const [diagnosisList, setDiagnosisList] = useState([]);
+  const [refractionAxis, setRefractionAxis] = useState([]);
   const [refractionSphere, setRefractionSphere] = useState([]);
   const [refractionCylinder, setRefractionCylinder] = useState([]);
   const [refractionPrism, setRefractionPrism] = useState([]);
   const [medicineList, setMedicineList] = useState([]);
   const [brushColor, setBrushColor] = useState('#000000');
-  
   const [formData, setFormData] = useState({
     chiefComplaintRight: '',
     chiefComplaintLeft: '',
@@ -100,10 +97,10 @@ const Consulting = () => {
     fundusPhotographyLeft: '',
     pachymetryRight: '',
     pachymetryLeft: '',
-    CVFTRight: '',
-    CVFTLeft: '',
-    CVFTKineticRight: '',
-    CVFTKineticLeft: '',
+    CUFTRight: '',
+    CUFTLeft: '',
+    CUFTKineticRight: '',
+    CUFTKineticLeft: '',
     refractionSphereRight: '',
     refractionSphereLeft: '',
     refractionCylinderRight: '',
@@ -123,9 +120,7 @@ const Consulting = () => {
     food: '',
     drugAllergy: '',
     currentMedication: '',
-    visualAcuityNear: '',
   });
-
   const [eyeDrops, setEyeDrops] = useState([{ medicine: '', dosage: '', doseDuration: '', doseInterval: '', comment: '' }]);
   const [tablets, setTablets] = useState([{ medicine: '', dosage: '', doseDuration: '', doseInterval: '', comment: '' }]);
   const [ointments, setOintments] = useState([{ medicine: '', dosage: '', doseDuration: '', doseInterval: '', comment: '' }]);
@@ -133,284 +128,19 @@ const Consulting = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
-  
   const doseDurationOptions = [
-    '1/7', '2/7', '3/7', '4/7', '5/7', '6/7', '7/7', '8/7', '9/7', '10/7', '11/7', '12/7', '13/7', '14/7',
+    '1/7', '2/7', '3/7', '4/7', '5/7', '8/7', '9/7', '10/7', '11/7', '12/7', '13/7', '14/7',
     '1/52', '2/52', '3/52', '4/52',
-    '1/12', '2/12', '3/12', '4/12', '5/12', '6/12', '7/12', '8/12', '9/12', '10/12', '11/12', '12/12', '13/12', '14/12'
+    '1/12', '2/12', '3/12', '4/12', '5/12', '6/12', '7/12', '8/12', '9/12', '10/12', '11/12', '14/12'
   ];
-
-  const chiefComplaintOptions = [
-    {"id": 1, "name": "Pain",},
-    {"id": 2, "name": "Watering"},
-    {"id": 3, "name": "Loss of vision"},
-    {"id": 4, "name": "Redness"},
-    {"id": 5, "name": "Swelling", "status": "active"},
-    {"id": 6, "name": "Other", "status": "active" }
-];
-
-const visualAcuityFar = [
-    { "id": 1, "name": "NPL", "status": "active" },
-    { "id": 2, "name": "PL", "status": "active" },
-    { "id": 3, "name": "HM", "status": "active" },
-    { "id": 4, "name": "6/60", "status": "active" },
-    { "id": 5, "name": "6/36", "status": "active" },
-    { "id": 6, "name": "6/24", "status": "active" },
-    { "id": 7, "name": "6/18", "status": "active" },
-    { "id": 8, "name": "6/12", "status": "active" },
-    { "id": 9, "name": "6/9",  "status": "active" },
-    { "id": 10, "name": "6/6", "status": "active" },
-    { "id": 11, "name": "6/5", "status": "active" },
-    { "id": 12, "name": "6/4", "status": "active" }
-];
-
-const visualAcuityNear = [
-    { "id": 1, "name": "NPL", "status": "active" },
-    { "id": 2, "name": "PL", "status": "active" },
-    { "id": 3, "name": "HM", "status": "active" },
-    { "id": 4, "name": "6/60", "status": "active" },
-    { "id": 5, "name": "6/36", "status": "active" },
-    { "id": 6, "name": "6/24", "status": "active" },
-    { "id": 7, "name": "6/18", "status": "active" },
-    { "id": 8, "name": "6/12", "status": "active" },
-    { "id": 9, "name": "6/9",  "status": "active" },
-    { "id": 10, "name": "6/6", "status": "active" },
-    { "id": 11, "name": "6/5", "status": "active" },
-    { "id": 12, "name": "6/4", "status": "active" }
-];
-
-
-const refractionAxis = [
-    { "id": 1, "name": "0<sup>0</sup>", "status": "active" },
-    { "id": 2, "name": "1<sup>0</sup>", "status": "active" },
-    { "id": 3, "name": "2<sup>0</sup>", "status": "active" },
-    { "id": 4, "name": "3<sup>0</sup>", "status": "active" },
-    { "id": 5, "name": "4<sup>0</sup>", "status": "active" },
-    { "id": 6, "name": "5<sup>0</sup>", "status": "active" },
-    { "id": 7, "name": "6<sup>0</sup>", "status": "active" },
-    { "id": 8, "name": "7<sup>0</sup>", "status": "active" },
-    { "id": 9, "name": "8<sup>0</sup>", "status": "active" },
-    { "id": 10, "name": "9<sup>0</sup>", "status": "active" },
-    { "id": 11, "name": "10<sup>0</sup>", "status": "active" },
-    { "id": 12, "name": "11<sup>0</sup>", "status": "active" },
-    { "id": 13, "name": "12<sup>0</sup>", "status": "active" },
-    { "id": 14, "name": "13<sup>0</sup>", "status": "active" },
-    { "id": 15, "name": "14<sup>0</sup>", "status": "active" },
-    { "id": 16, "name": "15<sup>0</sup>", "status": "active" },
-    { "id": 17, "name": "16<sup>0</sup>", "status": "active" },
-    { "id": 18, "name": "17<sup>0</sup>", "status": "active" },
-    { "id": 19, "name": "18<sup>0</sup>", "status": "active" },
-    { "id": 20, "name": "19<sup>0</sup>", "status": "active" },
-    { "id": 21, "name": "20<sup>0</sup>", "status": "active" },
-    { "id": 22, "name": "21<sup>0</sup>", "status": "active" },
-    { "id": 23, "name": "22<sup>0</sup>", "status": "active" },
-    { "id": 24, "name": "23<sup>0</sup>", "status": "active" },
-    { "id": 25, "name": "24<sup>0</sup>", "status": "active" },
-    { "id": 26, "name": "25<sup>0</sup>", "status": "active" },
-    { "id": 27, "name": "26<sup>0</sup>", "status": "active" },
-    { "id": 28, "name": "27<sup>0</sup>", "status": "active" },
-    { "id": 29, "name": "28<sup>0</sup>", "status": "active" },
-    { "id": 30, "name": "29<sup>0</sup>", "status": "active" },
-    { "id": 31, "name": "30<sup>0</sup>", "status": "active" },
-    { "id": 32, "name": "31<sup>0</sup>", "status": "active" },
-    { "id": 33, "name": "32<sup>0</sup>", "status": "active" },
-    { "id": 34, "name": "33<sup>0</sup>", "status": "active" },
-    { "id": 35, "name": "34<sup>0</sup>", "status": "active" },
-    { "id": 36, "name": "35<sup>0</sup>", "status": "active" },
-    { "id": 37, "name": "36<sup>0</sup>", "status": "active" },
-    { "id": 38, "name": "37<sup>0</sup>", "status": "active" },
-    { "id": 39, "name": "38<sup>0</sup>", "status": "active" },
-    { "id": 40, "name": "39<sup>0</sup>", "status": "active" },
-    { "id": 41, "name": "40<sup>0</sup>", "status": "active" },
-    { "id": 42, "name": "41<sup>0</sup>", "status": "active" },
-    { "id": 43, "name": "42<sup>0</sup>", "status": "active" },
-    { "id": 44, "name": "43<sup>0</sup>", "status": "active" },
-    { "id": 45, "name": "44<sup>0</sup>", "status": "active" },
-    { "id": 46, "name": "45<sup>0</sup>", "status": "active" },
-    { "id": 47, "name": "46<sup>0</sup>", "status": "active" },
-    { "id": 48, "name": "47<sup>0</sup>", "status": "active" },
-    { "id": 49, "name": "48<sup>0</sup>", "status": "active" },
-    { "id": 50, "name": "49<sup>0</sup>", "status": "active" },
-    { "id": 51, "name": "50<sup>0</sup>", "status": "active" },
-    { "id": 52, "name": "51<sup>0</sup>", "status": "active" },
-    { "id": 53, "name": "52<sup>0</sup>", "status": "active" },
-    { "id": 54, "name": "53<sup>0</sup>", "status": "active" },
-    { "id": 55, "name": "54<sup>0</sup>", "status": "active" },
-    { "id": 56, "name": "55<sup>0</sup>", "status": "active" },
-    { "id": 57, "name": "56<sup>0</sup>", "status": "active" },
-    { "id": 58, "name": "57<sup>0</sup>", "status": "active" },
-    { "id": 59, "name": "58<sup>0</sup>", "status": "active" },
-    { "id": 60, "name": "59<sup>0</sup>", "status": "active" },
-    { "id": 61, "name": "60<sup>0</sup>", "status": "active" },
-    { "id": 62, "name": "61<sup>0</sup>", "status": "active" },
-    { "id": 63, "name": "62<sup>0</sup>", "status": "active" },
-    { "id": 64, "name": "63<sup>0</sup>", "status": "active" },
-    { "id": 65, "name": "64<sup>0</sup>", "status": "active" },
-    { "id": 66, "name": "65<sup>0</sup>", "status": "active" },
-    { "id": 67, "name": "66<sup>0</sup>", "status": "active" },
-    { "id": 68, "name": "67<sup>0</sup>", "status": "active" },
-    { "id": 69, "name": "68<sup>0</sup>", "status": "active" },
-    { "id": 70, "name": "69<sup>0</sup>", "status": "active" },
-    { "id": 71, "name": "70<sup>0</sup>", "status": "active" },
-    { "id": 72, "name": "71<sup>0</sup>", "status": "active" },
-    { "id": 73, "name": "72<sup>0</sup>", "status": "active" },
-    { "id": 74, "name": "73<sup>0</sup>", "status": "active" },
-    { "id": 75, "name": "74<sup>0</sup>", "status": "active" },
-    { "id": 76, "name": "75<sup>0</sup>", "status": "active" },
-    { "id": 77, "name": "76<sup>0</sup>", "status": "active" },
-    { "id": 78, "name": "77<sup>0</sup>", "status": "active" },
-    { "id": 79, "name": "78<sup>0</sup>", "status": "active" },
-    { "id": 80, "name": "79<sup>0</sup>", "status": "active" },
-    { "id": 81, "name": "80<sup>0</sup>", "status": "active" },
-    { "id": 82, "name": "81<sup>0</sup>", "status": "active" },
-    { "id": 83, "name": "82<sup>0</sup>", "status": "active" },
-    { "id": 84, "name": "83<sup>0</sup>", "status": "active" },
-    { "id": 85, "name": "84<sup>0</sup>", "status": "active" },
-    { "id": 86, "name": "85<sup>0</sup>", "status": "active" },
-    { "id": 87, "name": "86<sup>0</sup>", "status": "active" },
-    { "id": 88, "name": "87<sup>0</sup>", "status": "active" },
-    { "id": 89, "name": "88<sup>0</sup>", "status": "active" },
-    { "id": 90, "name": "89<sup>0</sup>", "status": "active" },
-    { "id": 91, "name": "90<sup>0</sup>", "status": "active" },
-    { "id": 92, "name": "91<sup>0</sup>", "status": "active" },
-    { "id": 93, "name": "92<sup>0</sup>", "status": "active" },
-    { "id": 94, "name": "93<sup>0</sup>", "status": "active" },
-    { "id": 95, "name": "94<sup>0</sup>", "status": "active" },
-    { "id": 96, "name": "95<sup>0</sup>", "status": "active" },
-    { "id": 97, "name": "96<sup>0</sup>", "status": "active" },
-    { "id": 98, "name": "97<sup>0</sup>", "status": "active" },
-    { "id": 99, "name": "98<sup>0</sup>", "status": "active" },
-    { "id": 100, "name": "99<sup>0</sup>", "status": "active" },
-    { "id": 101, "name": "100<sup>0</sup>", "status": "active" },
-    { "id": 102, "name": "101<sup>0</sup>", "status": "active" },
-    { "id": 103, "name": "102<sup>0</sup>", "status": "active" },
-    { "id": 104, "name": "103<sup>0</sup>", "status": "active" },
-    { "id": 105, "name": "104<sup>0</sup>", "status": "active" },
-    { "id": 106, "name": "105<sup>0</sup>", "status": "active" },
-    { "id": 107, "name": "106<sup>0</sup>", "status": "active" },
-    { "id": 108, "name": "107<sup>0</sup>", "status": "active" },
-    { "id": 109, "name": "108<sup>0</sup>", "status": "active" },
-    { "id": 110, "name": "109<sup>0</sup>", "status": "active" },
-    { "id": 111, "name": "110<sup>0</sup>", "status": "active" },
-    { "id": 112, "name": "111<sup>0</sup>", "status": "active" },
-    { "id": 113, "name": "112<sup>0</sup>", "status": "active" },
-    { "id": 114, "name": "113<sup>0</sup>", "status": "active" },
-    { "id": 115, "name": "114<sup>0</sup>", "status": "active" },
-    { "id": 116, "name": "115<sup>0</sup>", "status": "active" },
-    { "id": 117, "name": "116<sup>0</sup>", "status": "active" },
-    { "id": 118, "name": "117<sup>0</sup>", "status": "active" },
-    { "id": 119, "name": "118<sup>0</sup>", "status": "active" },
-    { "id": 120, "name": "119<sup>0</sup>", "status": "active" },
-    { "id": 121, "name": "120<sup>0</sup>", "status": "active" },
-    { "id": 122, "name": "121<sup>0</sup>", "status": "active" },
-    { "id": 123, "name": "122<sup>0</sup>", "status": "active" },
-    { "id": 124, "name": "123<sup>0</sup>", "status": "active" },
-    { "id": 125, "name": "124<sup>0</sup>", "status": "active" },
-    { "id": 126, "name": "125<sup>0</sup>", "status": "active" },
-    { "id": 127, "name": "126<sup>0</sup>", "status": "active" },
-    { "id": 128, "name": "127<sup>0</sup>", "status": "active" },
-    { "id": 129, "name": "128<sup>0</sup>", "status": "active" },
-    { "id": 130, "name": "129<sup>0</sup>", "status": "active" },
-    { "id": 131, "name": "130<sup>0</sup>", "status": "active" },
-    { "id": 132, "name": "131<sup>0</sup>", "status": "active" },
-    { "id": 133, "name": "132<sup>0</sup>", "status": "active" },
-    { "id": 134, "name": "133<sup>0</sup>", "status": "active" },
-    { "id": 135, "name": "134<sup>0</sup>", "status": "active" },
-    { "id": 136, "name": "135<sup>0</sup>", "status": "active" },
-    { "id": 137, "name": "136<sup>0</sup>", "status": "active" },
-    { "id": 138, "name": "137<sup>0</sup>", "status": "active" },
-    { "id": 139, "name": "138<sup>0</sup>", "status": "active" },
-    { "id": 140, "name": "139<sup>0</sup>", "status": "active" },
-    { "id": 141, "name": "140<sup>0</sup>", "status": "active" },
-    { "id": 142, "name": "141<sup>0</sup>", "status": "active" },
-    { "id": 143, "name": "142<sup>0</sup>", "status": "active" },
-    { "id": 144, "name": "143<sup>0</sup>", "status": "active" },
-    { "id": 145, "name": "144<sup>0</sup>", "status": "active" },
-    { "id": 146, "name": "145<sup>0</sup>", "status": "active" },
-    { "id": 147, "name": "146<sup>0</sup>", "status": "active" },
-    { "id": 148, "name": "147<sup>0</sup>", "status": "active" },
-    { "id": 149, "name": "148<sup>0</sup>", "status": "active" },
-    { "id": 150, "name": "149<sup>0</sup>", "status": "active" },
-    { "id": 151, "name": "150<sup>0</sup>", "status": "active" },
-    { "id": 152, "name": "151<sup>0</sup>", "status": "active" },
-    { "id": 153, "name": "152<sup>0</sup>", "status": "active" },
-    { "id": 154, "name": "153<sup>0</sup>", "status": "active" },
-    { "id": 155, "name": "154<sup>0</sup>", "status": "active" },
-    { "id": 156, "name": "155<sup>0</sup>", "status": "active" },
-    { "id": 157, "name": "156<sup>0</sup>", "status": "active" },
-    { "id": 158, "name": "157<sup>0</sup>", "status": "active" },
-    { "id": 159, "name": "158<sup>0</sup>", "status": "active" },
-    { "id": 160, "name": "159<sup>0</sup>", "status": "active" },
-    { "id": 161, "name": "160<sup>0</sup>", "status": "active" },
-    { "id": 162, "name": "161<sup>0</sup>", "status": "active" },
-    { "id": 163, "name": "162<sup>0</sup>", "status": "active" },
-    { "id": 164, "name": "163<sup>0</sup>", "status": "active" },
-    { "id": 165, "name": "164<sup>0</sup>", "status": "active" },
-    { "id": 166, "name": "165<sup>0</sup>", "status": "active" },
-    { "id": 167, "name": "166<sup>0</sup>", "status": "active" },
-    { "id": 168, "name": "167<sup>0</sup>", "status": "active" },
-    { "id": 169, "name": "168<sup>0</sup>", "status": "active" },
-    { "id": 170, "name": "169<sup>0</sup>", "status": "active" },
-    { "id": 171, "name": "170<sup>0</sup>", "status": "active" },
-    { "id": 172, "name": "171<sup>0</sup>", "status": "active" },
-    { "id": 173, "name": "172<sup>0</sup>", "status": "active" },
-    { "id": 174, "name": "173<sup>0</sup>", "status": "active" },
-    { "id": 175, "name": "174<sup>0</sup>", "status": "active" },
-    { "id": 176, "name": "175<sup>0</sup>", "status": "active" },
-    { "id": 177, "name": "176<sup>0</sup>", "status": "active" },
-    { "id": 178, "name": "177<sup>0</sup>", "status": "active" },
-    { "id": 179, "name": "178<sup>0</sup>", "status": "active" },
-    { "id": 180, "name": "179<sup>0</sup>", "status": "active" },
-    { "id": 181, "name": "180<sup>0</sup>", "status": "active" }
-];
-
-const diagnosisList = [
-    { "id": 1, "name": "Myopia (Near sightedness" },
-    { "id": 2, "name": "Hyperopia (Farsightedness)" },
-    { "id": 3, "name": "Astigmatism" },
-    { "id": 4, "name": "Presbyopia" },
-    { "id": 5, "name": "Cataracts" },
-    { "id": 6, "name": "Glaucoma" },
-    { "id": 7, "name": "Macular Degeneration (MD)" },
-    { "id": 8, "name": "Diabetic Retinopathy" },
-    { "id": 9, "name": "Retinal Detachment" },
-    { "id": 10, "name": "Conjuctivitis (Pink Eye)" },
-    { "id": 11, "name": "Keratos" },
-    { "id": 12, "name": "Stratismus (Crossed Eyes)" },
-    { "id": 13, "name": "Amblyopia (Lazy Eye)" },
-    { "id": 14, "name": "Uveitis" },
-    { "id": 15, "name": "Blepharitis" },
-    { "id": 16, "name": "Corneal Ulcer" },
-    { "id": 17, "name": "Pinguecula" },
-    { "id": 18, "name": "Pterygium" },
-    { "id": 19, "name": "Dry Eye Syndrome" },
-    { "id": 20, "name": "Chalazion" }
-];
-
-const nearAdd = [
-  { "id": 1, "name": "+0.75" },
-  { "id": 2, "name": "+1.00" },
-  { "id": 3, "name": "+1.25" },
-  { "id": 4, "name": "+1.50" },
-  { "id": 5, "name": "+1.75" },
-  { "id": 6, "name": "+2.00" },
-  { "id": 7, "name": "+2.25" },
-  { "id": 8, "name": "+2.50" },
-  { "id": 9, "name": "+2.75" },
-  { "id": 10, "name": "+3.00" },
-  { "id": 11, "name": "+3.25" },
-  { "id": 12, "name": "+3.50" }
-];
-
-
-  const dosageOptions = ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', '2 hourly', 'Nocte', 'When necessary'];
+  const dosageOptions = ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'When necessary'];
   const quantityOptions = Array.from({ length: 150 }, (_, i) => (i + 1).toString());
 
   // Fetch data for options
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [medicineRes] = await Promise.all([
+        const [farResponse, nearResponse, complaintResponse, diagnosisResponse, axisRes, sphereRes, cylinderRes, prismRes, medicineRes] = await Promise.all([
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_far`),
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_near`),
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/chief_complaint`),
@@ -418,10 +148,17 @@ const nearAdd = [
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_axis`),
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_sphere`),
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_cylinder`),
-          // axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refractionogram`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_prism`),
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
         ]);
-      
+        setVisualAcuityFar(Array.isArray(farResponse.data) ? farResponse.data : []);
+        setVisualAcuityNear(Array.isArray(nearResponse.data) ? nearResponse.data : []);
+        setChiefComplaintOptions(Array.isArray(complaintResponse.data) ? complaintResponse.data : []);
+        setDiagnosisList(Array.isArray(diagnosisResponse.data) ? diagnosisResponse.data : []);
+        setRefractionAxis(Array.isArray(axisRes.data) ? axisRes.data : []);
+        setRefractionSphere(Array.isArray(sphereRes.data) ? sphereRes.data : []);
+        setRefractionCylinder(Array.isArray(cylinderRes.data) ? cylinderRes.data : []);
+        setRefractionPrism(Array.isArray(prismRes.data) ? prismRes.data : []);
         setMedicineList(Array.isArray(medicineRes.data) ? medicineRes.data : []);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -432,7 +169,6 @@ const nearAdd = [
         });
       }
     };
-    
     fetchData();
   }, []);
 
@@ -442,7 +178,6 @@ const nearAdd = [
 
   const handleTableInputChange = (index, field, value, state, setter) => {
     const updatedRows = [...state];
-    
     updatedRows[index] = { ...updatedRows[index], [field]: value };
     setter(updatedRows);
   };
@@ -482,9 +217,9 @@ const nearAdd = [
     };
 
     const sketches = activeStep === 4 ? {
-      rightEyeFront: rightEyeRef.current?.getSaveData() || null,
+      rightEyeFront: rightEyeFrontRef.current?.getSaveData() || null,
       rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
-      leftEyeFront: leftEyeRef.current?.getSaveData() || null,
+      leftEyeFront: leftEyeFrontRef.current?.getSaveData() || null,
       leftEyeBack: leftEyeBackRef.current?.getSaveData() || null,
     } : {};
 
@@ -559,8 +294,7 @@ const nearAdd = [
             ))}
             <Grid item xs={1}>
               <IconButton onClick={() => handleRemoveRow(index, rows, setter)} color="error">
-                <RemoveCircle />
-                Remove
+                <RemoveCircleIcon />
               </IconButton>
             </Grid>
           </Grid>
@@ -627,7 +361,6 @@ const nearAdd = [
               { label: 'Far Pinhole Left', field: 'visualAcuityFarPinholeLeft' },
               { label: 'Near Left', field: 'visualAcuityNearLeft' },
               { label: 'Near Right', field: 'visualAcuityNearRight' },
-
             ].map(({ label, field }) => (
               <Grid item xs={12} sm={6} key={field}>
                 <FormControl fullWidth>
@@ -651,7 +384,7 @@ const nearAdd = [
       case 2:
         return (
           <Grid container spacing={4}>
-            {['findings', 'eyelid', 'conjunctiva', 'cornea', 'AC', 'iris', 'lens', 'vitreous', 'retina', 'OCT', 'FFA', 'fundusPhotography', 'pachymetry', 'CVFT', 'CVFTKinetic', 'otherFindings'].map((field) =>
+            {['findings', 'eyelid', 'conjunctiva', 'cornea', 'AC', 'iris', 'pupil', 'lens', 'vitreous', 'retina', 'otherFindings'].map((field) =>
               ['Right', 'Left'].map((side) => (
                 <Grid item xs={12} sm={6} key={`${field}${side}`}>
                   <TextField
@@ -672,8 +405,8 @@ const nearAdd = [
       case 3:
         return (
           <Grid container spacing={4}>
-            {/* {[
-              'OCT', 'FFA', 'fundusPhotography', 'pachymetry', 'CVFT', 'CVFTKinetic', 'pupil'
+            {[
+              'nearAdd', 'OCT', 'FFA', 'fundusPhotography', 'pachymetry', 'CUFT', 'CUFTKinetic', 'pupil'
             ].map((field) =>
               ['Right', 'Left'].map((side) => (
                 <Grid item xs={12} sm={6} key={`${field}${side}`}>
@@ -687,8 +420,8 @@ const nearAdd = [
                   />
                 </Grid>
               ))
-            )} */}
-            {['nearAdd', 'refractionSphere', 'refractionCylinder', 'refractionAxis', 'refractionPrism'].map((field) =>
+            )}
+            {['refractionSphere', 'refractionCylinder', 'refractionAxis', 'refractionPrism'].map((field) =>
               ['Right', 'Left'].map((side) => (
                 <Grid item xs={12} sm={6} key={`${field}${side}`}>
                   <FormControl fullWidth>
@@ -699,14 +432,12 @@ const nearAdd = [
                       className="rounded-lg"
                     >
                       {(field === 'refractionSphere'
-                      ? refractionSphere
-                      : field === 'refractionCylinder'
-                      ? refractionCylinder
-                      : field === 'refractionAxis'
-                      ? refractionAxis
-                      : field === 'refractionPrism'
-                      ? refractionPrism
-                      : nearAdd
+                        ? refractionSphere
+                        : field === 'refractionCylinder'
+                        ? refractionCylinder
+                        : field === 'refractionAxis'
+                        ? refractionAxis
+                        : refractionPrism
                       ).map((option) => (
                         <MenuItem key={option.id} value={option.id}>
                           <span dangerouslySetInnerHTML={{ __html: option.name }} />
@@ -727,16 +458,14 @@ const nearAdd = [
               <Box display="flex" flexDirection="column" alignItems="center">
                 <Typography variant="subtitle1" className="text-gray-600 mb-2">Right Eye Front</Typography>
                 <CanvasDraw
-                  ref={rightEyeRef}
+                  ref={rightEyeFrontRef}
                   brushColor={brushColor}
-                  brushRadius={1}
-                  lazyRadius={0}
-                  catenaryColor="rgba(0,0,0,0)"
+                  brushRadius={0.5} // Tiny dot
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
                 />
-                <Button variant="contained" color="secondary" onClick={() => rightEyeRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
+                <Button variant="contained" color="secondary" onClick={() => rightEyeFrontRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
                 </Button>
               </Box>
@@ -745,9 +474,7 @@ const nearAdd = [
                 <CanvasDraw
                   ref={rightEyeBackRef}
                   brushColor={brushColor}
-                  brushRadius={1}
-                  lazyRadius={0}
-                  catenaryColor="rgba(0,0,0,0)"
+                  brushRadius={0.5} // Tiny dot
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
@@ -759,16 +486,14 @@ const nearAdd = [
               <Box display="flex" flexDirection="column" alignItems="center">
                 <Typography variant="subtitle1" className="text-gray-600 mb-2">Left Eye Front</Typography>
                 <CanvasDraw
-                  ref={leftEyeRef}
+                  ref={leftEyeFrontRef}
                   brushColor={brushColor}
-                  brushRadius={1}
-                  lazyRadius={0}
-                  catenaryColor="rgba(0,0,0,0)"
+                  brushRadius={0.5} // Tiny dot
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
                 />
-                <Button variant="contained" color="secondary" onClick={() => leftEyeRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
+                <Button variant="contained" color="secondary" onClick={() => leftEyeFrontRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
                 </Button>
               </Box>
@@ -777,9 +502,7 @@ const nearAdd = [
                 <CanvasDraw
                   ref={leftEyeBackRef}
                   brushColor={brushColor}
-                  brushRadius={1}
-                  lazyRadius={0}
-                  catenaryColor="rgba(0,0,0,0)"
+                  brushRadius={0.5} // Tiny dot
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"

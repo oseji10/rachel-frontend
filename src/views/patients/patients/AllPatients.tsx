@@ -23,7 +23,7 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
-import { Bed, CalendarMonth, Delete, Edit, MoneyOutlined, ShoppingCart, Visibility } from '@mui/icons-material';
+import { Bed, CalendarMonth, Delete, Edit, MoneyOutlined, ShoppingCart, Visibility, EventAvailable } from '@mui/icons-material';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
@@ -79,6 +79,9 @@ const PatientsTable = () => {
   const cardNumberOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const genderOptions = ['Male', 'Female', ];
 
+  const [openBookingModal, setOpenBookingModal] = useState<boolean>(false);
+    
+    const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Get role from cookies
@@ -180,6 +183,34 @@ const PatientsTable = () => {
     setSelectedPatient(patient);
     setOpenViewModal(true);
   };
+
+
+   const handleBooking = (patient: Patient) => {
+    setSelectedPatient(patient);
+    setSelectedDoctorId('');
+    setOpenBookingModal(true);
+  };
+
+  const handleBookingSave = async () => {
+    if (!selectedPatient || !selectedDoctorId) {
+      Swal.fire('Error!', 'Please select a doctor.', 'error');
+      return;
+    }
+
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`, {
+        patientId: selectedPatient.patientId,
+        doctorId: selectedDoctorId,
+        appointmentDate: new Date().toISOString(),
+      });
+      Swal.fire('Success!', 'Appointment booked successfully.', 'success');
+      setOpenBookingModal(false);
+    } catch (error) {
+      Swal.fire('Error!', 'Failed to book appointment.', 'error');
+    }
+  };
+
+
 
   const handleEdit = (patient: Patient) => {
     setSelectedPatient(patient);
@@ -348,14 +379,26 @@ const PatientsTable = () => {
   </IconButton>
 )}
 
-                  
+                  {(role === '3' || role === '8') && (
                   <IconButton onClick={() => handleAppointment(patient)} color="success">
                    <CalendarMonth />
                   </IconButton>
+                  
+                  )}
+                  
+{(role === '3' || role === '8') && (
+<IconButton onClick={() => handleBooking(patient)} color="primary">
+                    <EventAvailable />
+                  </IconButton>
 
+                  )}
+
+                  {(role === '2' || role === '5' || role === '8') && (
                   <IconButton color="info"  onClick={() => handleBilling(patient)}>
                     <ShoppingCart />
                   </IconButton>
+                  )}
+
                   {(role === '8') && (
                   <IconButton onClick={() => handleDelete(patient)} color="error">
                     <Delete />
@@ -570,6 +613,44 @@ const PatientsTable = () => {
     )}
   </Box>
 </Modal>
+
+{/* Booking Modal */}
+      <Modal open={openBookingModal} onClose={() => setOpenBookingModal(false)}>
+        <Box sx={{ ...modalStyle }}>
+          <Typography variant="h5" gutterBottom sx={{ textAlign: 'center' }}>
+            Queue Patient for Appointment
+          </Typography>
+          {selectedPatient && (
+            <Box>
+              <Typography variant="body1" gutterBottom>
+                Patient: {`${selectedPatient.firstName} ${selectedPatient.lastName}`}
+              </Typography>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Doctor</InputLabel>
+                <Select
+                  value={selectedDoctorId}
+                  onChange={(e) => setSelectedDoctorId(e.target.value)}
+                >
+                  {doctors.map((doctor) => (
+                    <MenuItem key={doctor.doctorId} value={doctor.doctorId}>
+                      {doctor.doctorName}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={handleBookingSave}
+              >
+                Add To Queue
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Modal>
 
     </>
   );

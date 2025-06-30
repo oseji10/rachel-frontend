@@ -1,7 +1,7 @@
 
 'use client';
 
-import Consulting from '@/views/encounters/create/Consulting'
+import Consulting from '@/views/encounters/create/DumpedConsulting'
 import { Suspense } from 'react';
 
 const EncountersPage = () => {
