@@ -396,22 +396,93 @@ const refractionCylinder = [
 
 
 const refractionSphere = [
-    {"id":1,"name":"NPL"},
-    {"id":2,"name":"PL"},
-    {"id":3,"name":"HM"},
-    {"id":4,"name":"CF"},
-    {"id":5,"name":"6/120"},
-    {"id":6,"name":"6/60"},
-    {"id":7,"name":"6/36"},
-    {"id":8,"name":"6/24"},
-    {"id":9,"name":"6/18"},
-    {"id":10,"name":"6/15"},
-    {"id":11,"name":"6/12"},
-    {"id":12,"name":"6/9"},
-    {"id":13,"name":"6/7.5"},
-    {"id":14,"name":"6/6"},
-    {"id":15,"name":"6/5"},
-    {"id":16,"name":"6/4"}
+    {"id":1,"name":"-10.75D"},
+    {"id":2,"name":"-10.50D"},
+    {"id":3,"name":"-10.25D"},
+    {"id":4,"name":"-10.00D"},
+    {"id":5,"name":"-9.75D"},
+    {"id":6,"name":"-9.50D"},
+    {"id":7,"name":"-9.25D"},
+    {"id":8,"name":"-9.00D"},
+    {"id":9,"name":"-8.75D"},
+    {"id":10,"name":"-8.50D"},
+    {"id":11,"name":"-8.25D"},
+    {"id":12,"name":"-8.00D"},
+    {"id":13,"name":"-7.75D"},
+    {"id":14,"name":"-7.50D"},
+    {"id":15,"name":"-7.25D"},
+    {"id":16,"name":"-7.00D"},
+    {"id":17,"name":"-6.75D"},
+    {"id":18,"name":"-6.50D"},
+    {"id":19,"name":"-6.25D"},
+    {"id":20,"name":"-6.00D"},
+    {"id":21,"name":"-5.75D"},
+    {"id":22,"name":"-5.50D"},
+    {"id":23,"name":"-5.25D"},
+    {"id":24,"name":"-5.00D"},
+    {"id":25,"name":"-4.75D"},
+    {"id":26,"name":"-4.50D"},
+    {"id":27,"name":"-4.25D"},
+    {"id":28,"name":"-4.00D"},
+    {"id":29,"name":"-3.75D"},
+    {"id":30,"name":"-3.50D"},
+    {"id":31,"name":"-3.25D"},
+    {"id":32,"name":"-3.00D"},
+    {"id":33,"name":"-2.75D"},
+    {"id":34,"name":"-2.50D"},
+    {"id":35,"name":"-2.25D"},
+    {"id":36,"name":"-2.00D"},
+    {"id":37,"name":"-1.75D"},
+    {"id":38,"name":"-1.50D"},
+    {"id":39,"name":"-1.25D"},
+    {"id":40,"name":"-1.00D"},
+    {"id":41,"name":"-0.75D"},
+    {"id":42,"name":"-0.50D"},
+    {"id":43,"name":"-0.25D"},
+    {"id":44,"name":"0.00D"},
+    {"id":45,"name":"+0.25D"},
+    {"id":46,"name":"+0.50D"},
+    {"id":47,"name":"+0.75D"},
+    {"id":48,"name":"+1.00D"},
+    {"id":49,"name":"+1.25D"},
+    {"id":50,"name":"+1.50D"},
+    {"id":51,"name":"+1.75D"},
+    {"id":52,"name":"+2.00D"},
+    {"id":53,"name":"+2.25D"},
+    {"id":54,"name":"+2.50D"},
+    {"id":55,"name":"+2.75D"},
+    {"id":56,"name":"+3.00D"},
+    {"id":57,"name":"+3.25D"},
+    {"id":58,"name":"+3.50D"},
+    {"id":59,"name":"+3.75D"},
+    {"id":60,"name":"+4.00D"},
+    {"id":61,"name":"+4.25D"},
+    {"id":62,"name":"+4.50D"},
+    {"id":63,"name":"+4.75D"},
+    {"id":64,"name":"+5.00D"},
+    {"id":65,"name":"+5.25D"},
+    {"id":66,"name":"+5.50D"},
+    {"id":67,"name":"+5.75D"},
+    {"id":68,"name":"+6.00D"},
+    {"id":69,"name":"+6.25D"},
+    {"id":70,"name":"+6.50D"},
+    {"id":71,"name":"+6.75D"},
+    {"id":72,"name":"+7.00D"},
+    {"id":73,"name":"+7.25D"},
+    {"id":74,"name":"+7.50D"},
+    {"id":75,"name":"+7.75D"},
+    {"id":76,"name":"+8.00D"},
+    {"id":77,"name":"+8.25D"},
+    {"id":78,"name":"+8.50D"},
+    {"id":79,"name":"+8.75D"},
+    {"id":80,"name":"+9.00D"},
+    {"id":81,"name":"+9.25D"},
+    {"id":82,"name":"+9.50D"},
+    {"id":83,"name":"+9.75D"},
+    {"id":84,"name":"+10.00D"},
+    {"id":85,"name":"+10.25D"},
+    {"id":86,"name":"+10.50D"},
+    {"id":87,"name":"+10.75D"}
 ];
 
 const refractionPrism = [
@@ -504,13 +575,15 @@ const lensTypeOptions = [
   { id: 1, name: 'Single Vision' },
   { id: 2, name: 'Bifocal' },
   { id: 3, name: 'Progressive' },
-  { id: 4, name: 'Photochromic' }
+  // { id: 4, name: 'Photochromic' }
 ];
 const lensColorOptions = [
-  { id: 1, name: 'Clear' },
-  { id: 2, name: 'Tinted' },
-  { id: 3, name: 'Polarized' }
+  { id: 1, name: 'White' },
+  { id: 2, name: 'White Ar' },
+  { id: 3, name: 'Photochromic' },
+  { id: 4, name: 'Photochromic Anti-reflective' }
 ];
+
 const surfacingOptions = [
   { id: 1, name: 'Standard' },
   { id: 2, name: 'Anti-Reflective' },
@@ -838,7 +911,7 @@ const Consulting = () => {
     </Box>
   );
 
-  
+
   const steps = ['Consultation', 'Findings', 'Refraction', 'Sketch Pad', 'Diagnosis', 'Investigations', 'Treatment', 'Summary'];
 
   const getStepContent = (step) => {
@@ -1025,30 +1098,39 @@ const Consulting = () => {
               </Grid>
             ))}
             {/* Frame and Lens Options */}
-            {[
-              { field: 'frameType', label: 'Frame Type', options: frameTypeOptions },
-              { field: 'frameColor', label: 'Frame Color', options: frameColorOptions },
-              { field: 'lensType', label: 'Lens Type', options: lensTypeOptions },
-              { field: 'lensColor', label: 'Lens Color', options: lensColorOptions },
-              { field: 'surfacing', label: 'Surfacing', options: surfacingOptions },
-            ].map(({ field, label, options }) => (
-              <Grid item xs={12} sm={6} key={field}>
-                <FormControl fullWidth>
-                  <InputLabel>{label}</InputLabel>
-                  <Select
-                    value={formData[field] || ''}
-                    onChange={(e) => handleFormChange(field, e.target.value)}
-                    className="rounded-lg"
-                  >
-                    {options.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-            ))}
+           {[
+  { field: 'frameType', label: 'Frame Type', options: frameTypeOptions },
+  { field: 'frameColor', label: 'Frame Color', options: frameColorOptions },
+  { field: 'lensType', label: 'Lens Type', options: lensTypeOptions },
+  { field: 'lensColor', label: 'Lens Color', options: lensColorOptions },
+].map(({ field, label, options }) => (
+  <Grid item xs={12} sm={6} key={field}>
+    <FormControl fullWidth>
+      <InputLabel>{label}</InputLabel>
+      <Select
+        value={formData[field] || ''}
+        onChange={(e) => handleFormChange(field, e.target.value)}
+        className="rounded-lg"
+      >
+        {options.map((option) => (
+          <MenuItem key={option.id} value={option.id}>
+            {option.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </Grid>
+))}
+<Grid item xs={12} sm={6} key="surfacing">
+  <TextField
+    label="Surfacing"
+    fullWidth
+    value={formData.surfacing || ''}
+    onChange={(e) => handleFormChange('surfacing', e.target.value)}
+    className="rounded-lg"
+    variant="outlined"
+  />
+</Grid>
           </Grid>
         );
       case 3:

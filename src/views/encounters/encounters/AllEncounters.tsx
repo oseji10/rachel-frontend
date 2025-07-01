@@ -42,7 +42,7 @@ type Patient = {
   lastName: string;
   otherNames?: string | null;
   gender: string;
-  bloodGroup: string;
+  cardNumber: string;
   occupation?: string | null;
   dateOfBirth: string;
   address?: string | null;
@@ -195,7 +195,7 @@ const EncountersTable = () => {
               <TableCell>Encounter Date</TableCell>
               <TableCell>Patient Name</TableCell>
               <TableCell>Gender</TableCell>
-              <TableCell>Blood Group</TableCell>
+              <TableCell>Card Number</TableCell>
               <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -206,7 +206,7 @@ const EncountersTable = () => {
                 <TableCell>{formatDate(encounter.created_at)}</TableCell>
                 <TableCell>{encounter.firstName} {encounter.lastName}</TableCell>
                 <TableCell>{encounter.gender}</TableCell>
-                <TableCell>{encounter.bloodGroup}</TableCell>
+                <TableCell>{encounter.cardNumber}</TableCell>
                 <TableCell>
                   <IconButton onClick={() => encountersList(encounter)} color="primary">
                     <Visibility />

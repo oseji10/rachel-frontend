@@ -24,7 +24,7 @@ type FormData = {
   lastName: string
   otherNames: string
   gender: string
-  bloodGroup: string
+  cardNumber: string
   occupation: string
   dateOfBirth: string
   email: string
@@ -40,7 +40,7 @@ const initialFormData: FormData = {
   lastName: '',
   otherNames: '',
   gender: '',
-  bloodGroup: '',
+  cardNumber: '',
   occupation: '',
   dateOfBirth: '',
   email: '',
@@ -107,7 +107,7 @@ const CreatePatient = () => {
         lastName: formData.lastName,
         otherNames: formData.otherNames,
         gender: formData.gender,
-        bloodGroup: formData.bloodGroup,
+        cardNumber: formData.cardNumber,
         occupation: formData.occupation,
         dateOfBirth: formData.dateOfBirth,  // Pass as Date object
         address: formData.address,
@@ -207,22 +207,12 @@ const CreatePatient = () => {
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Blood Group</InputLabel>
-                <Select
-                  value={formData.bloodGroup}
-                  onChange={e => handleFormChange('bloodGroup', e.target.value)}
-                >
-                  <MenuItem value="A+">A+</MenuItem>
-                  <MenuItem value="A-">A-</MenuItem>
-                  <MenuItem value="B+">B+</MenuItem>
-                  <MenuItem value="B-">B-</MenuItem>
-                  <MenuItem value="O+">O+</MenuItem>
-                  <MenuItem value="O-">O-</MenuItem>
-                  <MenuItem value="AB+">AB+</MenuItem>
-                  <MenuItem value="AB-">AB-</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                fullWidth
+                label="Card Number"
+                value={formData.cardNumber}
+                onChange={e => handleFormChange('cardNumber', e.target.value)}
+              />
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField

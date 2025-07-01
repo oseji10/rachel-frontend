@@ -187,7 +187,7 @@ const CreateEncounter = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel>Blood Group</InputLabel>
+                <InputLabel>Card Number</InputLabel>
                 <Select
                   value={formData.bloodGroup}
                   onChange={e => handleFormChange('bloodGroup', e.target.value)}

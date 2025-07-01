@@ -450,7 +450,7 @@ const PatientsTable = () => {
                 Gender: {selectedPatient?.gender}
               </Typography>
               <Typography variant="body1">
-                Blood Group: {selectedPatient?.cardNumber}
+                Card Number: {selectedPatient?.cardNumber}
               </Typography>
               <Typography variant="body1">
                 HMO/Insurance: {selectedPatient?.hmo?.hmoName}
@@ -539,17 +539,13 @@ const PatientsTable = () => {
 
 
        <FormControl fullWidth margin="normal">
-                <InputLabel>Blood Group</InputLabel>
-                <Select
-                  value={selectedPatient.cardNumber}
-                  onChange={(e) => handleInputChange('cardNumber', e.target.value)}
-                >
-                  {cardNumberOptions.map((group) => (
-                    <MenuItem key={group} value={group}>
-                      {group}
-                    </MenuItem>
-                  ))}
-                </Select>
+                <InputLabel>Card Number</InputLabel>
+                 <TextField
+                                fullWidth
+                                label="Card Number"
+                                value={formData.cardNumber}
+                                onChange={e => handleFormChange('cardNumber', e.target.value)}
+                              />
               </FormControl>
         <TextField
           fullWidth

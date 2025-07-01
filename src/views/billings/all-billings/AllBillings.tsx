@@ -388,7 +388,7 @@ const BillingsTable = () => {
         <div class="receipt-container">
           <div class="header">
           <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Rachel Eye Clinic Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
-            <h1>Rachel Eye Clinic</h1>
+            <h1>Rachel Eye Center</h1>
             <h3>Payment Receipt</h3>
             <p> No. 23 Onitsha Crescent, off Gimbiya street,<br/> Garki Area 11</p>
             <p>Phone: +234 814 801 9410</p>
@@ -436,8 +436,8 @@ const BillingsTable = () => {
             <p>Total: ₦${billing.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : '0'}</p>
           </div>
           <div class="footer">
-            <p>Thank you for choosing Eye Clinic!</p>
-            <p>Visit us at www.eyeclinic.ng</p>
+            <p>Thank you for choosing Rachel Eye Center!</p>
+            <p>Visit us at www.racheleye.com.ng</p>
           </div>
         </div>
         <script>
