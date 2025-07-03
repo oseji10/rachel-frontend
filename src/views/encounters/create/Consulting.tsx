@@ -560,9 +560,10 @@ const investigationsDoneList = [
 
 // New options for refraction fields
 const frameTypeOptions = [
-  { id: 1, name: 'Full Rim' },
-  { id: 2, name: 'Half Rim' },
-  { id: 3, name: 'Rimless' }
+  { id: 1, name: 'Own Frame Private' },
+  { id: 2, name: 'Rachel Frame Private' },
+  { id: 3, name: 'Own Frame Company' },
+  { id: 4, name: 'Rachel Frame Company' }
 ];
 const frameColorOptions = [
   { id: 1, name: 'Black' },
@@ -607,6 +608,10 @@ const Consulting = () => {
   const leftEyeBackRef = useRef(null);
 
   const [medicineList, setMedicineList] = useState([]);
+  const [eyeDropList, setEyeDropList] = useState([]);
+  const [tabletList, setTabletList] = useState([]);
+  const [ointmentList, setOintmentList] = useState([]);
+
   const [brushColor, setBrushColor] = useState('#000000');
    const [formData, setFormData] = useState({
     chiefComplaintRight: '',
@@ -724,10 +729,16 @@ const Consulting = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [medicineRes] = await Promise.all([
+        const [medicineRes, eyeDropsRes, tabletRes, ointmentRes] = await Promise.all([
           axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/eyedrops`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/tablets`),
+          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/ointments`),
         ]);
         setMedicineList(Array.isArray(medicineRes.data) ? medicineRes.data : []);
+        setEyeDropList(Array.isArray(eyeDropsRes.data) ? eyeDropsRes.data : []);
+        setTabletList(Array.isArray(tabletRes.data) ? tabletRes.data : []);
+        setOintmentList(Array.isArray(ointmentRes.data) ? ointmentRes.data : []);
       } catch (error) {
         console.error('Error fetching data:', error);
         Swal.fire({
@@ -1418,21 +1429,21 @@ const Consulting = () => {
         return (
           <Grid container spacing={4}>
             {renderTable('Eye Drops', eyeDrops, setEyeDrops, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: medicineList.map(m => m.name) },
+              { name: 'medicine', label: 'Medicine', type: 'select', options: eyeDropList.map(m => m.medicineName) },
               { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
               { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
               { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
               { name: 'comment', label: 'Comment' },
             ])}
             {renderTable('Tablets', tablets, setTablets, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: medicineList.map(m => m.name) },
+              { name: 'medicine', label: 'Medicine', type: 'select', options: tabletList.map(m => m.medicineName) },
               { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
               { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
               { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
               { name: 'comment', label: 'Comment' },
             ])}
             {renderTable('Ointments', ointments, setOintments, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: medicineList.map(m => m.name) },
+              { name: 'medicine', label: 'Medicine', type: 'select', options: ointmentList.map(m => m.medicineName) },
               { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
               { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
               { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },

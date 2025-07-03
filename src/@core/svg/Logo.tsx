@@ -72,7 +72,7 @@ const Logo = (props: SVGAttributes<SVGElement>) => {
     //     fillOpacity='0.3'
     //   />
     // </svg>
-    <Image alt='Rachel Eye Clinic' src={"/images/rachel.png"} width={50} height={40} />
+    <Image alt='Rachel Eye Center' src={"/images/rachel.png"} width={50} height={40} />
   )
 }
 

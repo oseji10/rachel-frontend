@@ -290,170 +290,224 @@ const BillingsTable = () => {
     });
   };
 
-  const handlePrintReceipt = (billing: Billing) => {
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) {
-      Swal.fire('Error!', 'Failed to open print window.', 'error');
-      return;
+ const calculateTotalCost = (relatedTransactions) => {
+  // Log the transactions for debugging
+  console.log('Related Transactions:', JSON.stringify(relatedTransactions, null, 2));
+
+  return relatedTransactions.reduce((total, transaction) => {
+    // Convert transaction.cost to a number, handling strings and invalid values
+    const cost = Number(transaction.cost) || 0; // Use Number() for robust conversion
+
+    // Log each transaction's cost and its type for debugging
+    console.log(
+      `Transaction: ${transaction.product?.productName || transaction.service?.serviceName || 'N/A'}, ` +
+      `Cost: ${cost}, Type: ${typeof transaction.cost}`
+    );
+
+    // Validate cost to prevent extreme values
+    if (cost > 1_000_000_000) { // Arbitrary threshold (e.g., 1 billion naira)
+      console.warn(`Suspiciously high cost detected: ${cost} for transaction`, transaction);
+      return total; // Skip this transaction to avoid skewing the total
     }
 
-    const receiptContent = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Receipt - ${billing.transactionId}</title>
-        <style>
-          @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    return total + cost; // Ensure numerical addition
+  }, 0);
+};
+
+const handlePrintReceipt = (billing: Billing) => {
+  const calculatedTotal = calculateTotalCost(billing.relatedTransactions);
+
+  // Log for debugging
+  console.log('Calculated Total:', calculatedTotal);
+  console.log('API Total (billing.total_cost):', billing.total_cost);
+
+  // Warn if there's a mismatch
+  if (calculatedTotal !== billing.total_cost) {
+    console.warn(
+      `Total cost mismatch for billing ${billing.transactionId}: ` +
+      `API total = ${billing.total_cost}, Calculated total = ${calculatedTotal}`
+    );
+  }
+
+  // Use calculatedTotal for display to ensure accuracy
+  const displayTotal = calculatedTotal;
+
+  const receiptContent = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Receipt - ${billing.transactionId}</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body {
+          font-family: 'Roboto', sans-serif;
+          margin: 0;
+          padding: 10mm;
+          width: 90mm;
+          background-color: #fff;
+          color: #333;
+          font-size: 12px;
+          line-height: 1.4;
+        }
+        .receipt-container {
+          border: 2px solid #4a90e2;
+          border-radius: 8px;
+          padding: 10px;
+          background: linear-gradient(to bottom, #f5faff, #ffffff);
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          text-align: center;
+          border-bottom: 2px dashed #4a90e2;
+          padding-bottom: 8px;
+          margin-bottom: 8px;
+        }
+        .header h1 {
+          font-size: 18px;
+          color: #2c5282;
+          margin: 0;
+        }
+        .header p {
+          margin: 2px 0;
+          color: #4a5568;
+          font-size: 10px;
+        }
+        .details, .items {
+          margin: 8px 0;
+        }
+        .details p, .items p {
+          margin: 4px 0;
+        }
+        .items table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 8px;
+        }
+        .items th, .items td {
+          padding: 4px;
+          text-align: left;
+          border-bottom: 1px solid #e2e8f0;
+        }
+        .items th {
+          background-color: #e6f0fa;
+          font-weight: bold;
+          color: #2c5282;
+        }
+        .total {
+          border-top: 2px dashed #4a90e2;
+          padding-top: 8px;
+          text-align: right;
+          font-weight: bold;
+          color: #2c5282;
+        }
+        .footer {
+          text-align: center;
+          margin-top: 8px;
+          font-size: 10px;
+          color: #718096;
+        }
+        @media print {
           body {
-            font-family: 'Roboto', sans-serif;
             margin: 0;
-            padding: 10mm;
-            width: 90mm;
-            background-color: #fff;
-            color: #333;
-            font-size: 12px;
-            line-height: 1.4;
+            padding: 0;
           }
           .receipt-container {
-            border: 2px solid #4a90e2;
-            border-radius: 8px;
-            padding: 10px;
-            background: linear-gradient(to bottom, #f5faff, #ffffff);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: none;
           }
-          .header {
-            text-align: center;
-            border-bottom: 2px dashed #4a90e2;
-            padding-bottom: 8px;
-            margin-bottom: 8px;
-          }
-          .header h1 {
-            font-size: 18px;
-            color: #2c5282;
-            margin: 0;
-          }
-          .header p {
-            margin: 2px 0;
-            color: #4a5568;
-            font-size: 10px;
-          }
-          .details, .items {
-            margin: 8px 0;
-          }
-          .details p, .items p {
-            margin: 4px 0;
-          }
-          .items table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 8px;
-          }
-          .items th, .items td {
-            padding: 4px;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-          }
-          .items th {
-            background-color: #e6f0fa;
-            font-weight: bold;
-            color: #2c5282;
-          }
-          .total {
-            border-top: 2px dashed #4a90e2;
-            padding-top: 8px;
-            text-align: right;
-            font-weight: bold;
-            color: #2c5282;
-          }
-          .footer {
-            text-align: center;
-            margin-top: 8px;
-            font-size: 10px;
-            color: #718096;
-          }
-          @media print {
-            body {
-              margin: 0;
-              padding: 0;
-            }
-            .receipt-container {
-              box-shadow: none;
-            }
-          }
-        </style>
-      </head>
-      <body>
-        <div class="receipt-container">
-          <div class="header">
-          <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Rachel Eye Clinic Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
-            <h1>Rachel Eye Center</h1>
-            <h3>Payment Receipt</h3>
-            <p> No. 23 Onitsha Crescent, off Gimbiya street,<br/> Garki Area 11</p>
-            <p>Phone: +234 814 801 9410</p>
-            <p>Email: info@racheleyeemr.com.ng</p>
-          </div>
-          <div class="details">
-            <p><strong>Transaction ID:</strong> ${billing.transactionId}</p>
-            <p><strong>Date:</strong> ${billing.created_at ? new Date(billing.created_at).toLocaleString('en-US', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: true
-            }) : 'N/A'}</p>
-            <p><strong>Patient:</strong> ${billing.patient.firstName} ${billing.patient.lastName}</p>
-            <p><strong>Doctor:</strong> ${billing.patient.doctor?.doctorName || 'N/A'}</p>
-            <p><strong>Payment Method:</strong> ${billing.paymentMethod || 'N/A'}</p>
-            <p><strong>Payment Status:</strong> ${billing.paymentStatus.toUpperCase()}</p>
-          </div>
-          <div class="items">
-            <table>
-              <thead>
-                <tr>
-                  <th>Item</th>
-                  <th>Qty</th>
-                  <th>Price</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${billing.relatedTransactions.map((transaction) => `
-                  <tr>
-                    <td>${transaction.product?.productName || transaction.service?.serviceName || 'N/A'}</td>
-                    <td>${transaction.quantity}</td>
-                    <td>₦${transaction.cost ? new Intl.NumberFormat().format(transaction.cost) : '0'}</td>
-                    <td>₦${transaction.cost && transaction.quantity ? new Intl.NumberFormat().format(transaction.cost * transaction.quantity) : '0'}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-          <div class="total">
-            <p>Total: ₦${billing.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : '0'}</p>
-          </div>
-          <div class="footer">
-            <p>Thank you for choosing Rachel Eye Center!</p>
-            <p>Visit us at www.racheleye.com.ng</p>
-          </div>
+        }
+      </style>
+    </head>
+    <body>
+      <div class="receipt-container">
+        <div class="header">
+          <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Rachel Eye Center Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
+          <h1>Rachel Eye Center</h1>
+          <h3>Payment Receipt</h3>
+          <p> No. 23 Onitsha Crescent, off Gimbiya street,<br/> Garki Area 11</p>
+          <p>Phone: +234 814 801 9410</p>
+          <p>Email: info@racheleyeemr.com.ng</p>
         </div>
-        <script>
-          window.onload = () => {
-            window.print();
-            setTimeout(() => window.close(), 1000);
-          };
-        </script>
-      </body>
-      </html>
-    `;
+        <div class="details">
+          <p><strong>Transaction ID:</strong> ${billing.transactionId}</p>
+          <p><strong>Date:</strong> ${
+            billing.created_at
+              ? new Date(billing.created_at).toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                })
+              : 'N/A'
+          }</p>
+          <p><strong>Patient:</strong> ${billing.patient.firstName} ${billing.patient.lastName}</p>
+          <p><strong>Cashier:</strong> ${billing.biller_info || 'N/A'} </p>
+          <p><strong>Payment Method:</strong> ${billing.paymentMethod || 'N/A'}</p>
+          <p><strong>Payment Status:</strong> ${billing.paymentStatus.toUpperCase()}</p>
+        </div>
+        <div class="items">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${billing.relatedTransactions
+                .map(
+                  (transaction) => `
+                <tr>
+                  <td>${transaction.product?.productName || transaction.service?.serviceName || 'N/A'}</td>
+                  <td>${transaction.quantity}</td>
+                  <td>₦${
+                    transaction.product?.productCost || transaction.service?.serviceCost
+                      ? new Intl.NumberFormat().format(
+                          Number(transaction.product?.productCost || transaction.service?.serviceCost) || 0
+                        )
+                      : '0'
+                  }</td>
+                  <td>₦${transaction.cost ? new Intl.NumberFormat().format(Number(transaction.cost) || 0) : '0'}</td>
+                </tr>
+              `
+                )
+                .join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="total">
+          <p>Total: ₦${new Intl.NumberFormat().format(displayTotal)}</p>
+        </div>
+        <div class="footer">
+          <p>Thank you for choosing Rachel Eye Center!</p>
+          <p>Visit us at www.racheleye.com.ng</p>
+        </div>
+      </div>
+      <script>
+        window.onload = () => {
+          window.print();
+          setTimeout(() => window.close(), 1000);
+        };
+      </script>
+    </body>
+    </html>
+  `;
 
-    printWindow.document.write(receiptContent);
-    printWindow.document.close();
-  };
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    Swal.fire('Error!', 'Failed to open print window.', 'error');
+    return;
+  }
 
+  printWindow.document.write(receiptContent);
+  printWindow.document.close();
+};
   const handleEdit = (index) => {
     setModalOpen(true);
   };
@@ -511,100 +565,118 @@ const BillingsTable = () => {
         margin="normal"
       />
       <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Billing Date</TableCell>
-              <TableCell>TRX ID</TableCell>
-              <TableCell>Patient Name</TableCell>
-              <TableCell>Amount</TableCell>
-              <TableCell>Payment Method</TableCell>
-              <TableCell>Payment Status</TableCell>
-              {(role === "3" || role === "8" || role === "6") && (
-                <TableCell>Action</TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((billing) => (
-              <TableRow key={billing.billingId}>
-                <TableCell>
-                  {billing.created_at &&
-                    new Date(billing.created_at).toLocaleString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                      hour12: true
-                    })}
-                </TableCell>
-                <TableCell>{billing.transactionId}</TableCell>
-                <TableCell>{billing.patient.firstName} {billing.patient.lastName}</TableCell>
-                <TableCell>₦{billing.total_cost ? new Intl.NumberFormat().format(billing.total_cost) : "N/A"}</TableCell>
-                <TableCell>{billing.paymentMethod}</TableCell>
-                <TableCell>
-                  <span
-                    style={{
-                      backgroundColor: billing.paymentStatus === "pending" ? "#FFC107" : "#4CAF50",
-                      color: "white",
-                      fontWeight: "bold",
-                      padding: "4px 8px",
-                      borderRadius: "4px",
-                    }}
-                  >
-                    {billing.paymentStatus.toUpperCase()}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  {(role === "2" || role === "3" || role === "8") && (
-                    <>
-                      <IconButton onClick={() => handleView(billing)} color="primary">
-                        <Visibility />
-                      </IconButton>
-                      {billing.paymentStatus === "paid" && (
-                        <IconButton onClick={() => handlePrintReceipt(billing)} color="success">
-                          <Print />
-                        </IconButton>
-                      )}
-                      {billing.paymentStatus === "pending" && (
-                        <IconButton onClick={() => handlePaymentsClick(billing)} color="warning">
-                          <Payments />
-                        </IconButton>
-                      )}
-                      {billing.paymentStatus === "pending" && (
-                        <IconButton onClick={() => handleEdit(billing)} color="secondary">
-                          <Edit />
-                        </IconButton>
-                      )}
-                      {billing.paymentStatus === "pending" && (
-                        <IconButton onClick={() => handleDelete(billing)} color="error">
-                          <Delete />
-                        </IconButton>
-                      )}
-                    </>
-                  )}
-                  {role === "6" && billing.paymentStatus === "paid" && (
-                    <IconButton onClick={() => handleDispense(billing)} color="success">
-                      <Outbound />
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell>Billing Date</TableCell>
+        <TableCell>TRX ID</TableCell>
+        <TableCell>Patient Name</TableCell>
+        <TableCell>Amount</TableCell>
+        <TableCell>Payment Method</TableCell>
+        <TableCell>Payment Status</TableCell>
+        {(role === "3" || role === "8" || role === "6") && (
+          <TableCell>Action</TableCell>
+        )}
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {filteredBillings.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((billing) => {
+        // Calculate the total cost for this billing
+        const calculatedTotal = calculateTotalCost(billing.relatedTransactions);
+
+        // Log for debugging
+        console.log(`Billing ${billing.transactionId} - Calculated Total: ${calculatedTotal}, API Total: ${billing.total_cost}`);
+
+        // Warn if there's a mismatch
+        if (calculatedTotal !== billing.total_cost) {
+          console.warn(
+            `Total cost mismatch for billing ${billing.transactionId}: ` +
+            `API total = ${billing.total_cost}, Calculated total = ${calculatedTotal}`
+          );
+        }
+
+        return (
+          <TableRow key={billing.billingId}>
+            <TableCell>
+              {billing.created_at &&
+                new Date(billing.created_at).toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                  hour12: true,
+                })}
+            </TableCell>
+            <TableCell>{billing.transactionId}</TableCell>
+            <TableCell>{billing.patient.firstName} {billing.patient.lastName}</TableCell>
+            <TableCell>
+              ₦{calculatedTotal ? new Intl.NumberFormat().format(calculatedTotal) : 'N/A'}
+            </TableCell>
+            <TableCell>{billing.paymentMethod}</TableCell>
+            <TableCell>
+              <span
+                style={{
+                  backgroundColor: billing.paymentStatus === 'pending' ? '#FFC107' : '#4CAF50',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                }}
+              >
+                {billing.paymentStatus.toUpperCase()}
+              </span>
+            </TableCell>
+            <TableCell>
+              {(role === '2' || role === '3' || role === '8') && (
+                <>
+                  <IconButton onClick={() => handleView(billing)} color="primary">
+                    <Visibility />
+                  </IconButton>
+                  {billing.paymentStatus === 'paid' && (
+                    <IconButton onClick={() => handlePrintReceipt(billing)} color="success">
+                      <Print />
                     </IconButton>
                   )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 50]}
-          component="div"
-          count={filteredBillings.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </TableContainer>
+                  {billing.paymentStatus === 'pending' && (
+                    <IconButton onClick={() => handlePaymentsClick(billing)} color="warning">
+                      <Payments />
+                    </IconButton>
+                  )}
+                  {billing.paymentStatus === 'pending' && (
+                    <IconButton onClick={() => handleEdit(billing)} color="secondary">
+                      <Edit />
+                    </IconButton>
+                  )}
+                  {billing.paymentStatus === 'pending' && (
+                    <IconButton onClick={() => handleDelete(billing)} color="error">
+                      <Delete />
+                    </IconButton>
+                  )}
+                </>
+              )}
+              {role === '6' && billing.paymentStatus === 'paid' && (
+                <IconButton onClick={() => handleDispense(billing)} color="success">
+                  <Outbound />
+                </IconButton>
+              )}
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </TableBody>
+  </Table>
+  <TablePagination
+    rowsPerPageOptions={[10, 25, 50]}
+    component="div"
+    count={filteredBillings.length}
+    rowsPerPage={rowsPerPage}
+    page={page}
+    onPageChange={handleChangePage}
+    onRowsPerPageChange={handleChangeRowsPerPage}
+  />
+</TableContainer>
 
       <Modal open={openViewModal} onClose={() => setOpenViewModal(false)}>
         <Box sx={modalStyle}>

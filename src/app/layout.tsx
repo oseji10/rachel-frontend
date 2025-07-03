@@ -12,7 +12,7 @@ import '@/assets/iconify-icons/generated-icons.css'
 
 
 export const metadata = {
-  title: 'Rachel Eye Clinic',
+  title: 'Rachel Eye Center',
   description:
     'Providing quality and affordable eye care for Nigerians.'
 }
