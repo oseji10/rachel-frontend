@@ -1,7 +1,7 @@
 'use client';
 
 // React Imports
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 
 // Next Imports
@@ -47,7 +47,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-
+  
   const router = useRouter()
 
   const handleClickShowPassword = () => setIsPasswordShown(show => !show)
@@ -56,129 +56,190 @@ const Login = () => {
     setFormData({ ...formData, [field]: value })
   }
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
     setSuccessMessage('');
-  
+
     const payload = {
       email: formData.email,
       password: formData.password,
     };
-    await initializeCsrf();
+
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/login`, payload);
-  
-      const data = response.data;
-  
-      if (data) {
-        Cookies.set('authToken', data.token, { secure: true, sameSite: 'strict' });
-        Cookies.set('role', data.user.role, { secure: true, sameSite: 'strict' });
-        Cookies.set('name', response.data.user.firstName + ' ' + response.data.user.lastName)
-        Cookies.set('firstName', response.data.user.firstName);
-        Cookies.set('lastName', response.data.user.lastName);
-        Cookies.set('phoneNumber', response.data.user.phoneNumber);
-        
-        setSuccessMessage('Login successful! Redirecting...');
-        setTimeout(() => router.push('/dashboard'), 1500);
-      } else {
-        setErrorMessage('Login failed. Please try again.');
-      }
-    } catch (error) {
-      setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_APP_URL}/login`,
+        payload,
+        { withCredentials: true }
+      );
+      
+      const {
+        message,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        role,
+        access_token,
+      } = response.data;
+
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        role,
+        access_token,
+      };
+
+      localStorage.setItem('user', JSON.stringify(userData));
+      setSuccessMessage('Login successful! Redirecting...');
+      
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 2000);
+    } catch (error: any) {
+      console.error('Login failed:', error);
+      setErrorMessage(error.response?.data?.message || 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
   };
 
+  useEffect(() => {
+    if (errorMessage || successMessage) {
+      const timer = setTimeout(() => {
+        setErrorMessage('');
+        setSuccessMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [errorMessage, successMessage]);
+
   return (
     <div className='min-h-screen flex bg-cover bg-center bg-no-repeat' style={{ backgroundImage: 'url(/images/eyeglasses.jpeg)' }}>
-      <div className='w-full md:w-1/2 flex items-center justify-end p-6 bg-black bg-opacity-50'>
-        <Card className='w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-2xl overflow-hidden'>
-          <CardContent className='p-8 sm:p-12'>
-            <Link href='/' className='flex justify-center items-center mb-8'>
-              <Logo />
-            </Link>
-            <div className='flex flex-col gap-6'>
-              <div>
-                <Typography variant='h3' className='text-3xl font-bold text-gray-800'>
-                  {/* {`Welcome to ${themeConfig.templateName}! 👋`} */}
-                </Typography>
-                <Typography className='mt-2 text-gray-600'>
-                  Sign in with your email and password
-                </Typography>
+      <div className='w-full md:w-1/2 lg:w-1/3 flex items-center justify-center p-6 bg-black bg-opacity-50'>
+        <Card className='w-full max-w-md bg-white/90 backdrop-blur-sm shadow-2xl rounded-xl overflow-hidden transform transition-all hover:shadow-3xl hover:-translate-y-1'>
+          <CardContent className='p-8 sm:p-10'>
+            <div className='flex flex-col items-center mb-8'>
+              <Link href='/' className='mb-6'>
+                <Logo />
+              </Link>
+              <Typography variant='h4' className='text-2xl font-bold text-gray-800 text-center'>
+                Welcome to {themeConfig.templateName}
+              </Typography>
+              <Typography variant='body2' className='mt-2 text-gray-600 text-center'>
+                Please sign in to continue
+              </Typography>
+            </div>
+            
+            {errorMessage && (
+              <div className='mb-4 p-3 bg-red-50 rounded-lg border border-red-200'>
+                <Typography className='text-red-600'>{errorMessage}</Typography>
               </div>
-              {errorMessage && <Typography className='text-red-500 bg-red-100 p-3 rounded'>{errorMessage}</Typography>}
-              {successMessage && <Typography className='text-green-500 bg-green-100 p-3 rounded'>{successMessage}</Typography>}
-              <form noValidate autoComplete='off' onSubmit={handleLogin} className='flex flex-col gap-6'>
-                <TextField
-                  autoFocus
-                  fullWidth
-                  label='Email'
-                  value={formData.email}
-                  onChange={e => handleFormChange('email', e.target.value)}
-                  variant='outlined'
-                  className='rounded-lg'
-                  InputProps={{
-                    className: 'bg-white'
-                  }}
+            )}
+            
+            {successMessage && (
+              <div className='mb-4 p-3 bg-green-50 rounded-lg border border-green-200'>
+                <Typography className='text-green-600'>{successMessage}</Typography>
+              </div>
+            )}
+            
+            <form onSubmit={handleLogin} className='space-y-5'>
+              <TextField
+                fullWidth
+                label='Email'
+                type='email'
+                value={formData.email}
+                onChange={e => handleFormChange('email', e.target.value)}
+                variant='outlined'
+                className='rounded-lg'
+                InputProps={{
+                  className: 'bg-white',
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <i className='ri-mail-line text-gray-400' />
+                    </InputAdornment>
+                  )
+                }}
+              />
+              
+              <TextField
+                fullWidth
+                label='Password'
+                type={isPasswordShown ? 'text' : 'password'}
+                value={formData.password}
+                onChange={e => handleFormChange('password', e.target.value)}
+                variant='outlined'
+                className='rounded-lg'
+                InputProps={{
+                  className: 'bg-white',
+                  startAdornment: (
+                    <InputAdornment position='start'>
+                      <i className='ri-lock-line text-gray-400' />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position='end'>
+                      <IconButton
+                        edge='end'
+                        onClick={handleClickShowPassword}
+                        onMouseDown={e => e.preventDefault()}
+                        className='text-gray-400 hover:text-gray-600'
+                      >
+                        <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }}
+              />
+              
+              <div className='flex items-center justify-between'>
+                <FormControlLabel
+                  control={<Checkbox color='primary' />}
+                  label='Remember me'
+                  className='text-gray-600'
                 />
-                <TextField
-                  fullWidth
-                  label='Password'
-                  id='outlined-adornment-password'
-                  type={isPasswordShown ? 'text' : 'password'}
-                  value={formData.password}
-                  onChange={e => handleFormChange('password', e.target.value)}
-                  variant='outlined'
-                  className='rounded-lg'
-                  InputProps={{
-                    className: 'bg-white',
-                    endAdornment: (
-                      <InputAdornment position='end'>
-                        <IconButton
-                          size='small'
-                          edge='end'
-                          onClick={handleClickShowPassword}
-                          onMouseDown={e => e.preventDefault()}
-                        >
-                          <i className={isPasswordShown ? 'ri-eye-off-line' : 'ri-eye-line'} />
-                        </IconButton>
-                      </InputAdornment>
-                    )
-                  }}
-                />
-                <div className='flex justify-between items-center flex-wrap gap-4'>
-                  <FormControlLabel
-                    control={<Checkbox color='primary' />}
-                    label='Remember me'
-                    className='text-gray-700'
-                  />
-                  <Typography
-                    component={Link}
-                    href='/forgot-password'
-                    className='text-blue-600 hover:text-blue-800 transition-colors'
-                  >
-                    Forgot password?
-                  </Typography>
-                </div>
-                <Button
-                  fullWidth
-                  variant='contained'
-                  type='submit'
-                  disabled={isLoading}
-                  className='bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white py-3 rounded-lg shadow-md transition-all duration-300'
-                  startIcon={isLoading && <CircularProgress size={20} />}
+                <Link 
+                  href='/forgot-password' 
+                  className='text-sm text-blue-600 hover:text-blue-800 transition-colors'
                 >
-                  {isLoading ? 'Logging In...' : 'Log In'}
-                </Button>
-              </form>
+                  Forgot password?
+                </Link>
+              </div>
+              
+              <Button
+                fullWidth
+                size='large'
+                variant='contained'
+                type='submit'
+                disabled={isLoading}
+                className='h-12 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-lg shadow-md transition-all duration-300'
+              >
+                {isLoading ? (
+                  <>
+                    <CircularProgress size={24} color='inherit' thickness={5} className='mr-2' />
+                    Signing In...
+                  </>
+                ) : 'Sign In'}
+              </Button>
+            </form>
+            
+            <div className='mt-6 text-center'>
+              <Typography variant='body2' className='text-gray-600'>
+                Don't have an account?{' '}
+                <Link 
+                  href='/register' 
+                  className='text-blue-600 hover:text-blue-800 font-medium transition-colors'
+                >
+                  Create one
+                </Link>
+              </Typography>
             </div>
           </CardContent>
         </Card>
       </div>
-      <div className='hidden md:block w-1/2 bg-gradient-to-b from-transparent to-black/50'></div>
     </div>
   )
 }

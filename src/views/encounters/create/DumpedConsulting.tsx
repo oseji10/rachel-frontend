@@ -127,6 +127,12 @@ const Consulting = () => {
   const [prescriptionGlasses, setPrescriptionGlasses] = useState([{ lensType: '' }]);
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [canvasData, setCanvasData] = useState({
+    rightEyeFront: null,
+    rightEyeBack: null,
+    leftEyeFront: null,
+    leftEyeBack: null,
+  });
 
   const doseDurationOptions = [
     '1/7', '2/7', '3/7', '4/7', '5/7', '8/7', '9/7', '10/7', '11/7', '12/7', '13/7', '14/7',
@@ -135,6 +141,82 @@ const Consulting = () => {
   ];
   const dosageOptions = ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'When necessary'];
   const quantityOptions = Array.from({ length: 150 }, (_, i) => (i + 1).toString());
+
+  // Load data from localStorage on component mount
+  useEffect(() => {
+    const savedFormData = localStorage.getItem(`formData_${patientId}_${encounterId}`);
+    const savedEyeDrops = localStorage.getItem(`eyeDrops_${patientId}_${encounterId}`);
+    const savedTablets = localStorage.getItem(`tablets_${patientId}_${encounterId}`);
+    const savedOintments = localStorage.getItem(`ointments_${patientId}_${encounterId}`);
+    const savedPrescriptionGlasses = localStorage.getItem(`prescriptionGlasses_${patientId}_${encounterId}`);
+    const savedCanvasData = localStorage.getItem(`canvasData_${patientId}_${encounterId}`);
+    const savedActiveStep = localStorage.getItem(`activeStep_${patientId}_${encounterId}`);
+
+    if (savedFormData) setFormData(JSON.parse(savedFormData));
+    if (savedEyeDrops) setEyeDrops(JSON.parse(savedEyeDrops));
+    if (savedTablets) setTablets(JSON.parse(savedTablets));
+    if (savedOintments) setOintments(JSON.parse(savedOintments));
+    if (savedPrescriptionGlasses) setPrescriptionGlasses(JSON.parse(savedPrescriptionGlasses));
+    if (savedCanvasData) setCanvasData(JSON.parse(savedCanvasData));
+    if (savedActiveStep) setActiveStep(parseInt(savedActiveStep, 10));
+  }, [patientId, encounterId]);
+
+  // Save data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem(`formData_${patientId}_${encounterId}`, JSON.stringify(formData));
+  }, [formData, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`eyeDrops_${patientId}_${encounterId}`, JSON.stringify(eyeDrops));
+  }, [eyeDrops, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`tablets_${patientId}_${encounterId}`, JSON.stringify(tablets));
+  }, [tablets, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`ointments_${patientId}_${encounterId}`, JSON.stringify(ointments));
+  }, [ointments, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`prescriptionGlasses_${patientId}_${encounterId}`, JSON.stringify(prescriptionGlasses));
+  }, [prescriptionGlasses, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`canvasData_${patientId}_${encounterId}`, JSON.stringify(canvasData));
+  }, [canvasData, patientId, encounterId]);
+
+  useEffect(() => {
+    localStorage.setItem(`activeStep_${patientId}_${encounterId}`, activeStep.toString());
+  }, [activeStep, patientId, encounterId]);
+
+  // Restore canvas sketches when navigating to the sketch step
+  useEffect(() => {
+    if (activeStep === 4) {
+      if (canvasData.rightEyeFront && rightEyeFrontRef.current) {
+        rightEyeFrontRef.current.loadSaveData(canvasData.rightEyeFront, true);
+      }
+      if (canvasData.rightEyeBack && rightEyeBackRef.current) {
+        rightEyeBackRef.current.loadSaveData(canvasData.rightEyeBack, true);
+      }
+      if (canvasData.leftEyeFront && leftEyeFrontRef.current) {
+        leftEyeFrontRef.current.loadSaveData(canvasData.leftEyeFront, true);
+      }
+      if (canvasData.leftEyeBack && leftEyeBackRef.current) {
+        leftEyeBackRef.current.loadSaveData(canvasData.leftEyeBack, true);
+      }
+    }
+  }, [activeStep, canvasData]);
+
+  // Save canvas data to state when canvas changes
+  const saveCanvasData = () => {
+    setCanvasData({
+      rightEyeFront: rightEyeFrontRef.current?.getSaveData() || null,
+      rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
+      leftEyeFront: leftEyeFrontRef.current?.getSaveData() || null,
+      leftEyeBack: leftEyeBackRef.current?.getSaveData() || null,
+    });
+  };
 
   // Fetch data for options
   useEffect(() => {
@@ -191,14 +273,23 @@ const Consulting = () => {
   };
 
   const handleNext = () => {
+    if (activeStep === 4) {
+      saveCanvasData();
+    }
     setActiveStep((prev) => prev + 1);
   };
 
   const handleBack = () => {
+    if (activeStep === 4) {
+      saveCanvasData();
+    }
     setActiveStep((prev) => prev - 1);
   };
 
   const handleStep = (step) => () => {
+    if (activeStep === 4) {
+      saveCanvasData();
+    }
     setActiveStep(step);
   };
 
@@ -216,12 +307,12 @@ const Consulting = () => {
       });
     };
 
-    const sketches = activeStep === 4 ? {
+    const sketches = {
       rightEyeFront: rightEyeFrontRef.current?.getSaveData() || null,
       rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
       leftEyeFront: leftEyeFrontRef.current?.getSaveData() || null,
       leftEyeBack: leftEyeBackRef.current?.getSaveData() || null,
-    } : {};
+    };
 
     const payload = {
       patientId,
@@ -243,6 +334,14 @@ const Consulting = () => {
         timer: 3000,
         showConfirmButton: false,
       });
+      // Clear localStorage on successful submission
+      localStorage.removeItem(`formData_${patientId}_${encounterId}`);
+      localStorage.removeItem(`eyeDrops_${patientId}_${encounterId}`);
+      localStorage.removeItem(`tablets_${patientId}_${encounterId}`);
+      localStorage.removeItem(`ointments_${patientId}_${encounterId}`);
+      localStorage.removeItem(`prescriptionGlasses_${patientId}_${encounterId}`);
+      localStorage.removeItem(`canvasData_${patientId}_${encounterId}`);
+      localStorage.removeItem(`activeStep_${patientId}_${encounterId}`);
       router.push(`/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}&encounterId=${encounterId}`);
     } catch (error) {
       Swal.fire({
@@ -460,10 +559,11 @@ const Consulting = () => {
                 <CanvasDraw
                   ref={rightEyeFrontRef}
                   brushColor={brushColor}
-                  brushRadius={0.5} // Tiny dot
+                  brushRadius={0.5}
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={saveCanvasData}
                 />
                 <Button variant="contained" color="secondary" onClick={() => rightEyeFrontRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -474,10 +574,11 @@ const Consulting = () => {
                 <CanvasDraw
                   ref={rightEyeBackRef}
                   brushColor={brushColor}
-                  brushRadius={0.5} // Tiny dot
+                  brushRadius={0.5}
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={saveCanvasData}
                 />
                 <Button variant="contained" color="secondary" onClick={() => rightEyeBackRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -488,10 +589,11 @@ const Consulting = () => {
                 <CanvasDraw
                   ref={leftEyeFrontRef}
                   brushColor={brushColor}
-                  brushRadius={0.5} // Tiny dot
+                  brushRadius={0.5}
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={saveCanvasData}
                 />
                 <Button variant="contained" color="secondary" onClick={() => leftEyeFrontRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -502,10 +604,11 @@ const Consulting = () => {
                 <CanvasDraw
                   ref={leftEyeBackRef}
                   brushColor={brushColor}
-                  brushRadius={0.5} // Tiny dot
+                  brushRadius={0.5}
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={saveCanvasData}
                 />
                 <Button variant="contained" color="secondary" onClick={() => leftEyeBackRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear

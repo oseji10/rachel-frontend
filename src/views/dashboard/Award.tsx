@@ -4,35 +4,36 @@ import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
 import Button from '@mui/material/Button'
 import Cookies from 'js-cookie';
+import { getRole, getUserName } from '../../../lib/auth';
 
 const Award = () => {
   
-  const role = Cookies.get('role');
-  const name = Cookies.get('name');
+  const role = getRole();
+  const name = getUserName();
 
-  const getRoleName = (role) => {
-    switch (role) {
-      case "2":
-        return "Clinic Receptionist";
-      case "3":
-        return "Frontdesk";
-      case "4":
-        return "Doctor";
-      case "5":
-        return "Workshop Receptionist";
-        case "6":
-        return "Nurse";
-        case "7":
-        return "Admin";
-        case "8":
-        return "Super Admin";
-      default:
-        return "Unknown Role"; 
-    }
-  };
+  // const getRoleName = (role) => {
+  //   switch (role) {
+  //     case "2":
+  //       return "Clinic Receptionist";
+  //     case "3":
+  //       return "Frontdesk";
+  //     case "4":
+  //       return "Doctor";
+  //     case "5":
+  //       return "Workshop Receptionist";
+  //       case "6":
+  //       return "Nurse";
+  //       case "7":
+  //       return "Admin";
+  //       case "8":
+  //       return "Super Admin";
+  //     default:
+  //       return "Unknown Role"; 
+  //   }
+  // };
   
   
-  const roleName = getRoleName(role);
+  // const roleName = getRoleName(role);
   
   // console.log(roleName); // Outputs the role name based on the role value
   
@@ -43,7 +44,7 @@ const Award = () => {
           <Typography 
           variant='h4'
           style={{color:'red'}}
-          >{roleName} Dashboard</Typography>
+          >{role} Dashboard</Typography>
           <Typography variant='h5'>Welcome back {name}! 🎉</Typography>
           <Typography>This dashbaord lets you manage your patients, inventory and patient encounters.</Typography>
         </div>

@@ -21,6 +21,7 @@ import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import Button from '@mui/material/Button'
 import Cookies from 'js-cookie';
+import { getRole, getUserName } from '../../../../lib/auth'
 // Styled component for badge content
 const BadgeContentSpan = styled('span')({
   width: 8,
@@ -59,33 +60,33 @@ const UserDropdown = () => {
 
 
   
-  const role = Cookies.get('role');
-  const name = Cookies.get('name')
+  const role = getRole();
+  const name = getUserName();
 
 
-  const getRoleName = (role) => {
-    switch (role) {
-      case "2":
-        return "Clinic Receptionist";
-      case "3":
-        return "Frontdesk Receptionist";
-      case "4":
-        return "Doctor";
-      case "5":
-        return "Workshop Receptionist";
-        case "6":
-        return "Nurse";
-        case "7":
-        return "Admin";
-        case "8":
-        return "Super Admin";
-      default:
-        return "Unknown Role"; 
-    }
-  };
+  // const getRoleName = (role) => {
+  //   switch (role) {
+  //     case "2":
+  //       return "Clinic Receptionist";
+  //     case "3":
+  //       return "Frontdesk Receptionist";
+  //     case "4":
+  //       return "Doctor";
+  //     case "5":
+  //       return "Workshop Receptionist";
+  //       case "6":
+  //       return "Nurse";
+  //       case "7":
+  //       return "Admin";
+  //       case "8":
+  //       return "Super Admin";
+  //     default:
+  //       return "Unknown Role"; 
+  //   }
+  // };
   
   
-  const roleName = getRoleName(role);
+  // const roleName = getRoleName(role);
 
   
     const handleLogout = () => {
@@ -101,6 +102,7 @@ const UserDropdown = () => {
     
   return (
     <>
+     {name}
       <Badge
         ref={anchorRef}
         overlap='circular'
@@ -140,7 +142,7 @@ const UserDropdown = () => {
                       <Typography className='font-medium' color='text.primary'>
                         {name}
                       </Typography>
-                      <Typography variant='caption'>{roleName}</Typography>
+                      <Typography variant='caption'>{role}</Typography>
                     </div>
                   </div>
                   <Divider className='mlb-1' />

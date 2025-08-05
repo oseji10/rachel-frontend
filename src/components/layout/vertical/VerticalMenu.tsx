@@ -21,8 +21,9 @@ import StyledVerticalNavExpandIcon from '@/@menu/styles/vertical/StyledVerticalN
 // Style Imports
 import menuItemStyles from '@/@core/styles/vertical/menuItemStyles'
 import menuSectionStyles from '@/@core/styles/vertical/menuSectionStyles'
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import api from '../../../../lib/api';
 type RenderExpandIconProps = {
   open?: boolean
   transitionDuration?: VerticalMenuContextProps['transitionDuration']
@@ -42,44 +43,74 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
   const { isBreakpointReached, transitionDuration } = useVerticalNav();
   const ScrollWrapper = isBreakpointReached ? 'div' : PerfectScrollbar;
 
-  // const [role, setRole] = useState<string | null>(null);
+   const [isAuthenticated, setIsAuthenticated] = useState(null); // null indicates loading
+  const [role, setRole] = useState('');
+  const [name, setName] = useState('');
 
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const token = localStorage.getItem('authToken');
-  //     const userRole = localStorage.getItem('role');
-  
-  //     if (!token) {
-  //       router.push('/login'); // Redirect to login if no token
-  //       return;
-  //     }
-  
-  //     setRole(userRole); // Set the role
-  //   }
-  // }, [router]);
-  // useEffect(() => {
-  //   const userRole = Cookies.get('role');
-  //   // const token = Cookies.get('authToken');
+  const refreshToken = useCallback(async () => {
+    try {
+      await api.post('/refresh', {}, { withCredentials: true });
+      return true;
+    } catch (error) {
+      console.error('Token refresh failed:', error);
+      return false;
+    }
+  }, []);
 
-  //   if (!Cookies.get('authToken')) {
-  //     router.push('/login');
-  //     // return null;
-  //   }
-  //   setRole(userRole);
-  // });
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await api.get(`/user`, { withCredentials: true });
+        setIsAuthenticated(true);
+        setRole(response.data.role || '');
+        setName(`${response.data.firstName || ''} ${response.data.lastName || ''}`.trim());
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setIsAuthenticated(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
-  const role = Cookies.get('role');
+  useEffect(() => {
+    const interceptor = api.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response?.status === 401 && error.config && !error.config.__isRetryRequest) {
+          error.config.__isRetryRequest = true;
+          const refreshed = await refreshToken();
+          if (refreshed) {
+            return api(error.config);
+          }
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      api.interceptors.response.eject(interceptor);
+    };
+  }, [refreshToken]);
+
+  useEffect(() => {
+    if (isAuthenticated === false) {
+      router.push('/');
+    }
+  }, [isAuthenticated, router]);
+
+
+  // const role = Cookies.get('role');
   // console.log(role)
     // const token = Cookies.get('authToken');
 
-    if (!Cookies.get('authToken')) {
-      router.push('/login');
-      // return null;
-    }
+    // if (!Cookies.get('authToken')) {
+    //   router.push('/login');
+    //   // return null;
+    // }
 
   // Function to check if a role can see a specific menu
   // const canView = (allowedRoles: string[]) => role && allowedRoles.includes(role);
-  const canView = (allowedRoles: string[]) => role && (allowedRoles.includes(role) || role === '8');
+  const canView = (allowedRoles: string[]) => role && (allowedRoles.includes(role) || role === 'SUPER_ADMIN');
 
   return (
     <ScrollWrapper
@@ -101,10 +132,10 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
       >
         <MenuSection label="Dashboard">
           {/* Menu items based on roles */}
-          {canView(['2', '4', '5', '6', '8', '3']) && (
+          {canView(['CLINIC_RECEPTIONIST', 'DOCTOR', 'WORKSHOP_RECEPTIONIST', 'NURSE', 'SUPER_ADMIN', 'FRONT_DESK']) && (
   <SubMenu label="Patients" icon={<i className="ri-user-settings-line" />}>
     <MenuItem href="/dashboard/patients">All Patients</MenuItem>
-    {( role === '2' || role === '4' || role === '5' || role === '6' || role ==='8') && (
+    {( role === 'CLINIC_RECEPTIONIST' || role === 'DOCTOR' || role === 'WORKSHOP_RECEPTIONIST' || role === 'NURSE' || role ==='SUPER_ADMIN') && (
       <MenuItem href="/dashboard/encounters" icon={<i className="ri-shield-keyhole-line" />}>
         Encounters
       </MenuItem>
@@ -112,7 +143,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
   </SubMenu>
 )}
 
-{canView(['2', '5']) && (
+{canView(['CLINIC_RECEPTIONIST', 'WORKSHOP_RECEPTIONIST']) && (
 
       <MenuItem href="/dashboard/receptionist-encounters" icon={<i className="ri-capsule-line" />}>
         Prescriptions
@@ -120,19 +151,19 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 
 )}
 
-          {canView(['3', '4', '8']) && (
+          {canView(['FRONT_DESK', 'DOCTOR', 'SUPER_ADMIN']) && (
             <MenuItem href="/dashboard/appointments" icon={<i className="ri-calendar-line" />}>
               Appointments
             </MenuItem>
           )}
 
-           {canView(['3', '4', '8']) && (
+           {canView(['FRONT_DESK', 'DOCTOR', 'SUPER_ADMIN']) && (
             <MenuItem href="/dashboard/appointment-queue" icon={<i className="ri-calendar-check-line" />}>
               Appointment Queue
             </MenuItem>
           )}
 
-          {canView(['7', '8']) && (
+          {canView(['ADMIN', 'SUPER_ADMIN']) && (
              <SubMenu label='Users' icon={<i className='ri-group-line' />}>
              <MenuItem href='/dashboard/users/new-user'>
                New User
@@ -145,39 +176,39 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           )}
 
 
-{canView(['2', '3', '5', '6', '8']) && (
+{canView(['CLINIC_RECEPTIONIST', 'FRONT_DESK', 'WORKSHOP_RECEPTIONIST', 'NURSE', 'SUPER_ADMIN']) && (
             <MenuItem href="/dashboard/billings" icon={<i className="ri-shopping-cart-line" />}>
               Billings
             </MenuItem>
           )}
 
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
             <MenuItem href='/dashboard/clinic_receptionists' icon={<i className='ri-hand-heart-line' />}>
             Clinic Receptionists
           </MenuItem>
 )}
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
          <MenuItem href='/dashboard/workshop_receptionists' icon={<i className='ri-table-line' />}>
          Workshop Receptionists
        </MenuItem>
 )}
 
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
         <MenuItem href='/dashboard/front_desks' icon={<i className='ri-mac-line' />}>
         Front Desk
       </MenuItem>
 )}
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
         <MenuItem href='/dashboard/doctors' icon={<i className='ri-stethoscope-line' />}>
         Doctors
       </MenuItem>
 )}
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
       <MenuItem href='/dashboard/nurses' icon={<i className='ri-nurse-fill' />}>
       Nurses
     </MenuItem>
@@ -200,7 +231,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 )} */}
 
 
-{canView(['7']) && (
+{canView(['ADMIN', 'SUPER_ADMIN']) && (
    <SubMenu label='HMOs' icon={<i className='ri-hospital-line' />}>
      <MenuItem href='/dashboard/hmos/new-hmo'>
        New HMO
@@ -213,14 +244,14 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
 )}
 
 
-{canView(['8']) && (
+{canView(['SUPER_ADMIN']) && (
             <SubMenu label="Price List" icon={<i className="ri-price-tag-3-line" />}>
               <MenuItem href='/dashboard/products'>Products</MenuItem>
               <MenuItem href='/dashboard/services'>Services</MenuItem>
             </SubMenu>
           )}
          
-          {canView(['8']) && (
+          {canView(['SUPER_ADMIN']) && (
             <SubMenu label="Inventory" icon={<i className="ri-stock-line" />}>
               <MenuItem href='/dashboard/inventories/medicines'>Medicines</MenuItem>
               {/* <MenuItem href='/dashboard/inventories/services'>Services</MenuItem> */}

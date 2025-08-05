@@ -28,6 +28,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie'
+import { getRole } from '../../../../lib/auth';
 
 type Patient = {
   patientId: string;
@@ -85,7 +86,7 @@ const PatientsTable = () => {
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   // Get role from cookies
-  const role = Cookies.get('role')
+  const role = getRole();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -364,7 +365,7 @@ const PatientsTable = () => {
                   </IconButton> */}
 
                   {/* {!['3', '8'].includes(role) && ( */}
-                  {(role === '3' || role ==='8') && (
+                  {(role === 'FRONT_DESK' || role ==='SUPER_ADMIN') && (
                     
   <IconButton onClick={() => handleEdit(patient)} color="warning">
     <Edit />
@@ -372,34 +373,34 @@ const PatientsTable = () => {
 )}
 
                   {/* {!['2' || '3', '5', '8'].includes(role) && ( */}
-                  {(role === '4' || role === '8') && (
+                  {(role === 'DOCTOR' || role === 'SUPER_ADMIN') && (
                        
   <IconButton onClick={() => handleEncounter(patient)} color="success">
     <Bed />
   </IconButton>
 )}
 
-                  {(role === '3' || role === '8') && (
+                  {(role === 'FRONT_DESK' || role === 'SUPER_ADMIN') && (
                   <IconButton onClick={() => handleAppointment(patient)} color="success">
                    <CalendarMonth />
                   </IconButton>
                   
                   )}
                   
-{(role === '3' || role === '8') && (
+{(role === 'FRONT_DESK' || role === 'SUPER_ADMIN') && (
 <IconButton onClick={() => handleBooking(patient)} color="primary">
                     <EventAvailable />
                   </IconButton>
 
                   )}
 
-                  {(role === '2' || role === '5' || role === '8') && (
+                  {(role === 'CLINIC_RECEPTIONIST' || role === 'WORKSHOP_RECEPTIONIST' || role === 'SUPER_ADMIN') && (
                   <IconButton color="info"  onClick={() => handleBilling(patient)}>
                     <ShoppingCart />
                   </IconButton>
                   )}
 
-                  {(role === '8') && (
+                  {(role === 'SUPER_ADMIN') && (
                   <IconButton onClick={() => handleDelete(patient)} color="error">
                     <Delete />
                   </IconButton>

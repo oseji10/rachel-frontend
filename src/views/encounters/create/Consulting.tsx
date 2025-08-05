@@ -607,6 +607,16 @@ const Consulting = () => {
   const leftEyeRef = useRef(null);
   const leftEyeBackRef = useRef(null);
 
+  const [rightEyeFrontData, setRightEyeFrontData] = useState(null);
+  const [rightEyeBackData, setRightEyeBackData] = useState(null);
+  const [leftEyeFrontData, setLeftEyeFrontData] = useState(null);
+  const [leftEyeBackData, setLeftEyeBackData] = useState(null);
+
+const summaryRightEyeFrontRef = useRef(null);
+  const summaryRightEyeBackRef = useRef(null);
+  const summaryLeftEyeFrontRef = useRef(null);
+  const summaryLeftEyeBackRef = useRef(null);
+
   const [medicineList, setMedicineList] = useState([]);
   const [eyeDropList, setEyeDropList] = useState([]);
   const [tabletList, setTabletList] = useState([]);
@@ -676,8 +686,10 @@ const Consulting = () => {
     refractionPrismLeft: '',
     problemsRight: [],
     problemsLeft: [],
-    overallDiagnosisRight: [],
-    overallDiagnosisLeft: [],
+    // overallDiagnosisRight: [],
+    // overallDiagnosisLeft: [],
+      overallDiagnosisRight: '',
+    overallDiagnosisLeft: '',
     otherProblemsRight: '',
     otherProblemsLeft: '',
     otherOverallDiagnosisRight: '',
@@ -719,6 +731,7 @@ const Consulting = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [loading, setLoading] = useState(false);
 
+  
   const fields = [
     { key: 'problemsRight', label: 'Problems Identified (Right)' },
     { key: 'problemsLeft', label: 'Problems Identified (Left)' },
@@ -773,12 +786,34 @@ const Consulting = () => {
     setter(state.filter((_, i) => i !== index));
   };
 
+  // const handleNext = () => {
+  //   setActiveStep((prev) => prev + 1);
+  // };
+
+  // const handleBack = () => {
+  //   setActiveStep((prev) => prev - 1);
+  // };
+
   const handleNext = () => {
-    setActiveStep((prev) => prev + 1);
+    // Save sketches if leaving sketch step
+    if (activeStep === 3) {
+      setRightEyeFrontData(rightEyeRef.current?.getSaveData());
+      setRightEyeBackData(rightEyeBackRef.current?.getSaveData());
+      setLeftEyeFrontData(leftEyeRef.current?.getSaveData());
+      setLeftEyeBackData(leftEyeBackRef.current?.getSaveData());
+    }
+    setActiveStep((prevStep) => prevStep + 1);
   };
 
   const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
+    // Save sketches if leaving sketch step
+    if (activeStep === 3) {
+      setRightEyeFrontData(rightEyeRef.current?.getSaveData());
+      setRightEyeBackData(rightEyeBackRef.current?.getSaveData());
+      setLeftEyeFrontData(leftEyeRef.current?.getSaveData());
+      setLeftEyeBackData(leftEyeBackRef.current?.getSaveData());
+    }
+    setActiveStep((prevStep) => prevStep - 1);
   };
 
   const handleStep = (step) => () => {
@@ -807,18 +842,20 @@ const Consulting = () => {
       investigationsDone: formData.investigationsDone.join(','),
       problemsRight: formData.problemsRight.join(','),
       problemsLeft: formData.problemsLeft.join(','),
-      overallDiagnosisRight: formData.overallDiagnosisRight.join(','),
-      overallDiagnosisLeft: formData.overallDiagnosisLeft.join(','),
-      rightEyeFront: rightEyeRef.current?.getSaveData() || null,
-      rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
-      leftEyeFront: leftEyeRef.current?.getSaveData() || null,
-      leftEyeBack: leftEyeBackRef.current?.getSaveData() || null,
+      // rightEyeFront: rightEyeRef.current?.getSaveData() || null,
+      // rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
+      // leftEyeFront: leftEyeRef.current?.getSaveData() || null,
+      // leftEyeBack: leftEyeBackRef.current?.getSaveData() || null,
+      rightEyeFront: rightEyeFrontData || null,
+    rightEyeBack: rightEyeBackData || null,
+    leftEyeFront: leftEyeFrontData || null,
+    leftEyeBack: leftEyeBackData || null,
       eyeDrops: normalizeData(eyeDrops),
       tablets: normalizeData(tablets),
       ointments: normalizeData(ointments),
       prescriptionGlasses: normalizeData(prescriptionGlasses),
     };
-    const sketches = activeStep === 4 ? {
+    const sketches = activeStep === 3 ? {
       rightEyeFront: rightEyeRef.current?.getSaveData() || null,
       rightEyeBack: rightEyeBackRef.current?.getSaveData() || null,
       leftEyeFront: leftEyeRef.current?.getSaveData() || null,
@@ -909,11 +946,11 @@ const Consulting = () => {
 
   const renderSummaryTable = (title, data) => (
     <Box mt={4}>
-      <Typography variant="h6" className="text-gray-700 mb-2">{title}</Typography>
+      <Typography variant="h6" className="text-gray-700 dark:text-white mb-2">{title}</Typography>
       <Grid container spacing={2}>
         {data.map(({ label, value }) => (
           <Grid item xs={12} sm={6} key={label}>
-            <Typography variant="body1" className="text-gray-600">
+            <Typography variant="body1" className="dark:text-white text-gray-600">
               <strong>{label}:</strong> {value || 'Not provided'}
             </Typography>
           </Grid>
@@ -922,7 +959,104 @@ const Consulting = () => {
     </Box>
   );
 
+useEffect(() => {
+    if (activeStep === 3) {
+      if (rightEyeFrontData && rightEyeRef.current)
+        rightEyeRef.current.loadSaveData(rightEyeFrontData);
+      if (rightEyeBackData && rightEyeBackRef.current)
+        rightEyeBackRef.current.loadSaveData(rightEyeBackData);
+      if (leftEyeFrontData && leftEyeRef.current)
+        leftEyeRef.current.loadSaveData(leftEyeFrontData);
+      if (leftEyeBackData && leftEyeBackRef.current)
+        leftEyeBackRef.current.loadSaveData(leftEyeBackData);
+    }
+  }, [activeStep]);
 
+  useEffect(() => {
+  if (activeStep === 7) {
+    if (rightEyeFrontData && summaryRightEyeFrontRef.current) {
+      summaryRightEyeFrontRef.current.loadSaveData(rightEyeFrontData);
+    }
+    if (rightEyeBackData && summaryRightEyeBackRef.current) {
+      summaryRightEyeBackRef.current.loadSaveData(rightEyeBackData);
+    }
+    if (leftEyeFrontData && summaryLeftEyeFrontRef.current) {
+      summaryLeftEyeFrontRef.current.loadSaveData(leftEyeFrontData);
+    }
+    if (leftEyeBackData && summaryLeftEyeBackRef.current) {
+      summaryLeftEyeBackRef.current.loadSaveData(leftEyeBackData);
+    }
+  }
+}, [activeStep, rightEyeFrontData, rightEyeBackData, leftEyeFrontData, leftEyeBackData]);
+
+  const renderSummarySketches = () => (
+    <Box mt={4}>
+      <Typography variant="h6" className="text-gray-700 mb-4">Sketch Pad</Typography>
+      <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={4} width="100%">
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <Typography variant="subtitle1" className="text-gray-600 mb-2">Right Eye Front</Typography>
+          {rightEyeFrontData ? (
+            <CanvasDraw
+              ref={summaryRightEyeFrontRef}
+              disabled={true}
+              hideGrid={true}
+              canvasWidth={300}
+              canvasHeight={300}
+              className="border border-gray-300 rounded-lg"
+            />
+          ) : (
+            <Typography variant="body2" className="text-gray-500">No drawing</Typography>
+          )}
+        </Box>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <Typography variant="subtitle1" className="text-gray-600 mb-2">Right Eye Back</Typography>
+          {rightEyeBackData ? (
+            <CanvasDraw
+              ref={summaryRightEyeBackRef}
+              disabled={true}
+              hideGrid={true}
+              canvasWidth={300}
+              canvasHeight={300}
+              className="border border-gray-300 rounded-lg"
+            />
+          ) : (
+            <Typography variant="body2" className="text-gray-500">No drawing</Typography>
+          )}
+        </Box>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <Typography variant="subtitle1" className="text-gray-600 mb-2">Left Eye Front</Typography>
+          {leftEyeFrontData ? (
+            <CanvasDraw
+              ref={summaryLeftEyeFrontRef}
+              disabled={true}
+              hideGrid={true}
+              canvasWidth={300}
+              canvasHeight={300}
+              className="border border-gray-300 rounded-lg"
+            />
+          ) : (
+            <Typography variant="body2" className="text-gray-500">No drawing</Typography>
+          )}
+        </Box>
+        <Box display="flex" flexDirection="column" alignItems="center">
+          <Typography variant="subtitle1" className="text-gray-600 mb-2">Left Eye Back</Typography>
+          {leftEyeBackData ? (
+            <CanvasDraw
+              ref={summaryLeftEyeBackRef}
+              disabled={true}
+              hideGrid={true}
+              canvasWidth={300}
+              canvasHeight={300}
+              className="border border-gray-300 rounded-lg"
+            />
+          ) : (
+            <Typography variant="body2" className="text-gray-500">No drawing</Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
+  );
+  
   const steps = ['Consultation', 'Findings', 'Refraction', 'Sketch Pad', 'Diagnosis', 'Investigations', 'Treatment', 'Summary'];
 
   const getStepContent = (step) => {
@@ -1160,6 +1294,7 @@ const Consulting = () => {
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={() => setRightEyeFrontData(rightEyeRef.current?.getSaveData())}
                 />
                 <Button variant="contained" color="secondary" onClick={() => rightEyeRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -1176,6 +1311,7 @@ const Consulting = () => {
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={() => setRightEyeBackData(rightEyeBackRef.current?.getSaveData())}
                 />
                 <Button variant="contained" color="secondary" onClick={() => rightEyeBackRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -1192,6 +1328,7 @@ const Consulting = () => {
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={() => setLeftEyeFrontData(leftEyeRef.current?.getSaveData())}
                 />
                 <Button variant="contained" color="secondary" onClick={() => leftEyeRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -1208,6 +1345,7 @@ const Consulting = () => {
                   canvasWidth={300}
                   canvasHeight={300}
                   className="border border-gray-300 rounded-lg"
+                  onChange={() => setLeftEyeBackData(leftEyeBackRef.current?.getSaveData())}
                 />
                 <Button variant="contained" color="secondary" onClick={() => leftEyeBackRef.current?.clear()} className="mt-2 bg-red-500 hover:bg-red-600">
                   Clear
@@ -1256,41 +1394,61 @@ const Consulting = () => {
       case 4:
         return (
           <Grid container spacing={4}>
-            {fields.map((field) => (
-              <Grid item xs={12} sm={6} key={field.key}>
-                <FormControl fullWidth>
-                  <InputLabel>{field.label}</InputLabel>
-                  <Select
-                    multiple
-                    value={formData[field.key] || []}
-                    onChange={(e) => handleFormChange(field.key, e.target.value)}
-                    className="rounded-lg"
-                    renderValue={(selected) => {
-                      return selected
-                        .map((id) => diagnosisList.find((option) => option.id === id)?.name)
-                        .join(', ');
-                    }}
-                  >
-                    {diagnosisList.map((option) => (
-                      <MenuItem key={option.id} value={option.id}>
-                        {option.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-                {formData[field.key]?.includes(999) && (
-                  <Box mt={2}>
-                    <TextField
-                      fullWidth
-                      label={`${field.label} - Other (Specify)`}
-                      value={formData[`other${field.key.charAt(0).toUpperCase() + field.key.slice(1)}`] || ''}
-                      onChange={(e) => handleOtherChange(`other${field.key.charAt(0).toUpperCase() + field.key.slice(1)}`, e.target.value)}
-                      className="rounded-lg"
-                    />
-                  </Box>
-                )}
-              </Grid>
-            ))}
+            {fields.map((field) => {
+  if (field.key === 'overallDiagnosisRight' || field.key === 'overallDiagnosisLeft') {
+    return (
+      <Grid item xs={12} sm={6} key={field.key}>
+        <TextField
+          label={field.label}
+          multiline
+          rows={4}
+          fullWidth
+          variant="outlined"
+          value={formData[field.key]}
+          onChange={(e) => handleFormChange(field.key, e.target.value)}
+          className="rounded-lg"
+        />
+      </Grid>
+    );
+  }
+
+  return (
+    <Grid item xs={12} sm={6} key={field.key}>
+      <FormControl fullWidth>
+        <InputLabel>{field.label}</InputLabel>
+        <Select
+          multiple
+          value={formData[field.key] || []}
+          onChange={(e) => handleFormChange(field.key, e.target.value)}
+          className="rounded-lg"
+          renderValue={(selected) => {
+            return selected
+              .map((id) => diagnosisList.find((option) => option.id === id)?.name)
+              .join(', ');
+          }}
+        >
+          {diagnosisList.map((option) => (
+            <MenuItem key={option.id} value={option.id}>
+              {option.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      {formData[field.key]?.includes(999) && (
+        <Box mt={2}>
+          <TextField
+            fullWidth
+            label={`${field.label} - Other (Specify)`}
+            value={formData[`other${field.key.charAt(0).toUpperCase() + field.key.slice(1)}`] || ''}
+            onChange={(e) => handleOtherChange(`other${field.key.charAt(0).toUpperCase() + field.key.slice(1)}`, e.target.value)}
+            className="rounded-lg"
+          />
+        </Box>
+      )}
+    </Grid>
+  );
+})}
+
           </Grid>
         );
       case 5:
@@ -1386,7 +1544,7 @@ const Consulting = () => {
             <Grid item xs={12}>
               <Typography variant="h6" className="text-gray-700">Physical Information</Typography>
             </Grid>
-            {[
+            {/* {[
               { label: 'HBP', field: 'HBP' },
               { label: 'Diabetes', field: 'diabetes' },
               { label: 'Pregnancy', field: 'pregnancy' },
@@ -1402,10 +1560,13 @@ const Consulting = () => {
                   <Typography variant="body2" className="text-gray-700">{label}</Typography>
                 </FormControl>
               </Grid>
-            ))}
+            ))} */}
 
             {/* Other Text Fields */}
             {[
+              { label: 'HBP', field: 'HBP' },
+              { label: 'Diabetes', field: 'diabetes' },
+              { label: 'Pregnancy', field: 'pregnancy' },
               { label: 'Food', field: 'food' },
               { label: 'Drug Allergy', field: 'drugAllergy' },
               { label: 'Current Medication', field: 'currentMedication' },
@@ -1458,7 +1619,7 @@ const Consulting = () => {
         case 7:
         return (
           <Box>
-            <Typography variant="h4" className="text-2xl font-bold text-gray-800 mb-4">
+            <Typography variant="h4" className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
               Consultation Summary
             </Typography>
             {renderSummaryTable('Consultation', [
@@ -1517,12 +1678,13 @@ const Consulting = () => {
               { label: 'Refraction Prism (Right)', value: refractionPrism.find(o => o.id === formData.refractionPrismRight)?.name },
               { label: 'Refraction Prism (Left)', value: refractionPrism.find(o => o.id === formData.refractionPrismLeft)?.name },
             ])}
-            {renderSummaryTable('Sketch Pad', [
+            {/* {renderSummaryTable('Sketch Pad', [
               { label: 'Right Eye Front', value: rightEyeRef.current?.getSaveData() || 'No drawing' },
               { label: 'Right Eye Back', value: rightEyeBackRef.current?.getSaveData() || 'No drawing' },
               { label: 'Left Eye Front', value: leftEyeRef.current?.getSaveData() || 'No drawing' },
               { label: 'Left Eye Back', value: leftEyeBackRef.current?.getSaveData() || 'No drawing' },
-            ])}
+            ])} */}
+             {renderSummarySketches()}
             {renderSummaryTable('Other Findings', [
               { label: 'Comments', value: formData.comments || 'No comments' },
             ])}
@@ -1538,24 +1700,36 @@ const Consulting = () => {
   };
 
   return (
-    <Card className="shadow-xl bg-white/95 backdrop-blur-sm">
-      <CardContent className="p-6 sm:p-10">
-        <Typography variant="h4" className="text-2xl font-bold text-gray-800 mb-4">
+    <Card className="shadow-xl bg-white dark:bg-gray-800 backdrop-blur-sm">
+  <CardContent className="p-6 sm:p-10">
+        <Typography variant="h4" className="text-2xl font-bold text-gray-600 dark:text-white mb-4">
           Eye Clinic Consultation
         </Typography>
-        <Typography variant="h6" className="text-gray-600 mb-6">
-          Patient: {patientName}
-        </Typography>
+       <Typography variant="h6" className="text-gray-600 dark:text-white mb-6">
+  Patient: {patientName}
+</Typography>
         <Stepper activeStep={activeStep} alternativeLabel className="mb-8">
           {steps.map((label, index) => (
             <Step key={label}>
-              <StepButton onClick={handleStep(index)}>
+              <StepButton 
+              onClick={(e) => {
+          e.preventDefault(); // Prevent any form submission
+          handleStep(index)();
+        }}
+              >
                 <StepLabel>{label}</StepLabel>
               </StepButton>
             </Step>
           ))}
         </Stepper>
-        <form onSubmit={handleSubmit}>
+        <form 
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+    if (e.key === 'Enter' && e.target.tagName !== 'BUTTON') {
+      e.preventDefault(); // Prevent form submission on Enter key unless focused on a button
+    }
+  }}
+        >
           {getStepContent(activeStep)}
           <Grid container spacing={4} className="mt-6">
             <Grid item xs={12} className="flex justify-between">
@@ -1569,14 +1743,18 @@ const Consulting = () => {
               </Button>
               {activeStep === steps.length - 1 ? (
                 <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={loading}
-                  className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
-                  startIcon={loading && <CircularProgress size={20} />}
-                >
-                  {loading ? 'Submitting...' : 'Submit'}
-                </Button>
+            variant="contained"
+            onClick={(e) => {
+              e.preventDefault(); // Prevent any form-related submission
+              console.log('Submit button clicked', { activeStep });
+              handleSubmit(e); // Call handleSubmit manually
+            }}
+            disabled={loading}
+            className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white"
+            startIcon={loading && <CircularProgress size={20} />}
+          >
+            {loading ? 'Submitting...' : 'Submit'}
+          </Button>
               ) : (
                 <Button
                   variant="contained"
