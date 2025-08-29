@@ -11,6 +11,7 @@ import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
 import Cookies from 'js-cookie'
+import { getRole } from '../../../lib/auth'
 
 const Patients = ({ tabContentList }: { tabContentList: { [key: string]: ReactElement } }) => {
   // States
@@ -21,7 +22,8 @@ const Patients = ({ tabContentList }: { tabContentList: { [key: string]: ReactEl
   }
 
   // Get role from cookies
-  const role = Cookies.get('role')
+
+  const role = getRole();
 
   return (
     <TabContext value={activeTab}>
@@ -29,7 +31,7 @@ const Patients = ({ tabContentList }: { tabContentList: { [key: string]: ReactEl
         <Grid item xs={12}>
           <TabList onChange={handleChange} variant='scrollable'>
             <Tab label='Patients' icon={<i className='ri-user-3-line' />} iconPosition='start' value='patients' />
-            {role == '3' && (
+            {role == 'FRONT_DESK' && (
               <Tab label='Create Patient' icon={<i className='ri-user-3-line' />} iconPosition='start' value='create' />
             )}
           </TabList>

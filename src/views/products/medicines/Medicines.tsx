@@ -31,6 +31,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import api from '@/app/utils/api';
 
 type Product = {
   inventoryId: number;
@@ -97,7 +98,7 @@ const Medicines = () => {
   const fetchInventories = async () => {
     try {
       const token = Cookies.get('authToken');
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicine-inventories`, {
+      const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicine-inventories`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -234,7 +235,7 @@ const Medicines = () => {
       if (result.isConfirmed) {
         try {
           const token = Cookies.get("authToken");
-          await axios.delete(
+          await api.delete(
             `${process.env.NEXT_PUBLIC_APP_URL}/inventories/${product.inventoryId}`,
             {
               headers: {
@@ -279,7 +280,7 @@ const Medicines = () => {
         expiryDate: selectedProduct.expiryDate,
       };
 
-      const response = await axios.put(
+      const response = await api.put(
         `${process.env.NEXT_PUBLIC_APP_URL}/inventories/${selectedProduct.inventoryId}`,
         updatedData,
         {

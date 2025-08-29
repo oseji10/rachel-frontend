@@ -22,6 +22,7 @@ import {
 } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type Patient = {
   id: number;
@@ -85,7 +86,7 @@ const TreatmentsTable = () => {
   useEffect(() => {
     const fetchTreatments = async () => {
       try {
-        const response = await axios.get<TreatmentResponse>(
+        const response = await api.get<TreatmentResponse>(
           `${process.env.NEXT_PUBLIC_APP_URL}/prescriptions`,
           { params: { per_page: rowsPerPage, page: page + 1 } }
         );

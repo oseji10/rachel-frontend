@@ -14,6 +14,7 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import Cookies from "js-cookie";
+import api from "@/app/utils/api";
 
 const modalStyle = {
   position: "absolute",
@@ -46,7 +47,7 @@ const EditBillingModal = ({ open, handleClose, billingData, refreshBillings }) =
     const token = Cookies.get("authToken");
 
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billingData.id}`,
         updatedBilling,
         {

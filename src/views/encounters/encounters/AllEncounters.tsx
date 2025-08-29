@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { Edit, Print, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type VisualAcuity = {
   id: number;
@@ -107,7 +108,7 @@ const EncountersTable = () => {
   useEffect(() => {
     const fetchEncounters = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/encounters`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/encounters`);
         setEncounters(response.data);
         setFilteredEncounters(response.data);
         setLoading(false);

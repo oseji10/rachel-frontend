@@ -17,6 +17,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
+import api from '@/app/utils/api';
 
 const Refraction = () => {
   const searchParams = useSearchParams();
@@ -61,10 +62,10 @@ const Refraction = () => {
     const fetchData = async () => {
       try {
         const [axisRes, sphereRes, cylinderRes, prismRes] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_axis`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_sphere`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_cylinder`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_prism`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_axis`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_sphere`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_cylinder`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_prism`),
         ]);
 
         setRefractionAxis(axisRes.data || []);
@@ -100,7 +101,7 @@ const Refraction = () => {
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/refraction`, payload);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/refraction`, payload);
       Swal.fire({
         icon: 'success',
         title: 'Success',

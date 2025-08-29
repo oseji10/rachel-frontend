@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type VisualAcuity = {
   id: number;
@@ -78,7 +79,7 @@ const Front_desksTable = () => {
   useEffect(() => {
     const fetchFront_desks = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/users/front_desks`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/users/front_desks`);
         setFront_desks(response.data);
         setFilteredFront_desks(response.data);
         setLoading(false);

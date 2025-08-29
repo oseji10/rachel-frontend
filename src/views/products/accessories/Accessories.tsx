@@ -33,6 +33,7 @@ import { Delete, Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
+import api from '@/app/utils/api';
 
 type Product = {
   inventoryId: number; // Note: Adjusted to match usage in code
@@ -97,7 +98,7 @@ const Accessories = () => {
     setLoading(true);
     try {
       const token = Cookies.get('authToken');
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/accessories-inventories`, {
+      const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/accessories-inventories`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -243,7 +244,7 @@ const Accessories = () => {
       if (result.isConfirmed) {
         try {
           const token = Cookies.get('authToken');
-          await axios.delete(
+          await api.delete(
             `${process.env.NEXT_PUBLIC_APP_URL}/inventories/${product.inventoryId}`,
             {
               headers: {

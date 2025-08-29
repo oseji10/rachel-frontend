@@ -21,6 +21,7 @@ import {
 import { Delete, Edit, EditCalendar, Visibility } from '@mui/icons-material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import api from '@/app/utils/api';
 
 type VisualAcuity = {
   id: number;
@@ -149,7 +150,7 @@ const [editUser, setEditUser] = useState<User | null>(null);
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/users`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/users`);
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
@@ -226,7 +227,7 @@ const [editUser, setEditUser] = useState<User | null>(null);
     }).then((result) => {
       if (result.isConfirmed) {
         // Make API request to delete the appointment
-        // const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
+        // const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`);
         axios
           .delete(`${process.env.NEXT_PUBLIC_APP_URL}/user/${user.id}`)
           .then((response) => {
@@ -266,7 +267,7 @@ const handleEditSubmit = async () => {
         email: editUser.email,
         phoneNumber: editUser.phoneNumber,
       };
-      const response = await axios.put(
+      const response = await api.put(
         `${process.env.NEXT_PUBLIC_APP_URL}/user/${editUser.id}`,
         payload // Send as an object
       );

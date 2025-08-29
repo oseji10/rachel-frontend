@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type VisualAcuity = {
   id: number;
@@ -78,7 +79,7 @@ const Clinic_receptionistsTable = () => {
   useEffect(() => {
     const fetchClinic_receptionists = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/users/clinic_receptionists`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/users/clinic_receptionists`);
         setClinic_receptionists(response.data);
         setFilteredClinic_receptionists(response.data);
         setLoading(false);

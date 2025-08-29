@@ -28,6 +28,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import { getRole } from '../../../../lib/auth';
+import api from '@/app/utils/api';
 
 type Billing = {
   billingId: number;
@@ -88,7 +90,7 @@ const BillingsTable = () => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openEditModal, setOpenEditModal] = useState<boolean>(false);
   const router = useRouter();
-  const role = Cookies.get('role');
+  // const role = Cookies.get('role');
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     paymentMethod: "",
@@ -103,6 +105,8 @@ const BillingsTable = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editItemIndex, setEditItemIndex] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const role = getRole();
 
   const inventoryOptions = [
     { value: 'Products', label: 'Products' },
@@ -127,61 +131,66 @@ const BillingsTable = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsUpdating(true);
-    try {
-      const token = Cookies.get('authToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/confirm-payment`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          transactionId: selectedBilling?.transactionId,
-          paymentMethod: formData.paymentMethod,
-          paymentReference: formData.paymentReference,
-        }),
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsUpdating(true);
+
+  try {
+    // ✅ Confirm payment request
+    const response = await api.post(
+      `${process.env.NEXT_PUBLIC_APP_URL}/confirm-payment`,
+      {
+        transactionId: selectedBilling?.transactionId,
+        paymentMethod: formData.paymentMethod,
+        paymentReference: formData.paymentReference,
+      }
+    );
+
+    // ✅ Axios puts your backend's JSON inside response.data
+    console.log("Confirm Payment Response:", response.data);
+
+    if (response.status === 200) {
+      setOpen(false);
+      Swal.fire({
+        icon: "success",
+        title: response.data.message || "Payment confirmed successfully!",
+        showConfirmButton: false,
+        timer: 1500,
       });
 
-      if (response.ok) {
-        setOpen(false);
-        Swal.fire({
-          icon: 'success',
-          title: 'Payment confirmed successfully!',
-          showConfirmButton: false,
-          timer: 1500
-        });
-        const updatedBillings = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setBillings(updatedBillings.data);
-        setFilteredBillings(updatedBillings.data);
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Failed to confirm payment!',
-          text: 'There was an issue confirming the payment.',
-        });
-      }
-    } catch (error) {
-      console.error("Error submitting payment:", error);
+      // ✅ Refetch updated billings
+      const updatedBillings = await api.get(
+        `${process.env.NEXT_PUBLIC_APP_URL}/billings`
+      );
+
+      setBillings(updatedBillings.data);
+      setFilteredBillings(updatedBillings.data);
+    } else {
       Swal.fire({
-        icon: 'error',
-        title: 'Error!',
-        text: 'An error occurred while processing the payment.',
+        icon: "error",
+        title: "Failed to confirm payment!",
+        text: response.data?.error || "There was an issue confirming the payment.",
       });
-    } finally {
-      setIsUpdating(false);
     }
-  };
+  } catch (error) {
+    console.error("Error submitting payment:", error.response?.data || error.message);
+    Swal.fire({
+      icon: "error",
+      title: "Error!",
+      text: error.response?.data?.error || "An error occurred while processing the payment.",
+    });
+  } finally {
+    setIsUpdating(false);
+  }
+};
+
+
 
   useEffect(() => {
     const fetchBillings = async () => {
       try {
         const token = Cookies.get('authToken');
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`, {
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/billings`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -201,9 +210,8 @@ const BillingsTable = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`);
-        const data = await response.json();
-        setDoctors(data);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`);
+        setDoctors(response.data);
       } catch (error) {
         console.error('Error fetching doctors:', error);
       }
@@ -246,7 +254,7 @@ const BillingsTable = () => {
   const handleUpdate = async () => {
     if (selectedBilling) {
       try {
-        const response = await axios.put(
+        const response = await api.put(
           `${process.env.NEXT_PUBLIC_APP_URL}/billings/${selectedBilling.billingId}`,
           selectedBilling
         );
@@ -271,7 +279,7 @@ const BillingsTable = () => {
       if (result.isConfirmed) {
         try {
           const token = Cookies.get("authToken");
-          await axios.delete(
+          await api.delete(
             `${process.env.NEXT_PUBLIC_APP_URL}/billings/${billing.transactionId}`,
             {
               headers: {
@@ -574,7 +582,7 @@ const handlePrintReceipt = (billing: Billing) => {
         <TableCell>Amount</TableCell>
         <TableCell>Payment Method</TableCell>
         <TableCell>Payment Status</TableCell>
-        {(role === "3" || role === "8" || role === "6") && (
+        {(role === "FRONT_DESK" || role === "NURSE" || role === "SUPER_ADMIN") && (
           <TableCell>Action</TableCell>
         )}
       </TableRow>
@@ -629,7 +637,7 @@ const handlePrintReceipt = (billing: Billing) => {
               </span>
             </TableCell>
             <TableCell>
-              {(role === '2' || role === '3' || role === '8') && (
+              {(role === 'CLINIC_RECEPTIONIST' || role === 'FRONT_DESK' || role === 'SUPER_ADMIN') && (
                 <>
                   <IconButton onClick={() => handleView(billing)} color="primary">
                     <Visibility />
@@ -656,7 +664,7 @@ const handlePrintReceipt = (billing: Billing) => {
                   )}
                 </>
               )}
-              {role === '6' && billing.paymentStatus === 'paid' && (
+              {role === 'NURSE' && billing.paymentStatus === 'paid' && (
                 <IconButton onClick={() => handleDispense(billing)} color="success">
                   <Outbound />
                 </IconButton>

@@ -9,6 +9,7 @@ import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import api from '@/app/utils/api'
 
 const SearchPatient = () => {
   const [query, setQuery] = useState<string>('')
@@ -29,7 +30,7 @@ const SearchPatient = () => {
     setError('');
   
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `${process.env.NEXT_PUBLIC_APP_URL}/patients/search`,
         {
           params: { queryParameter: searchQuery }, // Include query parameter in the URL

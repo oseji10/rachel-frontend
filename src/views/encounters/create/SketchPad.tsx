@@ -4,6 +4,7 @@ import { Button, Box, Typography, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { useSearchParams, useRouter } from 'next/navigation';
 import Swal from "sweetalert2";
+import api from "@/app/utils/api";
 
 const DualSketchpad = () => {
   const rightEyeFrontRef = useRef(null);
@@ -33,7 +34,7 @@ const DualSketchpad = () => {
         encounterId: encounterId
       };
   
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/sketch`, sketches);
+      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/sketch`, sketches);
       Swal.fire({
         icon: 'success',
         title: 'Success',

@@ -19,6 +19,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 // Axios Import
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import api from '@/app/utils/api';
 
 type FormData = {
   firstName: string;
@@ -118,7 +119,7 @@ const ChangePassword = () => {
               email: formData.email,
               phoneNumber: formData.phoneNumber,
             };
-      await axios.put(
+      await api.put(
         `${process.env.NEXT_PUBLIC_APP_URL}/update-profile`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -153,7 +154,7 @@ const ChangePassword = () => {
               newPasswordConfirmation: formData.newPasswordConfirmation,
             };
      
-        await axios.post(
+        await api.post(
           `${process.env.NEXT_PUBLIC_APP_URL}/change-password`,
             payload,
           

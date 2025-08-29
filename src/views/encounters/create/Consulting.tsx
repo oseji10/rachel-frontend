@@ -23,6 +23,7 @@ import IconButton from '@mui/material/IconButton';
 import RemoveCircle from '@mui/icons-material/RemoveCircle';
 import Swal from 'sweetalert2';
 import { StepLabel } from '@mui/material';
+import api from '@/app/utils/api';
 
 
 
@@ -743,10 +744,10 @@ const summaryRightEyeFrontRef = useRef(null);
     const fetchData = async () => {
       try {
         const [medicineRes, eyeDropsRes, tabletRes, ointmentRes] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/eyedrops`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/tablets`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/ointments`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/eyedrops`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/tablets`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/ointments`),
         ]);
         setMedicineList(Array.isArray(medicineRes.data) ? medicineRes.data : []);
         setEyeDropList(Array.isArray(eyeDropsRes.data) ? eyeDropsRes.data : []);
@@ -873,7 +874,8 @@ const summaryRightEyeFrontRef = useRef(null);
     // };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload);
+      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload);
+      const newEncounterId = response.data.data.encounter.encounterId;
       Swal.fire({
         icon: 'success',
         title: 'Success',
@@ -881,7 +883,12 @@ const summaryRightEyeFrontRef = useRef(null);
         timer: 3000,
         showConfirmButton: false,
       });
-      router.push(`/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}&encounterId=${encounterId}`);
+      // router.push(`/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${encodeURIComponent(patientName)}&encounterId=${encodeURIComponent(encounterId)}`);
+      router.push(
+      `/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${encodeURIComponent(
+        patientName
+      )}&encounterId=${encodeURIComponent(newEncounterId)}`
+    );
     } catch (error) {
       Swal.fire({
         icon: 'error',

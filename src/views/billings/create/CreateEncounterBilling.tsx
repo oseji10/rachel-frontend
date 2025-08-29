@@ -19,6 +19,7 @@ import Swal from 'sweetalert2'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Clock from 'react-clock';
 import 'react-clock/dist/Clock.css';
+import api from '@/app/utils/api'
 
 
 
@@ -106,7 +107,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
     }
   
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/encounter-billing`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }

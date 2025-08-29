@@ -95,7 +95,7 @@ const Frames = () => {
     setLoading(true);
     try {
       const token = Cookies.get('authToken');
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/frames-inventories`, {
+      const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/frames-inventories`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -241,7 +241,7 @@ const Frames = () => {
       if (result.isConfirmed) {
         try {
           const token = Cookies.get('authToken');
-          await axios.delete(
+          await api.delete(
             `${process.env.NEXT_PUBLIC_APP_URL}/inventories/${product.inventoryId}`,
             {
               headers: {

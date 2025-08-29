@@ -17,6 +17,7 @@ import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
 import TextField from '@mui/material/TextField';
+import api from '@/app/utils/api';
 
 const Investigation = () => {
   const searchParams = useSearchParams();
@@ -74,7 +75,7 @@ const Investigation = () => {
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/investigations`, payload);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/investigations`, payload);
       Swal.fire({
         icon: 'success',
         title: 'Success',

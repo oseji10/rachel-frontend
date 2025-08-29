@@ -158,7 +158,7 @@ const VerticalMenu = ({ scrollMenu }: { scrollMenu: (container: any, isPerfectSc
           )}
 
            {canView(['FRONT_DESK', 'DOCTOR', 'SUPER_ADMIN']) && (
-            <MenuItem href="/dashboard/appointment-queue" icon={<i className="ri-calendar-check-line" />}>
+            <MenuItem href="/dashboard/appointments/appointment-queue" icon={<i className="ri-calendar-check-line" />}>
               Appointment Queue
             </MenuItem>
           )}

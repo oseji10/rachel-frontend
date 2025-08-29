@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 import { Edit, Visibility } from '@mui/icons-material';
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type VisualAcuity = {
   id: number;
@@ -78,7 +79,7 @@ const ManufacturersTable = () => {
   useEffect(() => {
     const fetchManufacturers = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/manufacturers`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/manufacturers`);
         setManufacturers(response.data);
         setFilteredManufacturers(response.data);
         setLoading(false);

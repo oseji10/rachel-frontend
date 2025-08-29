@@ -25,6 +25,7 @@ import IconButton from '@mui/material/IconButton';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import Swal from 'sweetalert2';
 import { StepLabel } from '@mui/material';
+import api from '@/app/utils/api';
 
 const Consulting = () => {
   const searchParams = useSearchParams();
@@ -223,15 +224,15 @@ const Consulting = () => {
     const fetchData = async () => {
       try {
         const [farResponse, nearResponse, complaintResponse, diagnosisResponse, axisRes, sphereRes, cylinderRes, prismRes, medicineRes] = await Promise.all([
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_far`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_near`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/chief_complaint`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis_list`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_axis`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_sphere`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_cylinder`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_prism`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_far`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/visual_acuity_near`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/chief_complaint`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis_list`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_axis`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_sphere`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_cylinder`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/refraction_prism`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`),
         ]);
         setVisualAcuityFar(Array.isArray(farResponse.data) ? farResponse.data : []);
         setVisualAcuityNear(Array.isArray(nearResponse.data) ? nearResponse.data : []);
@@ -326,7 +327,7 @@ const Consulting = () => {
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/consulting`, payload);
       Swal.fire({
         icon: 'success',
         title: 'Success',

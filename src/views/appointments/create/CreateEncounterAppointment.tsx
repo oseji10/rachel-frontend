@@ -19,6 +19,7 @@ import Swal from 'sweetalert2'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Clock from 'react-clock';
 import 'react-clock/dist/Clock.css';
+import api from '@/app/utils/api'
 
 
 
@@ -68,9 +69,8 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
-        const data = await response.json()
-        setDoctors(data)
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
+        setDoctors(response.data)
         // console.log(allDoctors)
       } catch (error) {
         console.error('Error fetching doctors:', error)
@@ -106,7 +106,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
     }
   
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/encounter-appointment`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
@@ -220,7 +220,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
             <Button variant="contained" color="primary" type="submit" disabled={loading}>
               {loading ? 'Booking...' : 'Book Next Appointment'}
             </Button>
-            <a href='/encounters'><Button
+            <a href='/dashboard/encounters'><Button
               variant="outlined"
               color="error"
               type="reset"

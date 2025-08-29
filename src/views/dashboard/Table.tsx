@@ -13,6 +13,7 @@ import CustomAvatar from '@/@core/components/mui/Avatar'
 import tableStyles from '@/@core/styles/table.module.css'
 import { useEffect, useState } from 'react'
 import axios from 'axios';
+import api from '@/app/utils/api';
 
 type TableBodyRowType = {
   avatarSrc?: string
@@ -119,7 +120,7 @@ const [error, setError] = useState<string | null>(null);
 useEffect(() => {
   const fetchPatients = async () => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients-all`);
+      const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/patients-all`);
       setPatients(response.data);
       setLoading(false);
     } catch (err) {

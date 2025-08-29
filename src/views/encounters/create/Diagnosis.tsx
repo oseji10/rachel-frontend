@@ -16,6 +16,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Swal from 'sweetalert2';
+import api from '@/app/utils/api';
 
 const Diagnosis = () => {
   const searchParams = useSearchParams();
@@ -33,7 +34,7 @@ const Diagnosis = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis_list`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis_list`);
         setDiagnosisList(response.data || []);
       } catch (error) {
         console.error('Error fetching diagnosis data:', error);
@@ -64,7 +65,7 @@ const Diagnosis = () => {
     };
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis`, payload);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/diagnosis`, payload);
       Swal.fire({
         icon: 'success',
         title: 'Success',

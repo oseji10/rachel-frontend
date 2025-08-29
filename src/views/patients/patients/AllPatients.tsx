@@ -29,6 +29,7 @@ import { useRouter } from 'next/navigation';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie'
 import { getRole } from '../../../../lib/auth';
+import api from '@/app/utils/api';
 
 type Patient = {
   patientId: string;
@@ -93,8 +94,8 @@ const PatientsTable = () => {
       try {
         const [doctorsResponse, hmosResponse] = await Promise.all([
           
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`),
-          axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`),
+          api.get(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`),
         ]);
 
         setDoctors(doctorsResponse.data);
@@ -115,7 +116,7 @@ const PatientsTable = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `${process.env.NEXT_PUBLIC_APP_URL}/patients?page=${currentPage + 1}&limit=${rowsPerPage}&query=${query}`
       );
       const { data, total, current_page, last_page } = response.data;
@@ -199,7 +200,7 @@ const PatientsTable = () => {
     }
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`, {
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`, {
         patientId: selectedPatient.patientId,
         doctorId: selectedDoctorId,
         appointmentDate: new Date().toISOString(),
@@ -483,7 +484,7 @@ const PatientsTable = () => {
         onSubmit={async (e) => {
           e.preventDefault();
           try {
-            const response = await axios.put(
+            const response = await api.put(
               `${process.env.NEXT_PUBLIC_APP_URL}/patient/${selectedPatient.patientId}`,
               selectedPatient
             );

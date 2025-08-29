@@ -18,6 +18,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Cookies from 'js-cookie'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
 import Paper from '@mui/material/Paper'
+import api from '../../../../lib/api'
+
 const inventoryOptions = [
   { value: 'Products', label: 'Products' },
   { value: 'Services', label: 'Services' }
@@ -66,7 +68,7 @@ const CreateBilling = () => {
         ? `${process.env.NEXT_PUBLIC_APP_URL}/product-billing-inventories?category=${categoryType}`
         : `${process.env.NEXT_PUBLIC_APP_URL}/service-billing-inventories?category=${categoryType}`;  // Use the service endpoint for services
   
-      axios
+      api
         .get(endpoint, {
           headers: {
             "Content-Type": "application/json",
@@ -147,7 +149,7 @@ const CreateBilling = () => {
     const token = Cookies.get("authToken");
   
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/bill-patient`,
         {
           patientId,

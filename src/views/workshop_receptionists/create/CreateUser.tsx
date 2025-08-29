@@ -16,6 +16,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import Swal from 'sweetalert2'
+import api from '@/app/utils/api'
 
 // Type Definitions
 type FormData = {
@@ -82,7 +83,7 @@ const CreateUser = () => {
     }
   
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/users`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }

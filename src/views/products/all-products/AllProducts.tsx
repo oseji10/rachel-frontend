@@ -31,6 +31,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
+import api from '@/app/utils/api';
 
 type Product = {
   productId: number;
@@ -113,7 +114,7 @@ const ProductsTable = () => {
     setLoading(true);
     try {
       const token = Cookies.get('authToken');
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
+      const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -181,7 +182,7 @@ const ProductsTable = () => {
 
     try {
       const token = Cookies.get('authToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
+      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -262,7 +263,7 @@ const ProductsTable = () => {
       if (result.isConfirmed) {
         try {
           const token = Cookies.get('authToken');
-          await axios.delete(
+          await api.delete(
             `${process.env.NEXT_PUBLIC_APP_URL}/products/${product.productId}`,
             {
               headers: {

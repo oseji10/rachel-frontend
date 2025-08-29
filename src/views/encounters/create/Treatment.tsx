@@ -19,6 +19,7 @@ import {
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import Swal from "sweetalert2";
 import { useSearchParams, useRouter } from "next/navigation";
+import api from "@/app/utils/api";
 
 const Treatment = () => {
   const [medicineList, setMedicineList] = useState([]);
@@ -88,7 +89,7 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
   useEffect(() => {
     const fetchMedicineList = async () => {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`);
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`);
         setMedicineList(response.data);
       } catch (error) {
         Swal.fire({ icon: "error", title: "Error", text: "Failed to fetch medicine list." });
@@ -142,7 +143,7 @@ const dosageOptions = ["Once daily", "Twice daily", "Three times daily", "Four t
     };
   
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/treatment`, payload);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/treatment`, payload);
       Swal.fire({ icon: "success", title: "Success", text: "Data submitted successfully!", timer: 3000, showConfirmButton: false });
       router.push(
         `/dashboard/appointments/encounter-appointment?patientId=${patientId}&patientName=${patientName}&encounterId=${encounterId}`

@@ -16,6 +16,7 @@ import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
 import Typography from '@mui/material/Typography'
 import Swal from 'sweetalert2'
+import api from '@/app/utils/api'
 
 // Type Definitions
 type FormData = {
@@ -60,11 +61,8 @@ const CreatePatient = () => {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
-        const data = await response.json()
-        // const allDoctors = data.flatMap(user => user.doctors)
-        setDoctors(data)
-        // console.log(allDoctors)
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/doctors`)
+        setDoctors(response.data)
       } catch (error) {
         console.error('Error fetching doctors:', error)
       }
@@ -76,9 +74,8 @@ const CreatePatient = () => {
   useEffect(() => {
     const fetchHmos = async () => {
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`)
-        const data = await response.json()
-        setHmos(data)
+        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/hmos`)
+        setHmos(response.data)
       } catch (error) {
         console.error('Error fetching HMOs:', error)
       }
@@ -120,7 +117,7 @@ const CreatePatient = () => {
     }
   
     try {
-      const response = await axios.post(
+      const response = await api.post(
         `${process.env.NEXT_PUBLIC_APP_URL}/patients`,
         payload,
         { headers: { 'Content-Type': 'application/json' } }
