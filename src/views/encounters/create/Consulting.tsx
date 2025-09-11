@@ -1594,65 +1594,81 @@ useEffect(() => {
           </Grid>
         );
       case 6:
-        return (
-          <Grid container spacing={4}>
-            {renderTable('Eye Drops', eyeDrops, setEyeDrops, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: eyeDropList.map(m => m.medicineName) },
-              { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
-              { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
-              { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
-              { name: 'comment', label: 'Comment' },
-            ])}
-            {renderTable('Tablets', tablets, setTablets, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: tabletList.map(m => m.medicineName) },
-              { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
-              { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
-              { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
-              { name: 'comment', label: 'Comment' },
-            ])}
-            {renderTable('Ointments', ointments, setOintments, [
-              { name: 'medicine', label: 'Medicine', type: 'select', options: ointmentList.map(m => m.medicineName) },
-              { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
-              { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
-              { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
-              { name: 'comment', label: 'Comment' },
-            ])}
-            {renderTable('Prescription Glasses', prescriptionGlasses, setPrescriptionGlasses, [
-              { name: 'lensType', label: 'Lens Type' },
-            ])}
-          </Grid>
-        );
+       return (
+  <Grid container spacing={4}>
+    <Grid item xs={12}>
+      {renderTable('Eye Drops', eyeDrops, setEyeDrops, [
+        { name: 'medicine', label: 'Medicine', type: 'select', options: eyeDropList.map(m => m.medicineName) },
+        { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
+        { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
+        { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
+        { name: 'comment', label: 'Comment' },
+      ])}
+    </Grid>
 
-        case 7:
+    <Grid item xs={12}>
+      {renderTable('Tablets', tablets, setTablets, [
+        { name: 'medicine', label: 'Medicine', type: 'select', options: tabletList.map(m => m.medicineName) },
+        { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
+        { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
+        { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
+        { name: 'comment', label: 'Comment' },
+      ])}
+    </Grid>
+
+    <Grid item xs={12}>
+      {renderTable('Ointments', ointments, setOintments, [
+        { name: 'medicine', label: 'Medicine', type: 'select', options: ointmentList.map(m => m.medicineName) },
+        { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
+        { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
+        { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
+        { name: 'comment', label: 'Comment' },
+      ])}
+    </Grid>
+
+    <Grid item xs={12}>
+      {renderTable('Prescription Glasses', prescriptionGlasses, setPrescriptionGlasses, [
+        { name: 'lensType', label: 'Lens Type' },
+      ])}
+    </Grid>
+  </Grid>
+);
+
+
+       case 7: // Summary
         return (
           <Box>
-            <Typography variant="h4" className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-              Consultation Summary
-            </Typography>
             {renderSummaryTable('Consultation', [
-              { label: 'Chief Complaint (Right)', value: chiefComplaintOptions.find(o => o.id === formData.chiefComplaintRight)?.name },
-              { label: 'Chief Complaint (Left)', value: chiefComplaintOptions.find(o => o.id === formData.chiefComplaintLeft)?.name },
-              { label: 'Intra Occular Pressure (Right)', value: formData.intraOccularPressureRight },
-              { label: 'Intra Occular Pressure (Left)', value: formData.intraOccularPressureLeft },
+              { label: 'Chief Complaint (Right)', value: chiefComplaintOptions.find(opt => opt.id === formData.chiefComplaintRight)?.name },
+              { label: 'Chief Complaint (Left)', value: chiefComplaintOptions.find(opt => opt.id === formData.chiefComplaintLeft)?.name },
+              { label: 'Intra-Occular Pressure (Right)', value: formData.intraOccularPressureRight },
+              { label: 'Intra-Occular Pressure (Left)', value: formData.intraOccularPressureLeft },
               { label: 'Other Complaints (Right)', value: formData.otherComplaintsRight },
               { label: 'Other Complaints (Left)', value: formData.otherComplaintsLeft },
               { label: 'Detailed History (Right)', value: formData.detailedHistoryRight },
               { label: 'Detailed History (Left)', value: formData.detailedHistoryLeft },
+              { label: 'High Blood Pressure', value: formData.HBP },
+              { label: 'Diabetes', value: formData.diabetes },
+              { label: 'Pregnancy', value: formData.pregnancy },
+              { label: 'Food Allergies', value: formData.food },
+              { label: 'Drug Allergies', value: formData.drugAllergy },
+              { label: 'Current Medication', value: formData.currentMedication },
             ])}
             {renderSummaryTable('Findings', [
               { label: 'Findings (Right)', value: formData.findingsRight },
               { label: 'Findings (Left)', value: formData.findingsLeft },
-
               { label: 'Eyelid (Right)', value: formData.eyelidRight },
               { label: 'Eyelid (Left)', value: formData.eyelidLeft },
               { label: 'Conjunctiva (Right)', value: formData.conjunctivaRight },
               { label: 'Conjunctiva (Left)', value: formData.conjunctivaLeft },
               { label: 'Cornea (Right)', value: formData.corneaRight },
               { label: 'Cornea (Left)', value: formData.corneaLeft },
-              { label: 'AC (Right)', value: formData.ACRight },
-              { label: 'AC (Left)', value: formData.ACLeft },
+              { label: 'Anterior Chamber (Right)', value: formData.ACRight },
+              { label: 'Anterior Chamber (Left)', value: formData.ACLeft },
               { label: 'Iris (Right)', value: formData.irisRight },
               { label: 'Iris (Left)', value: formData.irisLeft },
+              { label: 'Pupil (Right)', value: formData.pupilRight },
+              { label: 'Pupil (Left)', value: formData.pupilLeft },
               { label: 'Lens (Right)', value: formData.lensRight },
               { label: 'Lens (Left)', value: formData.lensLeft },
               { label: 'Vitreous (Right)', value: formData.vitreousRight },
@@ -1661,46 +1677,80 @@ useEffect(() => {
               { label: 'Retina (Left)', value: formData.retinaLeft },
               { label: 'OCT (Right)', value: formData.OCTRight },
               { label: 'OCT (Left)', value: formData.OCTLeft },
-              { label: 'FFA (Right)', value: formData.FFARight },
-              { label: 'FFA (Left)', value: formData.FFALeft },
+              { label: 'Fundus Fluorescence Angiography (Right)', value: formData.FFARight },
+              { label: 'Fundus Fluorescence Angiography (Left)', value: formData.FFALeft },
               { label: 'Fundus Photography (Right)', value: formData.fundusPhotographyRight },
               { label: 'Fundus Photography (Left)', value: formData.fundusPhotographyLeft },
               { label: 'Pachymetry (Right)', value: formData.pachymetryRight },
               { label: 'Pachymetry (Left)', value: formData.pachymetryLeft },
-              { label: 'CVFT (Right)', value: formData.CVFTRight },
-              { label: 'CVFT (Left)', value: formData.CVFTLeft },
-              { label: 'CVFT Kinetic (Right)', value: formData.CVFTKineticRight },
-              { label: 'CVFT Kinetic (Left)', value: formData.CVFTKineticLeft },
-              { label: 'Other Findings', value: formData.otherFindings },
+              { label: 'Central Visual Field Test (Right)', value: formData.CVFTRight },
+              { label: 'Central Visual Field Test (Left)', value: formData.CVFTLeft },
+              { label: 'Central Visual Field Test Kinetic (Right)', value: formData.CVFTKineticRight },
+              { label: 'Central Visual Field Test Kinetic (Left)', value: formData.CVFTKineticLeft },
+              { label: 'Other Findings (Right)', value: formData.otherFindingsRight },
+              { label: 'Other Findings (Left)', value: formData.otherFindingsLeft },
+              { label: 'Visual Acuity Far Best Corrected (Right)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarBestCorrectedRight)?.name },
+              { label: 'Visual Acuity Far Best Corrected (Left)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarBestCorrectedLeft)?.name },
+              { label: 'Visual Acuity Far Presenting (Right)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarPresentingRight)?.name },
+              { label: 'Visual Acuity Far Presenting (Left)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarPresentingLeft)?.name },
+              { label: 'Visual Acuity Far Pinhole (Right)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarPinholeRight)?.name },
+              { label: 'Visual Acuity Far Pinhole (Left)', value: visualAcuityFar.find(opt => opt.id === formData.visualAcuityFarPinholeLeft)?.name },
+              { label: 'Visual Acuity Near (Right)', value: visualAcuityNear.find(opt => opt.id === formData.visualAcuityNearRight)?.name },
+              { label: 'Visual Acuity Near (Left)', value: visualAcuityNear.find(opt => opt.id === formData.visualAcuityNearLeft)?.name },
             ])}
             {renderSummaryTable('Refraction', [
-              { label: 'Near Add (Right)', value: nearAdd.find(o => o.id === formData.nearAddRight)?.name },
-              { label: 'Near Add (Left)', value: nearAdd.find(o => o.id === formData.nearAddLeft)?.name },
-              { label: 'Refraction Sphere (Right)', value: refractionSphere.find(o => o.id === formData.refractionSphereRight)?.name },
-              { label: 'Refraction Sphere (Left)', value: refractionSphere.find(o => o.id === formData.refractionSphereLeft)?.name },
-              { label: 'Refraction Cylinder (Right)', value: refractionCylinder.find(o => o.id === formData.refractionCylinderRight)?.name },
-              { label: 'Refraction Cylinder (Left)', value: refractionCylinder.find(o => o.id === formData.refractionCylinderLeft)?.name },
-              { label: 'Refraction Axis (Right)', value: refractionAxis.find(o => o.id === formData.refractionAxisRight)?.name },
-              { label: 'Refraction Axis (Left)', value: refractionAxis.find(o => o.id === formData.refractionAxisLeft)?.name },
-              { label: 'Refraction Prism (Right)', value: refractionPrism.find(o => o.id === formData.refractionPrismRight)?.name },
-              { label: 'Refraction Prism (Left)', value: refractionPrism.find(o => o.id === formData.refractionPrismLeft)?.name },
+              { label: 'Near Add (Right)', value: nearAdd.find(opt => opt.id === formData.nearAddRight)?.name },
+              { label: 'Near Add (Left)', value: nearAdd.find(opt => opt.id === formData.nearAddLeft)?.name },
+              { label: 'Refraction Sphere (Right)', value: refractionSphere.find(opt => opt.id === formData.refractionSphereRight)?.name },
+              { label: 'Refraction Sphere (Left)', value: refractionSphere.find(opt => opt.id === formData.refractionSphereLeft)?.name },
+              { label: 'Refraction Cylinder (Right)', value: refractionCylinder.find(opt => opt.id === formData.refractionCylinderRight)?.name },
+              { label: 'Refraction Cylinder (Left)', value: refractionCylinder.find(opt => opt.id === formData.refractionCylinderLeft)?.name },
+              { label: 'Refraction Axis (Right)', value: refractionAxis.find(opt => opt.id === formData.refractionAxisRight)?.name },
+              { label: 'Refraction Axis (Left)', value: refractionAxis.find(opt => opt.id === formData.refractionAxisLeft)?.name },
+              { label: 'Refraction Prism (Right)', value: refractionPrism.find(opt => opt.id === formData.refractionPrismRight)?.name },
+              { label: 'Refraction Prism (Left)', value: refractionPrism.find(opt => opt.id === formData.refractionPrismLeft)?.name },
+              { label: 'Pupillary Distance (PD)', value: formData.pd },
+              { label: 'Bridge', value: formData.bridge },
+              { label: 'Eye Size', value: formData.eyeSize },
+              { label: 'Temple', value: formData.temple },
+              { label: 'Decentration', value: formData.decentration },
+              { label: 'Segment Measurement', value: formData.segmentMeasurement },
+              { label: 'Case Size', value: formData.caseSize },
+              { label: 'Frame Type', value: frameTypeOptions.find(opt => opt.id === formData.frameType)?.name },
+              { label: 'Frame Color', value: frameColorOptions.find(opt => opt.id === formData.frameColor)?.name },
+              { label: 'Frame Cost', value: formData.frameCost },
+              { label: 'Lens Type', value: lensTypeOptions.find(opt => opt.id === formData.lensType)?.name },
+              { label: 'Lens Color', value: lensColorOptions.find(opt => opt.id === formData.lensColor)?.name },
+              { label: 'Lens Cost', value: formData.lensCost },
+              { label: 'Surfacing', value: formData.surfacing },
+              { label: 'Other Notes', value: formData.other },
             ])}
-            {/* {renderSummaryTable('Sketch Pad', [
-              { label: 'Right Eye Front', value: rightEyeRef.current?.getSaveData() || 'No drawing' },
-              { label: 'Right Eye Back', value: rightEyeBackRef.current?.getSaveData() || 'No drawing' },
-              { label: 'Left Eye Front', value: leftEyeRef.current?.getSaveData() || 'No drawing' },
-              { label: 'Left Eye Back', value: leftEyeBackRef.current?.getSaveData() || 'No drawing' },
-            ])} */}
-             {renderSummarySketches()}
-            {renderSummaryTable('Other Findings', [
-              { label: 'Comments', value: formData.comments || 'No comments' },
+            {renderSummarySketches()}
+            {renderSummaryTable('Diagnosis', [
+              { label: 'Problems Identified (Right)', value: formData.problemsRight.map(id => diagnosisList.find(opt => opt.id === id)?.name).join(', ') },
+              { label: 'Problems Identified (Left)', value: formData.problemsLeft.map(id => diagnosisList.find(opt => opt.id === id)?.name).join(', ') },
+              { label: 'Other Problems (Right)', value: formData.otherProblemsRight },
+              { label: 'Other Problems (Left)', value: formData.otherProblemsLeft },
+              { label: 'Overall Diagnosis (Right)', value: diagnosisList.find(opt => opt.id === formData.overallDiagnosisRight)?.name },
+              { label: 'Overall Diagnosis (Left)', value: diagnosisList.find(opt => opt.id === formData.overallDiagnosisLeft)?.name },
+              { label: 'Other Overall Diagnosis (Right)', value: formData.otherOverallDiagnosisRight },
+              { label: 'Other Overall Diagnosis (Left)', value: formData.otherOverallDiagnosisLeft },
             ])}
-            {renderSummaryTable('Additional Information', [
-              { label: 'Date of Exam', value: formData.dateOfExam || 'No date provided' },
-              { label: 'Referring Physician', value: formData.referringPhysician || 'No physician provided' },
+            {renderSummaryTable('Investigations', [
+              { label: 'Investigations Required', value: formData.investigationsRequired.map(id => investigationsRequiredList.find(opt => opt.id === id)?.name).join(', ') },
+              { label: 'Other Investigations Required', value: formData.otherInvestigationsRequired },
+              { label: 'External Investigations Required', value: formData.externalInvestigationsRequired },
+              { label: 'Investigations Done in Clinic', value: formData.investigationsDone.map(id => investigationsDoneList.find(opt => opt.id === id)?.name).join(', ') },
+              { label: 'Other Investigations Done', value: formData.otherInvestigationsDone },
+            ])}
+            {renderSummaryTable('Treatment', [
+              { label: 'Eye Drops', value: eyeDrops.map(row => `${row.medicine} (${row.dosage}, ${row.doseDuration}, ${row.doseInterval}) - ${row.comment}`).join('; ') },
+              { label: 'Tablets', value: tablets.map(row => `${row.medicine} (${row.dosage}, ${row.doseDuration}, ${row.doseInterval}) - ${row.comment}`).join('; ') },
+              { label: 'Ointments', value: ointments.map(row => `${row.medicine} (${row.dosage}, ${row.doseDuration}, ${row.doseInterval}) - ${row.comment}`).join('; ') },
             ])}
           </Box>
         );
+      
       default:
         return null;
     }
