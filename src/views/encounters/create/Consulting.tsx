@@ -1598,7 +1598,7 @@ useEffect(() => {
   <Grid container spacing={4}>
     <Grid item xs={12}>
       {renderTable('Eye Drops', eyeDrops, setEyeDrops, [
-        { name: 'medicine', label: 'Medicine', type: 'select', options: eyeDropList.map(m => m.medicineName) },
+        { name: 'medicine', label: 'Medicine', type: 'select', options: eyeDropList.map(m => m.productName) },
         { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
         { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
         { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
@@ -1608,7 +1608,7 @@ useEffect(() => {
 
     <Grid item xs={12}>
       {renderTable('Tablets', tablets, setTablets, [
-        { name: 'medicine', label: 'Medicine', type: 'select', options: tabletList.map(m => m.medicineName) },
+        { name: 'medicine', label: 'Medicine', type: 'select', options: tabletList.map(m => m.productName) },
         { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
         { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
         { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
@@ -1618,7 +1618,7 @@ useEffect(() => {
 
     <Grid item xs={12}>
       {renderTable('Ointments', ointments, setOintments, [
-        { name: 'medicine', label: 'Medicine', type: 'select', options: ointmentList.map(m => m.medicineName) },
+        { name: 'medicine', label: 'Medicine', type: 'select', options: ointmentList.map(m => m.productName) },
         { name: 'dosage', label: 'Dosage', type: 'select', options: dosageOptions },
         { name: 'doseDuration', label: 'Dosage Duration', type: 'select', options: doseDurationOptions },
         { name: 'doseInterval', label: 'Quantity', type: 'select', options: quantityOptions },
