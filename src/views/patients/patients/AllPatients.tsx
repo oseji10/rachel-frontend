@@ -545,7 +545,7 @@ const PatientsTable = () => {
                  <TextField
                                 fullWidth
                                 label="Card Number"
-                                value={formData.cardNumber}
+                                value={selectedPatient.cardNumber}
                                 onChange={e => handleFormChange('cardNumber', e.target.value)}
                               />
               </FormControl>

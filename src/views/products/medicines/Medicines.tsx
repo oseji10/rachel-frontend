@@ -117,21 +117,34 @@ const Medicines = () => {
   }, []);
 
   // Fetch medicines for the dropdown
-  useEffect(() => {
+  // useEffect(() => {
+  //   const fetchMedicines = async () => {
+  //     try {
+  //       const token = Cookies.get('authToken');
+  //       // const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`, {
+  //       //   headers: {
+  //       //     Authorization: `Bearer ${token}`,
+  //       //   },
+  //       // });
+  //       // const data = await response.json();
+  //       const res = api.get(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`);
+  //       setMedicines(res);
+  //     } catch (error) {
+  //       console.error("Error fetching medicines:", error);
+  //     }
+  //   };
+
+     useEffect(() => {
     const fetchMedicines = async () => {
       try {
-        const token = Cookies.get('authToken');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/medicines`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setMedicines(data);
+        const res = await api.get("/medicines");
+        setMedicines(res.data);
       } catch (error) {
-        console.error("Error fetching medicines:", error);
+        console.error("Error fetching mdicines:", error);
       }
     };
+  //   fetchMedicines();
+  // }, []);
 
     if (openModal || openEditModal) {
       fetchMedicines();
@@ -154,35 +167,29 @@ const Medicines = () => {
     }));
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
 
-    if (submitLoading) return;
-    setSubmitLoading(true);
+
+
+
+  const handleSubmit = async (event) => {
+     event.preventDefault();
+ 
 
     try {
-      const token = Cookies.get("authToken");
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/inventories`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      if (submitLoading) return;
+      setSubmitLoading(true);
+      await api.post("/inventories", formData);
 
-      if (response.status === 201) {
-        await fetchInventories();
-
-        setFormData({
+      await fetchInventories();
+      setFormData({
           productId: "",
           quantityReceived: "",
           expiryDate: "",
           batchNumber: "",
-          inventoryType: "",
+          inventoryType: "Medicine",
         });
 
-        setOpenModal(false);
+         setOpenModal(false);
         setSubmitLoading(false);
 
         Swal.fire({
@@ -191,11 +198,9 @@ const Medicines = () => {
           icon: "success",
           confirmButtonText: "Okay",
         });
-      } else {
-        throw new Error("Failed to add product.");
-      }
+
     } catch (error) {
-      console.error("Error submitting form:", error);
+       console.error("Error submitting form:", error);
       Swal.fire({
         title: "Oops!",
         text: "An error occurred while adding the product.",

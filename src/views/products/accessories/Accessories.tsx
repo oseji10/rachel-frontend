@@ -118,19 +118,13 @@ const Accessories = () => {
   }, []);
 
   // Fetch list of medicines from API
-  useEffect(() => {
+ useEffect(() => {
     const fetchMedicines = async () => {
       try {
-        const token = Cookies.get('authToken');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/accessories`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        setMedicines(data);
+        const res = await api.get("/accessories");
+        setMedicines(res.data);
       } catch (error) {
-        console.error('Error fetching medicines:', error);
+        console.error("Error fetching accessories:", error);
       }
     };
 
@@ -158,61 +152,46 @@ const Accessories = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (submitLoading) return;
-    setSubmitLoading(true);
-
-    try {
-      const token = Cookies.get('authToken');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/inventories`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.status === 201) {
-        // Refetch inventories from the server to get the latest data
+   const handleSubmit = async (event) => {
+       event.preventDefault();
+   
+  
+      try {
+        if (submitLoading) return;
+        setSubmitLoading(true);
+        await api.post("/inventories", formData);
+  
         await fetchInventories();
-
-        // Reset form
         setFormData({
-          productId: '',
-          quantityReceived: '',
-          expiryDate: '',
-          batchNumber: '',
-          inventoryType: 'Accessory',
-        });
-
-        // Close modal and stop loading
-        setOpenModal(false);
-        setSubmitLoading(false);
-
+            productId: "",
+            quantityReceived: "",
+            expiryDate: "",
+            batchNumber: "",
+            inventoryType: "Accessory",
+          });
+  
+           setOpenModal(false);
+          setSubmitLoading(false);
+  
+          Swal.fire({
+            title: "Success!",
+            text: "Inventory added successfully!",
+            icon: "success",
+            confirmButtonText: "Okay",
+          });
+  
+      } catch (error) {
+         console.error("Error submitting form:", error);
         Swal.fire({
-          title: 'Success!',
-          text: 'Inventory added successfully!',
-          icon: 'success',
-          confirmButtonText: 'Okay',
+          title: "Oops!",
+          text: "An error occurred while adding the product.",
+          icon: "error",
+          confirmButtonText: "Okay",
         });
-      } else {
-        throw new Error('Failed to add product.');
+      } finally {
+        setSubmitLoading(false);
       }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      Swal.fire({
-        title: 'Oops!',
-        text: 'An error occurred while adding the product.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+    };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
