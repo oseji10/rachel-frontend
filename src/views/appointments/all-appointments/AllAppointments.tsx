@@ -296,9 +296,9 @@ const AppointmentsTable = () => {
                 <TableCell>
                   {appointment?.patients?.firstName} {appointment?.patients?.lastName}
                 </TableCell>
-                <TableCell>{appointment?.doctors.doctorName}</TableCell>
+                <TableCell>{appointment?.doctors?.doctorName}</TableCell>
                 <TableCell>
-                  {appointment.status === 'arrived' ? 'Checked In' : 'Scheduled'}
+                  {appointment?.status === 'arrived' ? 'Checked In' : 'Scheduled'}
                 </TableCell>
                 <TableCell>
                   <IconButton onClick={() => handleView(appointment)} color="primary">
@@ -313,7 +313,7 @@ const AppointmentsTable = () => {
                   <IconButton 
                     onClick={() => handleCheckIn(appointment)} 
                     color="success"
-                    disabled={appointment.status === 'arrived' || checkInLoading === appointment.appointmentId}
+                    disabled={appointment?.status === 'arrived' || checkInLoading === appointment?.appointmentId}
                   >
                     {checkInLoading === appointment.appointmentId ? (
                       <CircularProgress size={24} />

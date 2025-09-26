@@ -80,7 +80,7 @@ const PatientsTable = () => {
   const [totalPages, setTotalPages] = useState(0); // Define totalPages state
   const cardNumberOptions = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
   const genderOptions = ['Male', 'Female', ];
-
+const [bookingLoading, setBookingLoading] = useState(false);
   const [openBookingModal, setOpenBookingModal] = useState<boolean>(false);
     
     const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
@@ -200,16 +200,21 @@ const PatientsTable = () => {
     }
 
     try {
-      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/appointments`, {
+      setBookingLoading(true);
+      await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/appointments/booknow`, {
         patientId: selectedPatient.patientId,
         doctorId: selectedDoctorId,
-        appointmentDate: new Date().toISOString(),
+        // appointmentDate: new Date().toISOString(),
       });
       Swal.fire('Success!', 'Appointment booked successfully.', 'success');
       setOpenBookingModal(false);
+      setBookingLoading(false);
     } catch (error) {
       Swal.fire('Error!', 'Failed to book appointment.', 'error');
     }
+     finally {
+    setBookingLoading(false);
+  }
   };
 
 
@@ -636,15 +641,21 @@ const PatientsTable = () => {
                   ))}
                 </Select>
               </FormControl>
-              <Button
-                fullWidth
-                variant="contained"
-                color="primary"
-                sx={{ mt: 2 }}
-                onClick={handleBookingSave}
-              >
-                Add To Queue
-              </Button>
+             <Button
+  fullWidth
+  variant="contained"
+  color="primary"
+  sx={{ mt: 2 }}
+  onClick={handleBookingSave}
+  disabled={bookingLoading} // disable while loading
+>
+  {bookingLoading ? (
+    <CircularProgress size={24} color="inherit" />
+  ) : (
+    "Add To Queue"
+  )}
+</Button>
+
             </Box>
           )}
         </Box>

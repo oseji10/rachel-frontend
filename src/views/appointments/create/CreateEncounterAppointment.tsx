@@ -122,7 +122,7 @@ const [value, setValue] = useState(new Date()); // Set initial time to current t
       })
       setFormData(initialFormData)
       router.push(
-        `/encounters`
+        `/dashboard/encounters`
       );
     } catch (error) {
       console.error('Error submitting form:', error.response?.data || error.message)
