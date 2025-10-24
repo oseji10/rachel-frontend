@@ -31,7 +31,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
-import api from '@/app/utils/api';
+// import api from '@/app/utils/api';
+import api from '../../../../lib/api';
 
 type Product = {
   productId: number;
@@ -181,15 +182,17 @@ const ProductsTable = () => {
     setSubmitLoading(true);
 
     try {
-      const token = Cookies.get('authToken');
-      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      // const token = Cookies.get('authToken');
+      // const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      //   body: JSON.stringify(formData),
+      // });
+
+      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, formData);
 
       if (response.status === 201) {
         // Refetch products to get the latest data
