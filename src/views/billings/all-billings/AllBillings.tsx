@@ -324,20 +324,6 @@ const handleSubmit = async (e) => {
 
 const handlePrintReceipt = (billing: Billing) => {
   const calculatedTotal = calculateTotalCost(billing.relatedTransactions);
-
-  // Log for debugging
-  console.log('Calculated Total:', calculatedTotal);
-  console.log('API Total (billing.total_cost):', billing.total_cost);
-
-  // Warn if there's a mismatch
-  if (calculatedTotal !== billing.total_cost) {
-    console.warn(
-      `Total cost mismatch for billing ${billing.transactionId}: ` +
-      `API total = ${billing.total_cost}, Calculated total = ${calculatedTotal}`
-    );
-  }
-
-  // Use calculatedTotal for display to ensure accuracy
   const displayTotal = calculatedTotal;
 
   const receiptContent = `
@@ -345,84 +331,84 @@ const handlePrintReceipt = (billing: Billing) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Receipt - ${billing.transactionId}</title>
       <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        body {
-          font-family: 'Roboto', sans-serif;
+        @page {
+          size: 80mm auto;
           margin: 0;
-          padding: 10mm;
-          width: 90mm;
-          background-color: #fff;
-          color: #333;
-          font-size: 12px;
-          line-height: 1.4;
+        }
+        body {
+          width: 80mm;
+          margin: 0;
+          padding: 0;
+          font-family: 'Arial', sans-serif;
+          font-size: 11px;
+          color: #000;
         }
         .receipt-container {
-          border: 2px solid #4a90e2;
-          border-radius: 8px;
-          padding: 10px;
-          background: linear-gradient(to bottom, #f5faff, #ffffff);
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+          padding: 4mm;
         }
         .header {
           text-align: center;
-          border-bottom: 2px dashed #4a90e2;
-          padding-bottom: 8px;
-          margin-bottom: 8px;
+          margin-bottom: 2mm;
+        }
+        .header img {
+          width: 70px;
+          height: auto;
+          margin-bottom: 2mm;
         }
         .header h1 {
-          font-size: 18px;
-          color: #2c5282;
+          font-size: 14px;
           margin: 0;
+          font-weight: bold;
         }
         .header p {
-          margin: 2px 0;
-          color: #4a5568;
           font-size: 10px;
+          margin: 1px 0;
         }
-        .details, .items {
-          margin: 8px 0;
+        .details {
+          margin-bottom: 3mm;
+          border-top: 1px dashed #000;
+          border-bottom: 1px dashed #000;
+          padding: 2mm 0;
         }
-        .details p, .items p {
-          margin: 4px 0;
+        .details p {
+          margin: 0;
+          line-height: 1.3;
         }
-        .items table {
+        table {
           width: 100%;
           border-collapse: collapse;
-          margin-top: 8px;
+          font-size: 10px;
         }
-        .items th, .items td {
-          padding: 4px;
+        th, td {
           text-align: left;
-          border-bottom: 1px solid #e2e8f0;
+          padding: 2px 0;
         }
-        .items th {
-          background-color: #e6f0fa;
+        th {
+          border-bottom: 1px solid #000;
           font-weight: bold;
-          color: #2c5282;
+        }
+        td:last-child, th:last-child {
+          text-align: right;
         }
         .total {
-          border-top: 2px dashed #4a90e2;
-          padding-top: 8px;
-          text-align: right;
+          border-top: 1px dashed #000;
+          margin-top: 3mm;
+          padding-top: 2mm;
+          font-size: 12px;
           font-weight: bold;
-          color: #2c5282;
+          text-align: right;
         }
         .footer {
           text-align: center;
-          margin-top: 8px;
-          font-size: 10px;
-          color: #718096;
+          font-size: 9px;
+          margin-top: 4mm;
         }
         @media print {
           body {
             margin: 0;
             padding: 0;
-          }
-          .receipt-container {
-            box-shadow: none;
           }
         }
       </style>
@@ -430,77 +416,50 @@ const handlePrintReceipt = (billing: Billing) => {
     <body>
       <div class="receipt-container">
         <div class="header">
-          <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Rachel Eye Center Logo" style="width: 100px; height: auto; margin-bottom: 10px;">
+          <img src="https://app.racheleyeemr.com.ng/images/rachel.png" alt="Logo" />
           <h1>Rachel Eye Center</h1>
-          <h3>Payment Receipt</h3>
-          <p> No. 23 Onitsha Crescent, off Gimbiya street,<br/> Garki Area 11</p>
+          <p>No. 23 Onitsha Crescent, off Gimbiya street, Garki Area 11</p>
           <p>Phone: +234 814 801 9410</p>
-          <p>Email: info@racheleyeemr.com.ng</p>
         </div>
         <div class="details">
           <p><strong>Transaction ID:</strong> ${billing.transactionId}</p>
-          <p><strong>Date:</strong> ${
-            billing.created_at
-              ? new Date(billing.created_at).toLocaleString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                  hour12: true,
-                })
-              : 'N/A'
-          }</p>
+          <p><strong>Date:</strong> ${billing.created_at ? new Date(billing.created_at).toLocaleString() : 'N/A'}</p>
           <p><strong>Patient:</strong> ${billing.patient.firstName} ${billing.patient.lastName}</p>
-          <p><strong>Cashier:</strong> ${billing.biller_info || 'N/A'} </p>
           <p><strong>Payment Method:</strong> ${billing.paymentMethod || 'N/A'}</p>
-          <p><strong>Payment Status:</strong> ${billing.paymentStatus.toUpperCase()}</p>
+          <p><strong>Status:</strong> ${billing.paymentStatus.toUpperCase()}</p>
         </div>
-        <div class="items">
-          <table>
-            <thead>
+        <table>
+          <thead>
+            <tr>
+              <th>Item</th>
+              <th>Qty</th>
+              <th>Price</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${billing.relatedTransactions.map(t => `
               <tr>
-                <th>Item</th>
-                <th>Qty</th>
-                <th>Price</th>
-                <th>Total</th>
+                <td>${t.product?.productName || t.service?.serviceName || 'N/A'}</td>
+                <td>${t.quantity}</td>
+                <td>₦${Number(t.cost / t.quantity).toFixed(2)}</td>
+                <td>₦${Number(t.cost).toFixed(2)}</td>
               </tr>
-            </thead>
-            <tbody>
-              ${billing.relatedTransactions
-                .map(
-                  (transaction) => `
-                <tr>
-                  <td>${transaction.product?.productName || transaction.service?.serviceName || 'N/A'}</td>
-                  <td>${transaction.quantity}</td>
-                  <td>₦${
-                    transaction.product?.productCost || transaction.service?.serviceCost
-                      ? new Intl.NumberFormat().format(
-                          Number(transaction.product?.productCost || transaction.service?.serviceCost) || 0
-                        )
-                      : '0'
-                  }</td>
-                  <td>₦${transaction.cost ? new Intl.NumberFormat().format(Number(transaction.cost) || 0) : '0'}</td>
-                </tr>
-              `
-                )
-                .join('')}
-            </tbody>
-          </table>
-        </div>
+            `).join('')}
+          </tbody>
+        </table>
         <div class="total">
-          <p>Total: ₦${new Intl.NumberFormat().format(displayTotal)}</p>
+          Total: ₦${new Intl.NumberFormat().format(displayTotal)}
         </div>
         <div class="footer">
           <p>Thank you for choosing Rachel Eye Center!</p>
-          <p>Visit us at www.racheleye.com.ng</p>
+          <p>www.racheleye.com.ng</p>
         </div>
       </div>
       <script>
         window.onload = () => {
           window.print();
-          setTimeout(() => window.close(), 1000);
+          setTimeout(() => window.close(), 500);
         };
       </script>
     </body>
@@ -508,14 +467,12 @@ const handlePrintReceipt = (billing: Billing) => {
   `;
 
   const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    Swal.fire('Error!', 'Failed to open print window.', 'error');
-    return;
-  }
-
+  if (!printWindow) return;
   printWindow.document.write(receiptContent);
   printWindow.document.close();
 };
+
+
   const handleEdit = (index) => {
     setModalOpen(true);
   };

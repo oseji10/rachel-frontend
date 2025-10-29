@@ -158,29 +158,80 @@ const router = useRouter();
   // Handle form submission
   // const [loading, setLoading] = useState(true); // For fetching services
 const [submitLoading, setSubmitLoading] = useState(false); // For form submission
-const handleSubmit = async (event) => {
-  event.preventDefault();
+// const handleSubmit = async (event) => {
+//   event.preventDefault();
 
-  if (submitLoading) return; // Prevent multiple clicks
-  setSubmitLoading(true);
+//   if (submitLoading) return; // Prevent multiple clicks
+//   setSubmitLoading(true);
 
-  try {
-    const token = Cookies.get("authToken");
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/services`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(formData),
-    });
+//   try {
+//     const token = Cookies.get("authToken");
+//     const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/services`, formData);
+//     if (response.status === 201 || response.status === 200) {
+//       const newService = await response.json(); 
 
-    if (response.status === 201) {
-      const newService = await response.json(); 
+//       setServices((prevServices) => [newService, ...prevServices]);
+//       setFilteredServices((prevFiltered) => [newService, ...prevFiltered]);
 
-      setServices((prevServices) => [newService, ...prevServices]);
-      setFilteredServices((prevFiltered) => [newService, ...prevFiltered]);
+//       setFormData({
+//         serviceName: "",
+//         serviceDescription: "",
+//         serviceType: "",
+//         serviceCategory: "",
+//         serviceQuantity: "",
+//         serviceCost: "",
+//         servicePrice: "",
+//         serviceStatus: "available",
+//         serviceImage: "",
+//         serviceManufacturer: "",
+//         uploadedBy: "",
+//       });
 
+//       // Close modal and stop loading BEFORE showing the alert
+//       setOpenModal(false);
+//       setSubmitLoading(false);
+
+//       // Show success message
+//       Swal.fire({
+//         title: "Success!",
+//         text: "Service added successfully!",
+//         icon: "success",
+//         confirmButtonText: "Okay",
+//       });
+
+//     } else {
+//       throw new Error("Failed to add service.");
+//     }
+//   } catch (error) {
+//     console.error("Error submitting form:", error);
+//     Swal.fire({
+//       title: "Oops!",
+//       text: "An error occurred while adding the service.",
+//       icon: "error",
+//       confirmButtonText: "Okay",
+//     });
+//   } finally {
+//     setSubmitLoading(false); // Ensure spinner stops in case of success or error
+//   }
+// };
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (submitLoading) return;
+    setSubmitLoading(true);
+
+    try {
+      const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/services`, formData);
+
+      if (response.status === 201 || response.status === 200) {
+
+
+        // Refetch services to get the latest data
+        await fetchServices();
+
+        // Reset form
       setFormData({
         serviceName: "",
         serviceDescription: "",
@@ -195,56 +246,49 @@ const handleSubmit = async (event) => {
         uploadedBy: "",
       });
 
-      // Close modal and stop loading BEFORE showing the alert
-      setOpenModal(false);
-      setSubmitLoading(false);
+        // Close modal and stop loading
+        setOpenModal(false);
+        setSubmitLoading(false);
 
-      // Show success message
+        Swal.fire({
+          title: 'Success!',
+          text: 'Services added successfully!',
+          icon: 'success',
+          confirmButtonText: 'Okay',
+        });
+      } else {
+        throw new Error('Failed to add services.');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
       Swal.fire({
-        title: "Success!",
-        text: "Service added successfully!",
-        icon: "success",
-        confirmButtonText: "Okay",
+        title: 'Oops!',
+        text: 'An error occurred while adding the services.',
+        icon: 'error',
+        confirmButtonText: 'Okay',
       });
-
-    } else {
-      throw new Error("Failed to add service.");
+    } finally {
+      setSubmitLoading(false);
     }
-  } catch (error) {
-    console.error("Error submitting form:", error);
-    Swal.fire({
-      title: "Oops!",
-      text: "An error occurred while adding the service.",
-      icon: "error",
-      confirmButtonText: "Okay",
-    });
-  } finally {
-    setSubmitLoading(false); // Ensure spinner stops in case of success or error
+  };
+
+
+const fetchServices = async () => {
+  try {
+    const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/services`);
+    setServices(response.data);
+    setFilteredServices(response.data);
+    setLoading(false);
+  } catch (err) {
+    setError('Failed to load services data.');
+    setLoading(false);
   }
 };
 
+useEffect(() => {
+  fetchServices();
+}, []);
 
-
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const token = Cookies.get('authToken');
-        const response = await api.get(`${process.env.NEXT_PUBLIC_APP_URL}/services`, {
-          headers: {
-            Authorization: `Bearer ${token}`, 
-          },
-        });
-        setServices(response.data);
-        setFilteredServices(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to load services data.');
-        setLoading(false);
-      }
-    };
-
-    fetchServices();
-  }, []);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
