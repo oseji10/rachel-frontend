@@ -359,7 +359,7 @@ const Lenses = () => {
             <TableBody>
               {displayedProducts.map((product) => (
                 <TableRow key={product.inventoryId}>
-                  <TableCell>{formatDate(product?.createdAt)}</TableCell>
+                  <TableCell>{formatDate(product?.created_at)}</TableCell>
                   <TableCell>{product?.product?.productName}</TableCell>
                   <TableCell>{product?.product?.productDescription}</TableCell>
                   <TableCell>{product?.quantityReceived}</TableCell>

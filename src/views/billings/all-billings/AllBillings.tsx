@@ -332,40 +332,47 @@ const handlePrintReceipt = (billing: Billing) => {
     <head>
       <meta charset="UTF-8">
       <title>Receipt - ${billing.transactionId}</title>
-      <style>
-        @page {
-          size: 80mm auto;
-          margin: 0;
-        }
-        body {
-          width: 80mm;
-          margin: 0;
-          padding: 0;
-          font-family: 'Arial', sans-serif;
-          font-size: 11px;
-          color: #000;
-        }
-        .receipt-container {
-          padding: 4mm;
-        }
-        .header {
-          text-align: center;
-          margin-bottom: 2mm;
-        }
-        .header img {
-          width: 70px;
-          height: auto;
-          margin-bottom: 2mm;
-        }
-        .header h1 {
-          font-size: 14px;
-          margin: 0;
-          font-weight: bold;
-        }
-        .header p {
-          font-size: 10px;
-          margin: 1px 0;
-        }
+ <style>
+  @page {
+    size: 80mm auto;
+    margin: 0mm 0mm 0mm 0mm; /* Top, Right, Bottom, Left - all set to zero */
+    padding: 0;
+  }
+  body {
+    width: 80mm;
+    margin: 0mm !important; /* Force zero margins */
+    padding: 0mm !important; /* Force zero padding */
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    color: #000;
+    line-height: 1.2;
+  }
+  .receipt-container {
+    padding: 1mm 2mm 1mm 2mm; /* Reduced padding: top, right, bottom, left */
+    margin: 0;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 1mm; /* Reduced from 2mm */
+    padding: 0;
+  }
+  .header img {
+    width: 60px; /* Slightly smaller logo */
+    height: auto;
+    margin-bottom: 1mm; /* Reduced from 2mm */
+  }
+  .header h1 {
+    font-size: 13px; /* Slightly smaller */
+    margin: 1px 0; /* Reduced margins */
+    font-weight: bold;
+    line-height: 1.2;
+  }
+  .header p {
+    font-size: 9px; /* Slightly smaller */
+    margin: 1px 0; /* Reduced margins */
+    line-height: 1.2;
+  }
+  
         .details {
           margin-bottom: 3mm;
           border-top: 1px dashed #000;

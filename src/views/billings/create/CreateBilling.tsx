@@ -31,7 +31,7 @@ const inventoryOptions = [
 // }
 
 const categoryOptions = {
-  Products: ['Medicine', 'Lens', 'Frame', 'Accessory'],
+  Products: ['Medicine', 'Opticals', 'Frame', 'Accessory'],
   Services: ['Consultation/Registration', 'Procedures', 'Clinic Procedures', 'Lasers', 'Cataract Procedures', 'Ptosis Procedures', 'Investigation', 'Diagnosis', 'Surgery']
 }
 
