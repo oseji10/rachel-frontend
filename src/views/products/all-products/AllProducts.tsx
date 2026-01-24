@@ -182,16 +182,6 @@ const ProductsTable = () => {
     setSubmitLoading(true);
 
     try {
-      // const token = Cookies.get('authToken');
-      // const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(formData),
-      // });
-
       const response = await api.post(`${process.env.NEXT_PUBLIC_APP_URL}/products`, formData);
 
       if (response.status === 201) {

@@ -118,10 +118,15 @@ const EncountersTable = () => {
   const [selectedPatientName, setSelectedPatientName] = useState('');
 
   // Refs for canvas
-  const rightFrontRef = useRef<CanvasDraw>(null);
-  const rightBackRef = useRef<CanvasDraw>(null);
-  const leftFrontRef = useRef<CanvasDraw>(null);
-  const leftBackRef = useRef<CanvasDraw>(null);
+  // const rightFrontRef = useRef<CanvasDraw>(null);
+  // const rightBackRef = useRef<CanvasDraw>(null);
+  // const leftFrontRef = useRef<CanvasDraw>(null);
+  // const leftBackRef = useRef<CanvasDraw>(null);
+
+  const rightFrontRef = useRef(null);
+const rightBackRef  = useRef(null);
+const leftFrontRef  = useRef(null);
+const leftBackRef   = useRef(null);
 
   useEffect(() => {
     const fetchEncounters = async () => {
@@ -139,22 +144,48 @@ const EncountersTable = () => {
     fetchEncounters();
   }, []);
 
-  useEffect(() => {
-    if (selectedEncounter) {
-      if (rightFrontRef.current && selectedEncounter.sketches?.rightEyeFront) {
-        rightFrontRef.current.loadSaveData(selectedEncounter.sketches.rightEyeFront);
-      }
-      if (rightBackRef.current && selectedEncounter.sketches?.rightEyeBack) {
-        rightBackRef.current.loadSaveData(selectedEncounter.sketches.rightEyeBack);
-      }
-      if (leftFrontRef.current && selectedEncounter.sketches?.leftEyeFront) {
-        leftFrontRef.current.loadSaveData(selectedEncounter.sketches.leftEyeFront);
-      }
-      if (leftBackRef.current && selectedEncounter.sketches?.leftEyeBack) {
-        leftBackRef.current.loadSaveData(selectedEncounter.sketches.leftEyeBack);
-      }
+  // useEffect(() => {
+  //   if (selectedEncounter) {
+  //     if (rightFrontRef.current && selectedEncounter.sketches?.rightEyeFront) {
+  //       rightFrontRef.current.loadSaveData(selectedEncounter.sketches.rightEyeFront);
+  //     }
+  //     if (rightBackRef.current && selectedEncounter.sketches?.rightEyeBack) {
+  //       rightBackRef.current.loadSaveData(selectedEncounter.sketches.rightEyeBack);
+  //     }
+  //     if (leftFrontRef.current && selectedEncounter.sketches?.leftEyeFront) {
+  //       leftFrontRef.current.loadSaveData(selectedEncounter.sketches.leftEyeFront);
+  //     }
+  //     if (leftBackRef.current && selectedEncounter.sketches?.leftEyeBack) {
+  //       leftBackRef.current.loadSaveData(selectedEncounter.sketches.leftEyeBack);
+  //     }
+  //   }
+  // }, [selectedEncounter]);
+
+useEffect(() => {
+  if (!selectedEncounter?.sketches) return;
+
+  const sketches = selectedEncounter.sketches;
+
+  const loadSketch = (ref: React.RefObject<CanvasDraw>, jsonString?: string) => {
+    if (!ref.current || !jsonString) return;
+    try {
+      ref.current.loadSaveData(jsonString, false); // false = no redraw animation
+      console.log("Loaded sketch successfully");
+    } catch (err) {
+      console.error("loadSaveData failed:", err);
     }
-  }, [selectedEncounter]);
+  };
+
+  // Small delay to ensure modal + canvas are fully mounted
+  const timer = setTimeout(() => {
+    loadSketch(rightFrontRef, sketches.rightEyeFront);
+    loadSketch(rightBackRef, sketches.rightEyeBack);
+    loadSketch(leftFrontRef, sketches.leftEyeFront);
+    loadSketch(leftBackRef, sketches.leftEyeBack);
+  }, 300); // 300ms usually enough; try 500 if still failing
+
+  return () => clearTimeout(timer);
+}, [selectedEncounter]);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value.toLowerCase();
@@ -465,33 +496,33 @@ const EncountersTable = () => {
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>OCT</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.OCTRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.OCTLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.OCTRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.OCTLeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>FFA</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.FFARight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.FFALeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.FFARight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.FFALeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Fundus Photography</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.fundusPhotographyRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.fundusPhotographyLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.fundusPhotographyRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.fundusPhotographyLeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Pachymetry</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.pachymetryRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.pachymetryLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.pachymetryRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.pachymetryLeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>CVFT</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.CVFTRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.CVFTLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.CUFTRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.CUFTLeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>CVFT Kinetic</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.CVFTKineticRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.continue_consulting?.CVFTKineticLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.CUFTKineticRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.findings?.CUFTKineticLeft)}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -511,8 +542,8 @@ const EncountersTable = () => {
                   <TableBody>
                     <TableRow>
                       <TableCell><strong>Near Add</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.refractions?.nearAddRight)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.refractions?.nearAddLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.refractions?.near_add_right)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.refractions?.near_add_left)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Refraction Sphere</strong></TableCell>
@@ -674,13 +705,13 @@ const EncountersTable = () => {
                   <TableBody>
                     <TableRow>
                       <TableCell><strong>Problems Identified</strong></TableCell>
-                      <TableCell>{safeArrayValue(selectedEncounter?.diagnosis?.problemsRight)}</TableCell>
-                      <TableCell>{safeArrayValue(selectedEncounter?.diagnosis?.problemsLeft)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.problemsRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.problemsLeft)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Overall Diagnosis</strong></TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.diagnosis_right_details)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.diagnosis_left_details)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.overallDiagnosisRight)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.diagnosis?.overallDiagnosisLeft)}</TableCell>
                     </TableRow>
                   </TableBody>
                 </Table>
@@ -697,10 +728,42 @@ const EncountersTable = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    <TableRow>
-                      <TableCell><strong>Investigations Required</strong></TableCell>
-                      <TableCell>{safeArrayValue(selectedEncounter?.investigations?.investigationsRequired)}</TableCell>
+                    {/* <TableRow>
+                      <TableCell><strong>Food</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.food)}</TableCell>
                     </TableRow>
+
+                     <TableRow>
+                      <TableCell><strong>HBP</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.HBP)}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell><strong>Diabetes</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.diabetes)}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell><strong>Pregnancy</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.pregnancy)}</TableCell>
+                    </TableRow>
+
+                    <TableRow>
+                      <TableCell><strong>Drug Allergy</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.drugAllergy)}</TableCell>
+                    </TableRow>
+
+
+                    <TableRow>
+                      <TableCell><strong>Current Medication</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.currentMedication)}</TableCell>
+                    </TableRow> */}
+
+                     <TableRow>
+                      <TableCell><strong>Investigations Required</strong></TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.investigationsRequired)}</TableCell>
+                    </TableRow>
+
                     <TableRow>
                       <TableCell><strong>Other Investigations Required</strong></TableCell>
                       <TableCell>{'N/A'}</TableCell>
@@ -711,7 +774,7 @@ const EncountersTable = () => {
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Investigations Done</strong></TableCell>
-                      <TableCell>{safeArrayValue(selectedEncounter?.investigations?.investigationsDone)}</TableCell>
+                      <TableCell>{safeValue(selectedEncounter?.investigations?.investigationsDone)}</TableCell>
                     </TableRow>
                     <TableRow>
                       <TableCell><strong>Other Investigations Done</strong></TableCell>
@@ -721,32 +784,43 @@ const EncountersTable = () => {
                 </Table>
               </TableContainer>
 
-              {/* Treatments */}
-              <h2>Treatments</h2>
-              <TableContainer component={Paper} style={{ marginBottom: '20px' }}>
-                <Table>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell><strong>Type</strong></TableCell>
-                      <TableCell><strong>Medicine</strong></TableCell>
-                      <TableCell><strong>Dosage</strong></TableCell>
-                      <TableCell><strong>Dose Duration</strong></TableCell>
-                      <TableCell><strong>Dose Interval</strong></TableCell>
-                      <TableCell><strong>Comment</strong></TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.treatmentType)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.medicine)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.dosage)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.doseDuration)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.doseInterval)}</TableCell>
-                      <TableCell>{safeValue(selectedEncounter?.treatments?.comment)}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              
+        {/* Treatments */}
+<h2>Treatments</h2>
+<TableContainer component={Paper} style={{ marginBottom: '20px' }}>
+  <Table>
+    <TableHead>
+      <TableRow>
+        <TableCell><strong>Type</strong></TableCell>
+        <TableCell><strong>Medicine</strong></TableCell>
+        <TableCell><strong>Dosage</strong></TableCell>
+        <TableCell><strong>Dose Duration</strong></TableCell>
+        <TableCell><strong>Quantity</strong></TableCell>
+        <TableCell><strong>Comment</strong></TableCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      {selectedEncounter?.treatments && selectedEncounter.treatments.length > 0 ? (
+        selectedEncounter.treatments.map((treatment: any, index: number) => (
+          <TableRow key={index}>
+            <TableCell>{safeValue(treatment.treatmentType)}</TableCell>
+            <TableCell>{safeValue(treatment.medicine)}</TableCell>
+            <TableCell>{safeValue(treatment.dosage)}</TableCell>
+            <TableCell>{safeValue(treatment.doseDuration)}</TableCell>
+            <TableCell>{(treatment?.quantity)}</TableCell>
+            <TableCell>{safeValue(treatment.comment)}</TableCell>
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={6} align="center">
+            No treatments recorded
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+  </Table>
+</TableContainer>
 
               {/* Next Appointment */}
               {selectedEncounter?.appointments && (

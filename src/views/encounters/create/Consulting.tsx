@@ -1243,7 +1243,7 @@ const Consulting = () => {
                                         className="rounded-lg"
                                     >
                                         {options.map((option) => (
-                                            <MenuItem key={option.id} value={option.id}>
+                                            <MenuItem key={option.id} value={option.name}>
                                                 {option.name}
                                             </MenuItem>
                                         ))}
@@ -1402,7 +1402,7 @@ const Consulting = () => {
                                             }}
                                         >
                                             {diagnosisList.map((option) => (
-                                                <MenuItem key={option.id} value={option.id}>
+                                                <MenuItem key={option.id} value={option.name}>
                                                     {option.name}
                                                 </MenuItem>
                                             ))}
@@ -1442,7 +1442,7 @@ const Consulting = () => {
                                     }}
                                 >
                                     {investigationsRequiredList.map((option) => (
-                                        <MenuItem key={option.id} value={option.id}>
+                                        <MenuItem key={option.id} value={option.name}>
                                             {option.name}
                                         </MenuItem>
                                     ))}
@@ -1488,7 +1488,7 @@ const Consulting = () => {
                                     }}
                                 >
                                     {investigationsDoneList.map((option) => (
-                                        <MenuItem key={option.id} value={option.id}>
+                                        <MenuItem key={option.id} value={option.name}>
                                             {option.name}
                                         </MenuItem>
                                     ))}
