@@ -647,6 +647,22 @@ const Consulting = () => {
     const [tabletList, setTabletList] = useState([]);
     const [ointmentList, setOintmentList] = useState([]);
 
+    const formatArrayForDisplay = (arr: string[] | undefined): string => {
+  if (!arr || arr.length === 0) return 'None selected';
+
+  // Sort alphabetically (case-insensitive)
+  const sorted = [...arr].sort((a, b) => a.localeCompare(b));
+
+  const joined = sorted.join(', ');
+
+  // Truncate if too long
+  if (joined.length > 300) {
+    return joined.slice(0, 297) + '...';
+  }
+
+  return joined;
+};
+
     const [brushColor, setBrushColor] = useState('#000000');
     const [formData, setFormData] = useState({
         chiefComplaintRight: '',
@@ -1390,7 +1406,7 @@ const Consulting = () => {
                                 <Grid item xs={12} sm={6} key={field.key}>
                                     <FormControl fullWidth>
                                         <InputLabel>{field.label}</InputLabel>
-                                        <Select
+                                        {/* <Select
                                             multiple
                                             value={formData[field.key] || []}
                                             onChange={(e) => handleFormChange(field.key, e.target.value)}
@@ -1406,7 +1422,19 @@ const Consulting = () => {
                                                     {option.name}
                                                 </MenuItem>
                                             ))}
-                                        </Select>
+                                        </Select> */}
+                                        <Select
+  multiple
+  value={formData[field.key] || []}
+  onChange={(e) => handleFormChange(field.key, e.target.value)}
+  renderValue={(selected) => selected.join(', ')}   // ← change to this
+>
+  {diagnosisList.map((option) => (
+    <MenuItem key={option.id} value={option.name}>
+      {option.name}
+    </MenuItem>
+  ))}
+</Select>
                                     </FormControl>
                                     {formData[field.key]?.includes(999) && (
                                         <Box mt={2}>
@@ -1430,7 +1458,7 @@ const Consulting = () => {
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel>Investigations Required</InputLabel>
-                                <Select
+                                {/* <Select
                                     multiple
                                     value={formData.investigationsRequired || []}
                                     onChange={(e) => handleFormChange('investigationsRequired', e.target.value)}
@@ -1446,7 +1474,19 @@ const Consulting = () => {
                                             {option.name}
                                         </MenuItem>
                                     ))}
-                                </Select>
+                                </Select> */}
+                                <Select
+  multiple
+  value={formData.investigationsRequired || []}
+  onChange={(e) => handleFormChange('investigationsRequired', e.target.value)}
+  renderValue={(selected) => selected.join(', ')}   // ← this is the key fix
+>
+  {investigationsRequiredList.map((option) => (
+    <MenuItem key={option.id} value={option.name}>
+      {option.name}
+    </MenuItem>
+  ))}
+</Select>
                             </FormControl>
                             {formData.investigationsRequired?.includes(999) && (
                                 <Box mt={2}>
@@ -1476,7 +1516,7 @@ const Consulting = () => {
                         <Grid item xs={12}>
                             <FormControl fullWidth>
                                 <InputLabel>Investigations Done in Clinic</InputLabel>
-                                <Select
+                                {/* <Select
                                     multiple
                                     value={formData.investigationsDone || []}
                                     onChange={(e) => handleFormChange('investigationsDone', e.target.value)}
@@ -1492,7 +1532,19 @@ const Consulting = () => {
                                             {option.name}
                                         </MenuItem>
                                     ))}
-                                </Select>
+                                </Select> */}
+                                <Select
+  multiple
+  value={formData.investigationsDone || []}
+  onChange={(e) => handleFormChange('investigationsDone', e.target.value)}
+  renderValue={(selected) => selected.join(', ')}
+>
+  {investigationsDoneList.map((option) => (
+    <MenuItem key={option.id} value={option.name}>
+      {option.name}
+    </MenuItem>
+  ))}
+</Select>
                             </FormControl>
                             {formData.investigationsDone?.includes(999) && (
                                 <Box mt={2}>
@@ -1639,22 +1691,43 @@ const Consulting = () => {
                         ])}
                         {renderSummarySketches()}
                         {renderSummaryTable('Diagnosis', [
-                            { label: 'Problems Identified (Right)', value: formData.problemsRight.map(id => diagnosisList.find(opt => opt.id === id)?.name).join(', ') },
-                            { label: 'Problems Identified (Left)', value: formData.problemsLeft.map(id => diagnosisList.find(opt => opt.id === id)?.name).join(', ') },
-                            { label: 'Other Problems (Right)', value: formData.otherProblemsRight },
-                            { label: 'Other Problems (Left)', value: formData.otherProblemsLeft },
-                            { label: 'Overall Diagnosis (Right)', value: formData.overallDiagnosisRight },
-                            { label: 'Overall Diagnosis (Left)', value: formData.overallDiagnosisLeft },
-                            { label: 'Other Overall Diagnosis (Right)', value: formData.otherOverallDiagnosisRight },
-                            { label: 'Other Overall Diagnosis (Left)', value: formData.otherOverallDiagnosisLeft },
-                        ])}
-                        {renderSummaryTable('Investigations', [
-                            { label: 'Investigations Required', value: formData.investigationsRequired.map(id => investigationsRequiredList.find(opt => opt.id === id)?.name).join(', ') },
-                            { label: 'Other Investigations Required', value: formData.otherInvestigationsRequired },
-                            { label: 'External Investigations Required', value: formData.externalInvestigationsRequired },
-                            { label: 'Investigations Done in Clinic', value: formData.investigationsDone.map(id => investigationsDoneList.find(opt => opt.id === id)?.name).join(', ') },
-                            { label: 'Other Investigations Done', value: formData.otherInvestigationsDone },
-                        ])}
+  {
+    label: 'Problems Identified (Right)',
+    value: formData.problemsRight?.length > 0
+      ? formatArrayForDisplay(formData.problemsRight)
+      : 'None selected'
+  },
+  {
+    label: 'Problems Identified (Left)',
+    value: formData.problemsLeft?.length > 0
+      ? formatArrayForDisplay(formData.problemsLeft)
+      : 'None selected'
+  },
+  { label: 'Other Problems (Right)', value: formData.otherProblemsRight || 'None' },
+  { label: 'Other Problems (Left)', value: formData.otherProblemsLeft || 'None' },
+  { label: 'Overall Diagnosis (Right)', value: formData.overallDiagnosisRight || 'None' },
+  { label: 'Overall Diagnosis (Left)', value: formData.overallDiagnosisLeft || 'None' },
+  { label: 'Other Overall Diagnosis (Right)', value: formData.otherOverallDiagnosisRight || 'None' },
+  { label: 'Other Overall Diagnosis (Left)', value: formData.otherOverallDiagnosisLeft || 'None' },
+])}
+  
+  {renderSummaryTable('Investigations', [
+  {
+    label: 'Investigations Required',
+    value: formData.investigationsRequired?.length > 0
+      ? formatArrayForDisplay(formData.investigationsRequired)
+      : 'None selected'
+  },
+  { label: 'Other Investigations Required', value: formData.otherInvestigationsRequired || 'None' },
+  { label: 'External Investigations Required', value: formData.externalInvestigationsRequired || 'None' },
+  {
+    label: 'Investigations Done in Clinic',
+    value: formData.investigationsDone?.length > 0
+      ? formatArrayForDisplay(formData.investigationsDone)
+      : 'None selected'
+  },
+  { label: 'Other Investigations Done', value: formData.otherInvestigationsDone || 'None' },
+])}
                         {renderSummaryTable('Treatment', [
                             { label: 'Eye Drops', value: eyeDrops.map(row => `${row.medicine} (${row.dosage}, ${row.doseDuration}, ${row.doseInterval}) - ${row.comment || 'No comment'}`).join('; ') },
                             { label: 'Tablets', value: tablets.map(row => `${row.medicine} (${row.dosage}, ${row.doseDuration}, ${row.doseInterval}) - ${row.comment || 'No comment'}`).join('; ') },
